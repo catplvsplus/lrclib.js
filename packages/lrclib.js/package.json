@@ -1,0 +1,11 @@
+{
+    "name": "lrclib.js",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "build": "tsup"
+    },
+    "devDependencies": {
+        "tsup": "^8.2.4"
+    }
+}

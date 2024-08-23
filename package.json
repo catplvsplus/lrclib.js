@@ -8,7 +8,9 @@
   "devDependencies": {
     "@reciple/utils": "^9.3.2",
     "@types/node": "^22.4.0",
-    "lerna": "^8.1.8"
+    "lerna": "^8.1.8",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.4"
   },
   "workspaces": [
     "packages/*",

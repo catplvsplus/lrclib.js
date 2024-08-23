@@ -4,9 +4,14 @@ body,
 html {
     height: 100%;
     font-family: 'Inter', sans-serif;
-    background-color: var(--background);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     -webkit-tap-highlight-color: transparent;
+}
+
+*,
+*::before,
+*::after {
+    user-select: none;
 }

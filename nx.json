@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/dist"
+      ],
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/*.json",
+        "{projectRoot}/tsup.config.ts",
+        "{workspaceRoot}/tsup.config.ts"
+      ],
+      "cache": true
+    }
+  },
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
+    "sharedGlobals": [],
+    "production": [
+      "default"
+    ]
+  }
+}

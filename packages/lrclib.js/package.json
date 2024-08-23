@@ -1,23 +1,26 @@
 {
-    "name": "lrclib.js",
-    "version": "1.0.0",
-    "type": "module",
-    "module": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "exports": {
-        ".": {
-            "import": {
-                "types": "./dist/index.d.ts",
-                "default": "./dist/index.js"
-            }
-        }
-    },
-    "scripts": {
-        "clean": "rimraf dist",
-        "build": "npm run clean && tsc"
-    },
-    "dependencies": {
-        "@discordjs/collection": "^2.1.0",
-        "ky": "^1.7.1"
+  "name": "lrclib.js",
+  "version": "1.0.0",
+  "type": "module",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     }
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@discordjs/collection": "^2.1.0",
+    "ky": "^1.7.1"
+  },
+  "devDependencies": {
+    "tsup": "^8.2.4"
+  }
 }

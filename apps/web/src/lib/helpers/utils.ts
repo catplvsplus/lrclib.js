@@ -14,7 +14,7 @@ export type FlyAndScaleParams = {
 	duration?: number;
 };
 
-export const flyAndScale = (node: Element, params: FlyAndScaleParams = { y: -8, x: 0, start: 0.95, duration: 150 }): TransitionConfig => {
+export function flyAndScale(node: Element, params: FlyAndScaleParams = { y: -8, x: 0, start: 0.95, duration: 150 }): TransitionConfig {
 	const style = getComputedStyle(node);
 	const transform = style.transform === "none" ? "" : style.transform;
 
@@ -51,3 +51,15 @@ export const flyAndScale = (node: Element, params: FlyAndScaleParams = { y: -8, 
 		easing: cubicOut
 	};
 };
+
+export function parseSearchParams(search: string): Record<string, string> {
+    const params = search.substring(1).split('&');
+    const record: Record<string, string> = {};
+
+    for (const param of params) {
+        const [key, rawValue] = param.split('=');
+        record[key] = decodeURIComponent(rawValue);
+    }
+
+    return record;
+}

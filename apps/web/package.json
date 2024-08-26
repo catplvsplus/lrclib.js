@@ -17,6 +17,7 @@
 		"lucide-svelte": "^0.435.0",
 		"luxon": "^3.5.0",
 		"mode-watcher": "^0.4.1",
+		"music-metadata": "^10.2.0",
 		"svelte-legos": "^0.2.5",
 		"svelte-sonner": "^0.3.27",
 		"sveltekit-search-params": "^3.0.0",

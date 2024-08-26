@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite dev --host",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -17,6 +17,7 @@
 		"lucide-svelte": "^0.435.0",
 		"luxon": "^3.5.0",
 		"mode-watcher": "^0.4.1",
+		"svelte-legos": "^0.2.5",
 		"svelte-sonner": "^0.3.27",
 		"sveltekit-search-params": "^3.0.0",
 		"tailwind-merge": "^2.5.2",

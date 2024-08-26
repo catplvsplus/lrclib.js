@@ -4,9 +4,10 @@
     import Track from '$lib/components/Track.svelte';
     import Search from 'lucide-svelte/icons/search';
     import { onMount } from 'svelte';
-    import { redirect } from '@sveltejs/kit';
     import { goto } from '$app/navigation';
-    import Skeleton from '../../lib/components/ui/skeleton/skeleton.svelte';
+    import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
+    import { page } from '$app/stores';
+    import LyricsModal from '$lib/components/LyricsModal.svelte';
 
     let results: Promise<LrcTrack[]> = Promise.resolve([]);
     let throttle: NodeJS.Timeout|null = null;
@@ -65,3 +66,7 @@
         </div>
     {/await}
 </div>
+
+{#if $page.state.showLyrics}
+    <LyricsModal trackId={$page.state.showLyrics} open/>
+{/if}

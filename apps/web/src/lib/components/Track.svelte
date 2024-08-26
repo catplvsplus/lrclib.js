@@ -1,18 +1,21 @@
 <script lang="ts">
     import type { Track } from 'lrclib';
-    import { fade } from 'svelte/transition';
-    import * as Tooltip from './ui/tooltip';
     import Badge from './ui/badge/badge.svelte';
     import { DateTime } from 'luxon';
     import { cn } from '../helpers/utils';
     import { badgeVariants } from './ui/badge';
+	import { pushState } from '$app/navigation';
 
     export let track: Track;
+
+    function showModal() {
+        pushState('/track?id=' + track.id, { showLyrics: track.id });
+    }
 </script>
 
-<div class="min-h-24 w-full rounded-md bg-accent/10 p-4">
+<div {...$$props} class={cn("min-h-24 w-full rounded-md bg-accent/10 p-4", $$props.class)}>
     <h3 class="text-lg font-bold text-primary overflow-hidden text-ellipsis pb-2" title={track.trackName}>
-        <a href="/track/{track.id}">
+        <a href="/track?id={track.id}" on:click|preventDefault={showModal}>
             {track.trackName}
         </a>
     </h3>

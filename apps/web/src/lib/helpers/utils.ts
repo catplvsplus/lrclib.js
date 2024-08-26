@@ -63,3 +63,15 @@ export function parseSearchParams(search: string): Record<string, string> {
 
     return record;
 }
+
+export function selectText(node: HTMLElement) {
+    if (window.getSelection) {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+    } else {
+        console.warn("Could not select text in node: Unsupported browser.");
+    }
+}

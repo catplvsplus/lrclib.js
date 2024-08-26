@@ -12,10 +12,8 @@
     onMount(async () => {
         if (!$id) return goto('/');
 
-        setTimeout(async () => {
-            track = await lrclib.fetchId($id).catch(e => null);
-            if (!track) return goto('/');
-        }, 2000)
+        track = await lrclib.fetchId($id).catch(e => null);
+        if (!track) return goto('/');
     });
 </script>
 

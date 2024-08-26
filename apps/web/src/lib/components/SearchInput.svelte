@@ -1,20 +1,15 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import { onMount } from 'svelte';
     import { search } from '../stores/search';
-    import { cn, parseSearchParams } from '../helpers/utils';
+    import { cn } from '../helpers/utils';
     import Search from 'lucide-svelte/icons/search';
 
     export let focused = false;
     export let mini = false;
     export let input: HTMLInputElement|null = null;
 
-    onMount(() => {
-        $search = parseSearchParams(window.location.search).q || '';
-    });
-
     function onSubmit() {
-        const query = encodeURIComponent($search.trim());
+        const query = encodeURIComponent($search?.trim() ?? '');
         if (!query) {
             setTimeout(() => input?.focus(), 500);
             return;

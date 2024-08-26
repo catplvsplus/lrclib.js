@@ -7,4 +7,6 @@
 
 <ModeWatcher defaultMode="system"/>
 <Topbar/>
-<slot/>
+<div class="pt-14">
+    <slot/>
+</div>

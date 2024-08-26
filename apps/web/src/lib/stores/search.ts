@@ -1,3 +1,3 @@
-import { writable } from 'svelte/store';
+import { queryParam } from 'sveltekit-search-params';
 
-export const search = writable('');
+export const search = queryParam('q');

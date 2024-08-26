@@ -15,8 +15,10 @@
 		"is-mobile": "^4.0.0",
 		"lrclib": "file:../../packages/lrclib.js",
 		"lucide-svelte": "^0.435.0",
+		"luxon": "^3.5.0",
 		"mode-watcher": "^0.4.1",
 		"svelte-sonner": "^0.3.27",
+		"sveltekit-search-params": "^3.0.0",
 		"tailwind-merge": "^2.5.2",
 		"tailwind-variants": "^0.2.1",
 		"vaul-svelte": "^0.3.2"
@@ -26,6 +28,7 @@
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@tailwindcss/typography": "^0.5.14",
+		"@types/luxon": "^3.4.2",
 		"autoprefixer": "^10.4.20",
 		"sass": "^1.77.8",
 		"svelte": "^4.2.7",

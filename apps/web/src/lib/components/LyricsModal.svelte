@@ -4,6 +4,7 @@
     import * as Dialog from "$lib/components/ui/dialog/index.js";
     import * as Drawer from "$lib/components/ui/drawer/index.js";
     import ViewLyrics from "./ViewLyrics.svelte";
+    import ViewLyricsSkeleton from './ViewLyricsSkeleton.svelte';
 
     export let trackId: string;
     export let open: boolean = false;
@@ -23,17 +24,20 @@
 
 {#if $isDesktop}
     <Dialog.Root bind:open closeOnOutsideClick>
-        <Dialog.Overlay class="bg-transparent"/>
-        <Dialog.Content class="max-w-3xl max-h-screen border-primary/40 dark:border-border">
-            {#await track then data}
+        <Dialog.Content class="max-w-3xl max-h-screen min-h-80 border-primary/40 dark:border-border">
+            {#await track}
+                <ViewLyricsSkeleton/>
+            {:then data}
                 <ViewLyrics track={data} class="max-h-[80dvh] overflow-auto rounded"/>
             {/await}
         </Dialog.Content>
     </Dialog.Root>
 {:else}
     <Drawer.Root bind:open closeOnEscape closeOnOutsideClick>
-        <Drawer.Content class="max-h-screen px-2">
-            {#await track then data}
+        <Drawer.Content class="max-h-screen min-h-80 px-2">
+            {#await track}
+                <ViewLyricsSkeleton/>
+            {:then data}
                 <ViewLyrics track={data} class="max-h-[80dvh] h-screen overflow-auto rounded-md mb-6"/>
             {/await}
         </Drawer.Content>

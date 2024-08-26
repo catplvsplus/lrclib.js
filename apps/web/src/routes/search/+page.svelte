@@ -8,6 +8,7 @@
     import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
     import { page } from '$app/stores';
     import LyricsModal from '$lib/components/LyricsModal.svelte';
+    import TrackSkeleton from '../../lib/components/TrackSkeleton.svelte';
 
     let results: Promise<LrcTrack[]> = Promise.resolve([]);
     let throttle: NodeJS.Timeout|null = null;
@@ -39,12 +40,12 @@
 
     {#await results}
         <div class="flex flex-col gap-2">
-            <Skeleton  class="h-24 w-full"/>
-            <Skeleton class="h-24 w-full"/>
-            <Skeleton class="h-24 w-full"/>
-            <Skeleton class="h-24 w-full"/>
-            <Skeleton class="h-24 w-full"/>
-            <Skeleton class="h-24 w-full"/>
+            <TrackSkeleton  class="h-24 w-full"/>
+            <TrackSkeleton class="h-24 w-full"/>
+            <TrackSkeleton class="h-24 w-full"/>
+            <TrackSkeleton class="h-24 w-full"/>
+            <TrackSkeleton class="h-24 w-full"/>
+            <TrackSkeleton class="h-24 w-full"/>
         </div>
     {:then tracks}
         {#if tracks.length}

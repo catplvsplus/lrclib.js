@@ -4,6 +4,7 @@
     import { onMount } from 'svelte';
     import { queryParam } from 'sveltekit-search-params';
     import ViewLyrics from '$lib/components/ViewLyrics.svelte';
+    import ViewLyricsSkeleton from '../../lib/components/ViewLyricsSkeleton.svelte';
 
     let id = queryParam('id');
     let track: LrcTrack|null = null;
@@ -11,17 +12,17 @@
     onMount(async () => {
         if (!$id) return goto('/');
 
-        track = await lrclib.fetchId($id).catch(e => null);
-        if (!track) return goto('/');
+        setTimeout(async () => {
+            track = await lrclib.fetchId($id).catch(e => null);
+            if (!track) return goto('/');
+        }, 2000)
     });
 </script>
 
-{#if track}
-    <div class="container max-w-3xl p-4">
+<div class="container max-w-3xl p-4">
+    {#if track}
         <ViewLyrics {track}/>
-    </div>
-{:else}
-    <div class="min-h-80 w-full flex flex-col justify-center items-center">
-        <h1 class="text-xl font-medium">Loading...</h1>
-    </div>
-{/if}
+    {:else}
+        <ViewLyricsSkeleton/>
+    {/if}
+</div>

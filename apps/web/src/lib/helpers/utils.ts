@@ -88,14 +88,19 @@ export async function writeID3Tags(blob: Blob, track: Track): Promise<ArrayBuffe
 
     if (track.isSynced) {
         id3.setFrame('SYLT', {
-            type: 0x01,
-            timestampFormat: 0x02,
+            type: 1,
+            timestampFormat: 2,
             text: track.syncedLyricsJSON.map(l => [l.text, l.timeMs]),
+            language: 'eng',
+            description: track.trackName
         });
-    } else if (track.isPlain) {
+    }
+
+    if (track.isPlain) {
         id3.setFrame('USLT', {
             lyrics: track.plainLyrics,
-            description: track.trackName
+            description: track.trackName,
+            language: 'eng',
         });
     }
 

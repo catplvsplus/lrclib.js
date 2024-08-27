@@ -136,7 +136,7 @@
                         :global(div) {
                             transition: 0.2s ease-in-out;
 
-                            @apply mx-4 h-1 hover:h-3 rounded-full;
+                            @apply mx-4 h-2 hover:h-3 rounded-full;
 
                             > :global(span) {
                                 @apply h-full;

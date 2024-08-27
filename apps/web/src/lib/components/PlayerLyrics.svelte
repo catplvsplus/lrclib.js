@@ -33,8 +33,8 @@
                 href="#lyric-{index}"
                 class={cn(
                     'block data-[active="true"]:text-white/80 data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%] data-[active="false"]:blur-sm data-[active="true"]:animate-glow hover:text-white/85 hover:!blur-0 text-muted-foreground/60',
-                    index === 0 ? 'pt-72' : '',
-                    index === track.syncedLyricsJSON.length - 1 ? 'pb-72' : ''
+                    index === 0 ? 'beginning' : '',
+                    index === track.syncedLyricsJSON.length - 1 ? 'ending' : ''
                 )}
                 id="lyric-{index}"
                 style="transition: 0.5s; max-width: 90%;"
@@ -48,11 +48,10 @@
         {@const lines = (track.plainLyrics ?? '').split('\n')}
         {#each lines as line, index}
             {#if line}
-                <p
-                    class={cn(
+                <p class={cn(
                         "select-text text-white/80",
-                        index === 0 ? 'pt-72' : '',
-                        index === lines.length - 1 ? 'pb-72' : ''
+                        index === 0 ? 'beginning' : '',
+                        index === lines.length - 1 ? 'ending' : ''
                     )}
                 >{line}</p>
             {:else}
@@ -63,6 +62,18 @@
 </div>
 
 <style lang="scss">
+    .beginning {
+        margin-top: 50%;
+    }
+
+    p.beginning {
+        margin-top: 10%;
+    }
+
+    .ending {
+        margin-bottom: 50%;
+    }
+
     @media (max-width: 760px) {
         div {
             @apply text-3xl leading-normal;
@@ -74,6 +85,14 @@
 
             p {
                 font-size: 1.4rem;
+            }
+
+            .beginning {
+                margin-top: 1rem;
+            }
+
+            .ending {
+                margin-bottom: 1rem;
             }
         }
     }

@@ -21,7 +21,7 @@
     {...$$props}
     class={cn("h-full w-full overflow-y-auto text-5xl font-bold p-6 leading-relaxed no-scrollbar", $$props.class)}
     bind:this={container}
-    style="mask: var(--mask); -webkit-mask: var(--mask);"
+    style={track.isSynced ? "mask: var(--mask); -webkit-mask: var(--mask);" : ""}
 >
     {#if track.isSynced}
         {#each track.syncedLyricsJSON as line, index}
@@ -41,6 +41,19 @@
             </a>
         {/each}
     {:else}
-        {track.plainLyrics}
+        {@const lines = (track.plainLyrics ?? '').split('\n')}
+        {#each lines as line, index}
+            {#if line}
+                <p
+                    class={cn(
+                        "select-text",
+                        index === 0 ? 'pt-72' : '',
+                        index === lines.length - 1 ? 'pb-72' : ''
+                    )}
+                >{line}</p>
+            {:else}
+                <br class="leading-10"/>
+            {/if}
+        {/each}
     {/if}
 </div>

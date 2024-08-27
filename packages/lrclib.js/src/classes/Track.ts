@@ -30,7 +30,7 @@ export class Track implements APITrackSignatureResponse {
     }
 
     get syncedLyricsJSON(): TrackSyncedLyrics {
-        return Utils.parseTrackSyncedLyricsJSON(this.syncedLyrics);
+        return this.isSynced ? Utils.parseTrackSyncedLyricsJSON(this.syncedLyrics) : [];
     }
 
     constructor(track: APITrackSignatureResponse, public readonly client: Client) {

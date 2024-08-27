@@ -1,14 +1,12 @@
 <script lang="ts">
     import type { Track } from 'lrclib';
     import { cn } from '../helpers/utils';
-    import { mediaQuery } from 'svelte-legos';
 
     export let track: Track;
     export let currentTime: number;
     export let currentTimeLineIndex: number|undefined;
 
     let container: HTMLDivElement;
-    let isMobile = mediaQuery('(max-width: 730px)');
 
     $: currentTimeLineIndex, (() => {
         const line = container?.querySelector<HTMLDivElement>(`#lyric-${currentTimeLineIndex}`);
@@ -17,7 +15,7 @@
         // container.scrollTop = line.offsetTop - (container.offsetHeight / 2) + line.offsetHeight / 2;
         line.scrollIntoView({
             behavior: 'smooth',
-            block: $isMobile ? 'start' : 'center',
+            block: ('center'),
             inline: 'nearest'
         });
     })();
@@ -67,8 +65,6 @@
 <style lang="scss">
     @media (max-width: 760px) {
         div {
-            scroll-padding-top: 30%;
-
             @apply text-3xl leading-normal;
 
             a {

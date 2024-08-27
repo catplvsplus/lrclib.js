@@ -7,6 +7,7 @@
     import { cn, getCurrentTimeLineIndex } from '../helpers/utils';
     import PlayerLyrics from './PlayerLyrics.svelte';
     import { FastAverageColor, type FastAverageColorResult } from 'fast-average-color';
+    import isMobile from 'is-mobile';
 
     export let track: Track;
     export let blob: Blob;
@@ -38,6 +39,8 @@
 
         const fac = new FastAverageColor();
         primaryColor = await fac.getColorAsync(albumCover).catch(() => undefined);
+
+        allowBlur = !isMobile();
     });
 
     $: currentTime, currentTimeLineIndex = getCurrentTimeLineIndex(currentTime, track.syncedLyricsJSON);

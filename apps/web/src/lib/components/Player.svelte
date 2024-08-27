@@ -6,6 +6,7 @@
     import PlayerControls from './PlayerControls.svelte';
     import { cn, getCurrentTimeLineIndex } from '../helpers/utils';
     import PlayerLyrics from './PlayerLyrics.svelte';
+    import { FastAverageColor, type FastAverageColorResult } from 'fast-average-color';
 
     export let track: Track;
     export let blob: Blob;
@@ -21,6 +22,10 @@
     let muted: boolean = false;
     let currentTimeLineIndex: number|undefined = undefined;
 
+    let albumCoverElement: HTMLImageElement;
+    let allowBlur: boolean = false;
+    let primaryColor: FastAverageColorResult|undefined = undefined;
+
     onMount(async () => {
         data = await parseBlob(blob);
 
@@ -30,20 +35,32 @@
                 type: imageData.format
             }))
             : '/images/album.png';
+
+        const fac = new FastAverageColor();
+        primaryColor = await fac.getColorAsync(albumCover).catch(() => undefined);
     });
 
     $: currentTime, currentTimeLineIndex = getCurrentTimeLineIndex(currentTime, track.syncedLyricsJSON);
 </script>
 
 <audio src={audio} bind:duration bind:currentTime bind:paused {loop} {muted} autoplay></audio>
-<div class="h-full w-full relative overflow-hidden">
-    <div class="h-full w-full top-0 left-0 absolute overflow-hidden">
-        <img src={albumCover} alt="" class="absolute h-full w-full">
-        <img src={albumCover} alt="" class="animate-spin absolute h-screen top-0 left-0" style="animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">
-        <img src={albumCover} alt="" class="animate-spin absolute h-screen bottom-0 right-0" style="animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">
-        <img src={albumCover} alt="" class="animate-spin absolute h-screen top-1/2 left-1/2 bottom-0 " style="animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">
-    </div>
-    <div class="content h-full w-full top-0 left-0 absolute backdrop-blur-[10vh] dark:backdrop-saturate-150 bg-black/60 pt-14 flex justify-center items-center gap-16">
+<img src={albumCover} class="fixed -top-full -left-full" bind:this={albumCoverElement}>
+<div
+    class="h-full w-full relative overflow-hidden"
+    style={!allowBlur && primaryColor ? `background: ${primaryColor.hex}` : ''}
+>
+    {#if allowBlur}
+        <div class="h-full w-full top-0 left-0 absolute overflow-hidden">
+            <img src={albumCover} alt="" class="absolute h-full w-full">
+            <img src={albumCover} alt="" class="animate-spin absolute h-screen top-0 left-0" style="animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">
+            <img src={albumCover} alt="" class="animate-spin absolute h-screen bottom-0 right-0" style="animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">
+            <img src={albumCover} alt="" class="animate-spin absolute h-screen top-1/2 left-1/2 bottom-0 " style="animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">
+        </div>
+    {/if}
+    <div class={cn(
+        "content h-full w-full top-0 left-0 absolute dark:backdrop-saturate-150 bg-black/60 pt-14 flex justify-center items-center gap-16",
+        allowBlur ? 'backdrop-blur-[10vh]' : ''
+    )}>
         <div class="player flex flex-col gap-4 shrink-0 w-1/3 items-center">
             <div class="cover rounded-md overflow-hidden h-96 w-96 relative">
                 <img src={albumCover} alt="" class="h-full w-full">
@@ -60,7 +77,7 @@
             </div>
         </div>
         <div class="lyrics h-full w-1/2">
-            <PlayerLyrics bind:track bind:currentTime bind:currentTimeLineIndex/>
+            <PlayerLyrics bind:track bind:currentTime bind:currentTimeLineIndex bind:allowBlur/>
         </div>
     </div>
 </div>

@@ -5,6 +5,7 @@
     export let track: Track;
     export let currentTime: number;
     export let currentTimeLineIndex: number|undefined;
+    export let allowBlur: boolean = false;
 
     let container: HTMLDivElement;
 
@@ -32,7 +33,8 @@
             <a
                 href="#lyric-{index}"
                 class={cn(
-                    'block data-[active="true"]:text-white/80 data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%] data-[active="false"]:blur-sm data-[active="true"]:animate-glow hover:text-white/85 hover:!blur-0 text-muted-foreground/60',
+                    'block data-[active="true"]:text-white/80 data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%] data-[active="true"]:animate-glow hover:text-white/85 hover:!blur-0 text-muted-foreground/60',
+                    allowBlur ? 'data-[active="false"]:blur-sm' : 'data-[active="false"]:opacity-55',
                     index === 0 ? 'beginning' : '',
                     index === track.syncedLyricsJSON.length - 1 ? 'ending' : ''
                 )}

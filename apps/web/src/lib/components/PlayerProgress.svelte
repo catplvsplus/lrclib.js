@@ -1,5 +1,6 @@
 <script lang="ts">
     import { DateTime } from 'luxon';
+    import { cn } from '../helpers/utils';
 
     export let duration: number = 0;
     export let currentTime: number = 0;
@@ -29,7 +30,10 @@
     }
 </script>
 
-<div class="flex gap-2 items-center text-muted-foreground">
+<div
+    {...$$props}
+    class={cn("flex gap-2 items-center text-muted-foreground", $$props.class)}
+>
     <span>{DateTime.fromSeconds(currentTime).toFormat('mm:ss')}</span>
     <div class="w-full h-2 rounded bg-muted-foreground/40 overflow-hidden" on:pointerdown|preventDefault={pointerSeek} bind:this={target}>
         <span class="block bg-white h-2" style="width: {percent}%"></span>

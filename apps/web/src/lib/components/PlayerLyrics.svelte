@@ -57,3 +57,25 @@
         {/each}
     {/if}
 </div>
+
+<style lang="scss">
+    @media (max-width: 760px) {
+        div {
+            @apply text-3xl leading-relaxed;
+
+            a {
+                @apply data-[active="true"]:scale-105 data-[active="true"]:translate-x-3 data-[active="false"]:blur-[2px];
+            }
+
+            p {
+                font-size: 1.4rem;
+            }
+        }
+    }
+
+    @media (max-width: 430px) {
+        div {
+            padding: 1rem;
+        }
+    }
+</style>

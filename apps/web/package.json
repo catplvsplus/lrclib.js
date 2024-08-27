@@ -11,6 +11,7 @@
 	},
 	"dependencies": {
 		"bits-ui": "^0.21.13",
+		"browser-id3-writer": "^6.1.0",
 		"clsx": "^2.1.1",
 		"fast-average-color": "^9.4.0",
 		"is-mobile": "^4.0.0",

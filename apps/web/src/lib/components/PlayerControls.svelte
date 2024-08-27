@@ -4,25 +4,41 @@
     import Pause from 'lucide-svelte/icons/pause';
     import Unmuted from 'lucide-svelte/icons/volume-2';
     import Muted from 'lucide-svelte/icons/volume-off';
-    import Unloop from 'lucide-svelte/icons/repeat';
-    import Loop from 'lucide-svelte/icons/repeat-1';
-    import { cn } from '../helpers/utils';
+    import Download from 'lucide-svelte/icons/download';
+    import { cn, writeID3Tags } from '../helpers/utils';
+    import type { Track } from 'lrclib';
+    import { parseBlob } from 'music-metadata';
+    import { buttonVariants } from './ui/button';
+    import { onMount } from 'svelte';
 
-    export let loop: boolean;
     export let paused: boolean;
     export let muted: boolean;
+    export let track: Track;
+    export let blob: Blob;
+    export let name: string;
+
+    let downloadURL: string = '';
+
+    onMount(async () => {
+        const buff = await writeID3Tags(blob, track);
+        downloadURL = URL.createObjectURL(new Blob([buff]));
+        console.log(name, downloadURL);
+    });
 </script>
 
 <div {...$$props} class={cn("flex items-center gap-4", $$props.class)}>
-    <Button
-        on:click={() => loop = !loop}
+    <a
         class={cn(
-            "h-12 w-12 p-0 rounded-full",
-            !loop ? "bg-background/20 hover:bg-background/40" : "!bg-primary/10 text-primary"
+            buttonVariants({ variant: 'default' }),
+            "h-12 w-12 p-0 rounded-full bg-background/20 hover:bg-background/40",
+            downloadURL ? "" : "opacity-30"
         )}
+        download={name}
+        href={downloadURL}
+        target="_blank"
     >
-        {#if loop}<Loop/>{:else}<Unloop/>{/if}
-    </Button>
+        <Download/>
+    </a>
     <Button
         on:click={() => paused = !paused}
         class={cn(

@@ -2,7 +2,8 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
-import type { TrackSyncedLyrics } from 'lrclib';
+import type { Track, TrackSyncedLyrics } from 'lrclib';
+import { ID3Writer } from 'browser-id3-writer';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -80,4 +81,23 @@ export function selectText(node: HTMLElement) {
 export function getCurrentTimeLineIndex(currentTime: number, syncedLyrics: TrackSyncedLyrics): number|undefined {
 	const index = syncedLyrics.findIndex(lyrics => (lyrics.timeMs / 1000) >= currentTime);
 	return index > 0 ? index - 1 : index;
+}
+
+export async function writeID3Tags(blob: Blob, track: Track): Promise<ArrayBuffer> {
+    const id3 = new ID3Writer(await blob.arrayBuffer());
+
+    if (track.isSynced) {
+        id3.setFrame('SYLT', {
+            type: 0x01,
+            timestampFormat: 0x02,
+            text: track.syncedLyricsJSON.map(l => [l.text, l.timeMs]),
+        });
+    } else if (track.isPlain) {
+        id3.setFrame('USLT', {
+            lyrics: track.plainLyrics,
+            description: track.trackName
+        });
+    }
+
+    return id3.addTag();
 }

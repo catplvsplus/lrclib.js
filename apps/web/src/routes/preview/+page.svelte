@@ -31,5 +31,5 @@
         </div>
     </div>
 {:else}
-    <Player track={track} audio={URL.createObjectURL(file)} blob={file}/>
+    <Player track={track} audio={URL.createObjectURL(file)} blob={file} name={file.name}/>
 {/if}

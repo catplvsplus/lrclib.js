@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Track } from 'lrclib';
-    import { parseBlob, type IAudioMetadata } from 'music-metadata';
+    import { parseBlob, selectCover, type IAudioMetadata } from 'music-metadata';
     import { onMount } from 'svelte';
     import PlayerProgress from './PlayerProgress.svelte';
     import PlayerControls from './PlayerControls.svelte';
@@ -10,6 +10,7 @@
     import isMobile from 'is-mobile';
 
     export let track: Track;
+    export let name: string;
     export let blob: Blob;
     export let audio: string;
 
@@ -19,7 +20,6 @@
     let duration: number;
     let currentTime: number;
     let paused: boolean;
-    let loop: boolean = false;
     let muted: boolean = false;
     let currentTimeLineIndex: number|undefined = undefined;
 
@@ -30,7 +30,8 @@
     onMount(async () => {
         data = await parseBlob(blob);
 
-        const imageData = data?.common?.picture?.[0];
+        const imageData = data?.common?.picture?.[0] ? selectCover(data.common.picture) : null;
+
         albumCover = imageData
             ? URL.createObjectURL(new Blob([imageData.data], {
                 type: imageData.format
@@ -46,7 +47,7 @@
     $: currentTime, currentTimeLineIndex = getCurrentTimeLineIndex(currentTime, track.syncedLyricsJSON);
 </script>
 
-<audio src={audio} bind:duration bind:currentTime bind:paused {loop} {muted} autoplay></audio>
+<audio src={audio} bind:duration bind:currentTime bind:paused {muted} autoplay></audio>
 <img src={albumCover} class="fixed -top-full -left-full" bind:this={albumCoverElement}>
 <div
     class="h-full w-full relative overflow-hidden"
@@ -75,7 +76,7 @@
             <div class="controls flex flex-col gap-2 max-w-96 w-full">
                 <PlayerProgress bind:duration bind:currentTime class="progress"/>
                 <div class="buttons flex justify-center">
-                    <PlayerControls bind:loop bind:paused bind:muted class="mb-4"/>
+                    <PlayerControls bind:paused bind:muted bind:blob bind:track bind:name class="mb-4"/>
                 </div>
             </div>
         </div>

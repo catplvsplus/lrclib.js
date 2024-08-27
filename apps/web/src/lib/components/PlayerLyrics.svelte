@@ -34,7 +34,7 @@
                 href="#lyric-{index}"
                 class={cn(
                     'block data-[active="true"]:text-white/80 data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%] data-[active="true"]:animate-glow hover:text-white/85 hover:!blur-0 text-muted-foreground/60',
-                    allowBlur ? 'data-[active="false"]:blur-sm' : 'data-[active="false"]:opacity-55',
+                    allowBlur ? 'data-[active="false"]:blur-sm' : 'data-[active="false"]:opacity-55 noblur',
                     index === 0 ? 'beginning' : '',
                     index === track.syncedLyricsJSON.length - 1 ? 'ending' : ''
                 )}
@@ -81,8 +81,12 @@
             @apply text-3xl leading-normal;
 
             a {
-                @apply data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%] data-[active="false"]:blur-[2px];
+                @apply data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%];
                 margin-bottom: 1rem;
+
+                &:not(.noblur) {
+                    @apply data-[active="false"]:blur-[2px];
+                }
             }
 
             p {
@@ -90,11 +94,11 @@
             }
 
             .beginning {
-                margin-top: 1rem;
+                margin-top: 40%;
             }
 
             .ending {
-                margin-bottom: 1rem;
+                margin-bottom: 20%;
             }
         }
     }

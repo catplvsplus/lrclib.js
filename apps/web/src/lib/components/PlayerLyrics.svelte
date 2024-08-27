@@ -46,7 +46,7 @@
             {#if line}
                 <p
                     class={cn(
-                        "select-text",
+                        "select-text text-white/80",
                         index === 0 ? 'pt-72' : '',
                         index === lines.length - 1 ? 'pb-72' : ''
                     )}

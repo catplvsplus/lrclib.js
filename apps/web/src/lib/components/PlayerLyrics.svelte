@@ -1,19 +1,25 @@
 <script lang="ts">
     import type { Track } from 'lrclib';
     import { cn } from '../helpers/utils';
+    import { mediaQuery } from 'svelte-legos';
 
     export let track: Track;
     export let currentTime: number;
     export let currentTimeLineIndex: number|undefined;
 
     let container: HTMLDivElement;
+    let isMobile = mediaQuery('(max-width: 730px)');
 
     $: currentTimeLineIndex, (() => {
         const line = container?.querySelector<HTMLDivElement>(`#lyric-${currentTimeLineIndex}`);
         if (!line) return;
 
         // container.scrollTop = line.offsetTop - (container.offsetHeight / 2) + line.offsetHeight / 2;
-        line.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+        line.scrollIntoView({
+            behavior: 'smooth',
+            block: $isMobile ? 'start' : 'center',
+            inline: 'nearest'
+        });
     })();
 </script>
 
@@ -28,7 +34,7 @@
             <a
                 href="#lyric-{index}"
                 class={cn(
-                    'block data-[active="true"]:text-white/80 data-[active="true"]:scale-105 data-[active="true"]:translate-x-5 data-[active="false"]:blur-sm data-[active="true"]:animate-glow hover:text-white/85 hover:!blur-0 text-muted-foreground/60',
+                    'block data-[active="true"]:text-white/80 data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%] data-[active="false"]:blur-sm data-[active="true"]:animate-glow hover:text-white/85 hover:!blur-0 text-muted-foreground/60',
                     index === 0 ? 'pt-72' : '',
                     index === track.syncedLyricsJSON.length - 1 ? 'pb-72' : ''
                 )}
@@ -61,10 +67,13 @@
 <style lang="scss">
     @media (max-width: 760px) {
         div {
-            @apply text-3xl leading-relaxed;
+            scroll-padding-top: 30%;
+
+            @apply text-3xl leading-normal;
 
             a {
-                @apply data-[active="true"]:scale-105 data-[active="true"]:translate-x-3 data-[active="false"]:blur-[2px];
+                @apply data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%] data-[active="false"]:blur-[2px];
+                margin-bottom: 1rem;
             }
 
             p {

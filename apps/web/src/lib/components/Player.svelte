@@ -39,9 +39,9 @@
 <div class="h-full w-full relative overflow-hidden">
     <div class="h-full w-full top-0 left-0 absolute">
         <img src={albumCover} alt="" class="absolute h-full w-full">
-        <img src={albumCover} alt="" class="animate-spin absolute h-screen top-0 left-0" style="animation-duration: 20s;">
-        <img src={albumCover} alt="" class="animate-spin absolute h-screen bottom-0 right-0" style="animation-duration: 20s;">
-        <img src={albumCover} alt="" class="animate-spin absolute h-screen top-1/2 left-1/2 bottom-0 " style="animation-duration: 20s;">
+        <img src={albumCover} alt="" class="animate-spin absolute h-screen top-0 left-0" style="animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">
+        <img src={albumCover} alt="" class="animate-spin absolute h-screen bottom-0 right-0" style="animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">
+        <img src={albumCover} alt="" class="animate-spin absolute h-screen top-1/2 left-1/2 bottom-0 " style="animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">
     </div>
     <div class="h-full w-full top-0 left-0 absolute backdrop-blur-[10vh] dark:backdrop-saturate-150 bg-black/60 pt-14 flex justify-center items-center gap-16">
         <div class="flex flex-col gap-4 shrink-0 w-1/4 items-center">

@@ -35,7 +35,7 @@
         on:click={() => muted = !muted}
         class={cn(
             "h-12 w-12 p-0 rounded-full",
-            !loop ? "bg-background/20 hover:bg-background/40" : "!bg-primary/10 text-primary"
+            !muted ? "bg-background/20 hover:bg-background/40" : "!bg-primary/10 text-primary"
         )}
     >
         {#if muted}<Muted/>{:else}<Unmuted/>{/if}

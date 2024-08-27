@@ -98,7 +98,7 @@ export async function writeID3Tags(blob: Blob, track: Track): Promise<ArrayBuffe
 
     if (track.isPlain) {
         id3.setFrame('USLT', {
-            lyrics: track.plainLyrics,
+            lyrics: track.isSynced ? track.syncedLyrics : track.plainLyrics,
             description: track.trackName,
             language: 'eng',
         });

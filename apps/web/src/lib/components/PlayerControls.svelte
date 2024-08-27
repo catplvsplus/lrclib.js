@@ -20,7 +20,9 @@
     let downloadURL: string = '';
 
     onMount(async () => {
-        const buff = await writeID3Tags(blob, track);
+        const buff = await writeID3Tags(blob, track).catch(() => null);
+        if (!buff) return;
+
         downloadURL = URL.createObjectURL(new Blob([buff]));
         console.log(name, downloadURL);
     });

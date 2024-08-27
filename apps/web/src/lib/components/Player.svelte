@@ -21,6 +21,8 @@
     let muted: boolean = false;
     let currentTimeLineIndex: number|undefined = undefined;
 
+    let content: HTMLDivElement;
+
     onMount(async () => {
         data = await parseBlob(blob);
 
@@ -36,15 +38,15 @@
 </script>
 
 <audio src={audio} bind:duration bind:currentTime bind:paused {loop} {muted} autoplay></audio>
-<div class="h-full w-full relative overflow-hidden">
-    <div class="h-full w-full top-0 left-0 absolute">
+<div class="h-full w-full relative overflow-hidden" bind:this={content}>
+    <div class="h-full w-full top-0 left-0 absolute overflow-hidden">
         <img src={albumCover} alt="" class="absolute h-full w-full">
         <img src={albumCover} alt="" class="animate-spin absolute h-screen top-0 left-0" style="animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">
         <img src={albumCover} alt="" class="animate-spin absolute h-screen bottom-0 right-0" style="animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">
         <img src={albumCover} alt="" class="animate-spin absolute h-screen top-1/2 left-1/2 bottom-0 " style="animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">
     </div>
     <div class="h-full w-full top-0 left-0 absolute backdrop-blur-[10vh] dark:backdrop-saturate-150 bg-black/60 pt-14 flex justify-center items-center gap-16">
-        <div class="flex flex-col gap-4 shrink-0 w-1/4 items-center">
+        <div class="flex flex-col gap-4 shrink-0 w-1/3 items-center">
             <div class="rounded-md overflow-hidden h-96 w-96 relative">
                 <img src={albumCover} alt="" class="h-full w-full">
             </div>

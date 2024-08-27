@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
+import type { TrackSyncedLyrics } from 'lrclib';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -74,4 +75,9 @@ export function selectText(node: HTMLElement) {
     } else {
         console.warn("Could not select text in node: Unsupported browser.");
     }
+}
+
+export function getCurrentTimeLineIndex(currentTime: number, syncedLyrics: TrackSyncedLyrics): number|undefined {
+	const index = syncedLyrics.findIndex(lyrics => (lyrics.timeMs / 1000) >= currentTime);
+	return index > 0 ? index - 1 : index;
 }

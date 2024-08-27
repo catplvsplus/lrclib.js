@@ -18,7 +18,7 @@
         on:click={() => loop = !loop}
         class={cn(
             "h-12 w-12 p-0 rounded-full",
-            !loop ? "bg-muted-foreground/50 hover:bg-muted-foreground/80 dark:bg-background/20 dark:hover:bg-background/40" : "!bg-primary/10 text-primary"
+            !loop ? "bg-background/20 hover:bg-background/40" : "!bg-primary/10 text-primary"
         )}
     >
         {#if loop}<Loop/>{:else}<Unloop/>{/if}
@@ -26,7 +26,7 @@
     <Button
         on:click={() => paused = !paused}
         class={cn(
-            "h-16 w-16 p-0 rounded-full bg-muted-foreground/80 hover:bg-muted-foreground/90 dark:bg-background/20 dark:hover:bg-background/40"
+            "h-16 w-16 p-0 rounded-full bg-background/20 hover:bg-background/40"
         )}
     >
         {#if paused}<Play size="30"/>{:else}<Pause size="30"/>{/if}
@@ -35,7 +35,7 @@
         on:click={() => muted = !muted}
         class={cn(
             "h-12 w-12 p-0 rounded-full",
-            !muted ? "bg-muted-foreground/50 hover:bg-muted-foreground/80 dark:bg-background/20 dark:hover:bg-background/40" : "!bg-primary/10 text-primary"
+            !loop ? "bg-background/20 hover:bg-background/40" : "!bg-primary/10 text-primary"
         )}
     >
         {#if muted}<Muted/>{:else}<Unmuted/>{/if}

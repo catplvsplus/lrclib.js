@@ -56,7 +56,20 @@ const config: Config = {
 			},
 			fontFamily: {
 				sans: [...fontFamily.sans]
-			}
+			},
+            animation: {
+                'glow': 'glow 1s linear both'
+            },
+            keyframes: {
+                glow: {
+                    '0%': {
+                        textShadow: 'none'
+                    },
+                    '100%': {
+                        textShadow: '0 0 5px #fff'
+                    }
+                }
+            }
 		}
 	},
 };

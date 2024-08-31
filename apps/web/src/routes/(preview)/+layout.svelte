@@ -3,7 +3,7 @@
     import { isPlaying } from "$lib/stores/isPlaying";
 </script>
 
-<Topbar transparent={!$isPlaying}/>
+<Topbar bind:transparent={$isPlaying}/>
 <div class="h-full">
     <slot/>
 </div>

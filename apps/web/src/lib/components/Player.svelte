@@ -23,8 +23,8 @@
     let muted: boolean = false;
     let currentTimeLineIndex: number|undefined = undefined;
 
-    let albumCoverElement: HTMLImageElement;
     let primaryColor: FastAverageColorResult|undefined = undefined;
+    let wakeLock: WakeLockSentinel|null = null;
 
     onMount(async () => {
         data = await parseBlob(blob);
@@ -39,15 +39,48 @@
 
         const fac = new FastAverageColor();
         primaryColor = await fac.getColorAsync(albumCover).catch(() => undefined);
+
+        wakeLock = await window.navigator.wakeLock.request('screen').catch(() => null);
+
+        if (wakeLock) {
+            wakeLock.addEventListener('release', () => {
+                paused = true;
+            })
+        }
     });
+
+    async function createWakeLock(releaseOld: boolean = true): Promise<WakeLockSentinel|null> {
+        if (releaseOld && wakeLock && !wakeLock?.release) {
+            await wakeLock.release();
+            wakeLock = null;
+        }
+
+        wakeLock = wakeLock ?? await window.navigator.wakeLock.request('screen').catch(() => null);
+        if (!wakeLock) return null;
+
+        wakeLock.addEventListener('release', () => {
+            paused = true;
+            wakeLock = null;
+        });
+
+        return wakeLock;
+    }
 
     onDestroy(() => albumCover ? URL.revokeObjectURL(albumCover) : null);
 
     $: currentTime, currentTimeLineIndex = getCurrentTimeLineIndex(currentTime, track.syncedLyricsJSON);
 </script>
 
-<audio src={audio} bind:duration bind:currentTime bind:paused {muted} autoplay></audio>
-<img src={albumCover} class="fixed -top-full -left-full" bind:this={albumCoverElement}>
+<audio
+    src={audio}
+    bind:duration
+    bind:currentTime
+    bind:paused
+    {muted}
+    autoplay
+    on:pause={() => wakeLock?.release()}
+    on:play={() => createWakeLock()}
+/>
 <div
     class="w-full h-full flex justify-center items-center relative"
     style={!$enableBlur && primaryColor ? `background: ${primaryColor.hex}` : ''}

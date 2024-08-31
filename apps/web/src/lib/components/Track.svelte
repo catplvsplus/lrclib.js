@@ -7,32 +7,33 @@
 	import { goto, pushState } from '$app/navigation';
     import Button from './ui/button/button.svelte';
     import Preview from 'lucide-svelte/icons/play';
+    import { base } from '$app/paths';
 
     export let track: Track;
 
     function showModal() {
-        pushState('/track?id=' + track.id, { showLyrics: track.id });
+        pushState(`${base}/track?id=` + track.id, { showLyrics: track.id });
     }
 </script>
 
 <div {...$$props} class={cn("min-h-24 w-full rounded-md bg-accent/10 p-4", $$props.class)}>
     <div class="flex gap-2 items-center pb-2">
         {#if track.isSynced}
-            <Button class="shrink-0 p-0 h-7 w-7 rounded-full" on:click={() => goto(`/preview?id=${track.id}#open`)}>
+            <Button class="shrink-0 p-0 h-7 w-7 rounded-full" on:click={() => goto(`${base}/preview?id=${track.id}`)}>
                 <Preview size="16"/>
             </Button>
         {/if}
         <h3 class="text-lg font-bold text-primary overflow-hidden text-ellipsis w-full" title={track.trackName}>
-            <a href="/track?id={track.id}" on:click|preventDefault={showModal}>
+            <a href="{base}/track?id={track.id}" on:click|preventDefault={showModal}>
                 {track.trackName}
             </a>
         </h3>
     </div>
     <p class="text-sm leading-6">
-        <a class={cn(badgeVariants({ variant: 'default' }))} title={track.artistName} href="/search?q={encodeURIComponent(track.artistName)}">
+        <a class={cn(badgeVariants({ variant: 'default' }))} title={track.artistName} href="{base}/search?q={encodeURIComponent(track.artistName)}">
             {track.artistName}
         </a>
-        <a class={cn(badgeVariants({ variant: 'secondary' }), "bg-foreground/15")} title={track.albumName} href="/search?q={encodeURIComponent(track.albumName)}">
+        <a class={cn(badgeVariants({ variant: 'secondary' }), "bg-foreground/15")} title={track.albumName} href="{base}/search?q={encodeURIComponent(track.albumName)}">
             {track.albumName}
         </a>
         <Badge variant="outline" class="text-primary border-primary" style={track.isSynced ? '--primary: var(--success)' : '--primary: 0 0 54%'}>

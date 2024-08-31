@@ -3,6 +3,7 @@
     import { search } from '../stores/search';
     import { cn } from '../helpers/utils';
     import Search from 'lucide-svelte/icons/search';
+    import { base } from '$app/paths';
 
     export let focused = false;
     export let mini = false;
@@ -15,7 +16,7 @@
             return;
         }
 
-        goto(`/search?q=${query}`);
+        goto(`${base}/search?q=${query}`);
     }
 </script>
 

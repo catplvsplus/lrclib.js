@@ -41,8 +41,6 @@
         primaryColor = await fac.getColorAsync(albumCover).catch(() => undefined);
 
         wakeLock = await window.navigator.wakeLock.request('screen').catch(() => null);
-
-        if (wakeLock) wakeLock.addEventListener('release', () => wakeLock = null);
     });
 
     async function createWakeLock(releaseOld: boolean = true): Promise<WakeLockSentinel|null> {
@@ -54,10 +52,7 @@
         wakeLock = wakeLock ?? await window.navigator.wakeLock.request('screen').catch(() => null);
         if (!wakeLock) return null;
 
-        wakeLock.addEventListener('release', () => {
-            paused = true;
-            wakeLock = null;
-        });
+        wakeLock.addEventListener('release', () => wakeLock = null);
 
         return wakeLock;
     }

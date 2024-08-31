@@ -2,10 +2,12 @@
     import { queryParam } from 'sveltekit-search-params';
     import { lrclib, type Track as LrcTrack } from 'lrclib';
     import { onDestroy, onMount } from 'svelte';
-    import { goto } from '$app/navigation';
-    import Input from '../../lib/components/ui/input/input.svelte';
-    import type { FormInputEvent } from '../../lib/components/ui/input';
-    import Player from '../../lib/components/Player.svelte';
+    import { goto, pushState } from '$app/navigation';
+    import Input from '$lib/components/ui/input/input.svelte';
+    import type { FormInputEvent } from '$lib/components/ui/input';
+    import Player from '$lib/components/Player.svelte';
+    import { page } from '$app/stores';
+    import { isPlaying } from '../../../lib/stores/isPlaying';
 
     let id = queryParam('id');
     let track: LrcTrack|null = null;
@@ -19,11 +21,17 @@
         if (!track) return goto('/');
     });
 
-    onDestroy(() => audioURL ? URL.revokeObjectURL(audioURL) : null);
+    onDestroy(() => {
+        if (audioURL) URL.revokeObjectURL(audioURL);
+
+        $isPlaying = false;
+    });
 
     function onFileChange(e: FormInputEvent<Event>) {
         file = e.currentTarget.files?.[0] ?? null;
         audioURL = file && URL.createObjectURL(file);
+
+        $isPlaying = !!audioURL;
     }
 </script>
 

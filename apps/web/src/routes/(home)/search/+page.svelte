@@ -5,10 +5,9 @@
     import Search from 'lucide-svelte/icons/search';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
-    import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
     import { page } from '$app/stores';
     import LyricsModal from '$lib/components/LyricsModal.svelte';
-    import TrackSkeleton from '../../lib/components/TrackSkeleton.svelte';
+    import TrackSkeleton from '$lib/components/TrackSkeleton.svelte';
 
     let results: Promise<LrcTrack[]> = Promise.resolve([]);
     let throttle: NodeJS.Timeout|null = null;

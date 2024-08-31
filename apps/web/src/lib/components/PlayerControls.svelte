@@ -31,18 +31,33 @@
 </script>
 
 <div {...$$props} class={cn("flex items-center gap-4", $$props.class)}>
-    <a
-        class={cn(
-            buttonVariants({ variant: 'default' }),
-            "h-12 w-12 p-0 rounded-full bg-background/20 hover:bg-background/40",
-            downloadURL ? "" : "opacity-30"
-        )}
-        download={name}
-        href={downloadURL}
-        target="_blank"
-    >
-        <Download/>
-    </a>
+    {#if downloadURL}
+        <a
+            class={cn(
+                buttonVariants({ variant: 'default' }),
+                "h-12 w-12 p-0 rounded-full bg-background/20 hover:bg-background/40",
+                downloadURL ? "" : "opacity-30"
+            )}
+            download={downloadURL ? name : null}
+            href={downloadURL}
+            target={"_blank"}
+            rel="noreferrer noopener"
+            title={downloadURL ? "Download" : "Download not supported"}
+        >
+            <Download/>
+        </a>
+    {:else}
+        <Button
+            disabled
+            variant='default'
+            class={cn(
+                "h-12 w-12 p-0 rounded-full bg-background/20 hover:bg-background/40",
+                downloadURL ? "" : "opacity-30"
+            )}
+        >
+            <Download/>
+        </Button>
+    {/if}
     <Button
         on:click={() => paused = !paused}
         class={cn(

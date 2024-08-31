@@ -52,7 +52,7 @@
     class="w-full h-full flex justify-center items-center relative"
     style={!$enableBlur && primaryColor ? `background: ${primaryColor.hex}` : ''}
 >
-    <div class="h-full w-full relative overflow-hidden max-w-[2300px]">
+    <div class="h-full w-full relative overflow-hidden max-w-[2300px] pt-14">
         {#if $enableBlur}
             <div class="h-full w-full top-0 left-0 absolute overflow-hidden">
                 <img src={albumCover} alt="" class="absolute h-full w-full">
@@ -65,7 +65,7 @@
             "content h-full w-full top-0 left-0 absolute dark:backdrop-saturate-150 bg-black/60 pt-14 flex justify-center items-center gap-16",
             $enableBlur ? 'backdrop-blur-[10vh]' : ''
         )}>
-            <div class="player flex flex-col gap-4 shrink-0 w-1/3 items-center">
+            <div class="player flex flex-col gap-4 shrink-0 w-1/3 max-w-[500px] items-center">
                 <div class="cover rounded-md overflow-hidden h-96 w-96 relative">
                     <img src={albumCover} alt="" class="h-full w-full">
                 </div>
@@ -80,7 +80,7 @@
                     </div>
                 </div>
             </div>
-            <div class="lyrics h-full w-1/2">
+            <div class="lyrics h-full w-1/2 max-w-[800px]">
                 <PlayerLyrics bind:track bind:currentTime bind:currentTimeLineIndex bind:allowBlur={$enableBlur}/>
             </div>
         </div>
@@ -91,7 +91,6 @@
     @media (max-width: 1050px) {
         .content {
             flex-direction: column;
-            padding-top: 0;
 
             .lyrics {
                 width: 100%;

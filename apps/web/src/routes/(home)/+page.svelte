@@ -1,6 +1,6 @@
 <script lang="ts">
     import * as PageHeader from "$lib/components/ui/page-header/index.js";
-    import SearchInput from '../lib/components/SearchInput.svelte';
+    import SearchInput from '$lib/components/SearchInput.svelte';
 </script>
 
 <div class="container relative">

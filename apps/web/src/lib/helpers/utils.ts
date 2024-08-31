@@ -79,8 +79,9 @@ export function selectText(node: HTMLElement) {
 }
 
 export function getCurrentTimeLineIndex(currentTime: number, syncedLyrics: TrackSyncedLyrics): number|undefined {
-	const index = syncedLyrics.findIndex(lyrics => (lyrics.timeMs / 1000) >= currentTime);
-	return index > 0 ? index - 1 : index;
+	const line = syncedLyrics.filter(lyrics => (lyrics.timeMs / 1000) <= currentTime);
+    const index = syncedLyrics.findIndex(lyrics => line[line.length - 1] === lyrics);
+    return index >= 0 ? index : undefined;
 }
 
 export function getAdlibs(line: string): { adlibs: string[]; line: string; } {

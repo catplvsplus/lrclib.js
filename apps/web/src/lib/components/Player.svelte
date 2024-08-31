@@ -8,6 +8,7 @@
     import PlayerLyrics from './PlayerLyrics.svelte';
     import { FastAverageColor, type FastAverageColorResult } from 'fast-average-color';
     import { enableBlur } from '../stores/enableBlur';
+    import { base } from '$app/paths';
 
     export let track: Track;
     export let name: string;
@@ -15,7 +16,7 @@
     export let audio: string;
 
     let data: IAudioMetadata|null = null;
-    let albumCover: string = '/images/album.png';
+    let albumCover: string = base + '/images/album.png';
 
     let duration: number;
     let currentTime: number;
@@ -35,7 +36,7 @@
             ? URL.createObjectURL(new Blob([imageData.data], {
                 type: imageData.format
             }))
-            : '/images/album.png';
+            : base + '/images/album.png';
 
         const fac = new FastAverageColor();
         primaryColor = await fac.getColorAsync(albumCover).catch(() => undefined);

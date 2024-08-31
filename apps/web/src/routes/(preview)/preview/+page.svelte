@@ -3,11 +3,10 @@
     import { lrclib, type Track as LrcTrack } from 'lrclib';
     import { onDestroy, onMount } from 'svelte';
     import { goto, pushState } from '$app/navigation';
-    import Input from '$lib/components/ui/input/input.svelte';
-    import type { FormInputEvent } from '$lib/components/ui/input';
     import Player from '$lib/components/Player.svelte';
+    import { isPlaying } from '$lib/stores/isPlaying';
+    import Dropzone from 'svelte-file-dropzone';
     import { page } from '$app/stores';
-    import { isPlaying } from '../../../lib/stores/isPlaying';
 
     let id = queryParam('id');
     let track: LrcTrack|null = null;
@@ -27,19 +26,30 @@
         $isPlaying = false;
     });
 
-    function onFileChange(e: FormInputEvent<Event>) {
-        file = e.currentTarget.files?.[0] ?? null;
+    function onFileChange(e: CustomEvent<{ acceptedFiles: File[]; fileRejections: File[] }>) {
+        file = e.detail.acceptedFiles?.[0] ?? null;
         audioURL = file && URL.createObjectURL(file);
 
         $isPlaying = !!audioURL;
+        pushState('', { playing: !!audioURL });
     }
 </script>
 
-{#if !file || !audioURL || !track}
+{#if !file || !audioURL || !track || !$page.state.playing}
     <div class="h-full w-full flex justify-center items-center">
-        <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-4 w-full max-w-96">
             <h2 class="text-2xl text-center font-medium">Select an audio file</h2>
-            <Input type="file" accept="audio/*" on:change={onFileChange}/>
+            <Dropzone
+                accept="audio/*"
+                multiple={false}
+                required={true}
+                containerStyles="background: var(--background); border-radius: var(--radius); color: hsl(var(--primary)); border: 2px dashed hsl(var(--primary)); font-weight: 500;"
+                on:drop={onFileChange}
+            >
+                <p>Choose audio to upload</p>
+                <p class="opacity-40">or</p>
+                <p>Drag and drop it here</p>
+            </Dropzone>
         </div>
     </div>
 {:else}

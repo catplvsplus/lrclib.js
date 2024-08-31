@@ -18,11 +18,9 @@
 
 <div {...$$props} class={cn("min-h-24 w-full rounded-md bg-accent/10 p-4", $$props.class)}>
     <div class="flex gap-2 items-center pb-2">
-        {#if track.isSynced}
-            <Button class="shrink-0 p-0 h-7 w-7 rounded-full" on:click={() => goto(`${base}/preview?id=${track.id}`)}>
-                <Preview size="16"/>
-            </Button>
-        {/if}
+        <Button class="shrink-0 p-0 h-7 w-7 rounded-full" on:click={() => goto(`${base}/preview?id=${track.id}`)}>
+            <Preview size="16"/>
+        </Button>
         <h3 class="text-lg font-bold text-primary overflow-hidden text-ellipsis w-full" title={track.trackName}>
             <a href="{base}/track?id={track.id}" on:click|preventDefault={showModal}>
                 {track.trackName}

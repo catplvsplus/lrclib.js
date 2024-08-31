@@ -42,11 +42,7 @@
 
         wakeLock = await window.navigator.wakeLock.request('screen').catch(() => null);
 
-        if (wakeLock) {
-            wakeLock.addEventListener('release', () => {
-                paused = true;
-            })
-        }
+        if (wakeLock) wakeLock.addEventListener('release', () => wakeLock = null);
     });
 
     async function createWakeLock(releaseOld: boolean = true): Promise<WakeLockSentinel|null> {

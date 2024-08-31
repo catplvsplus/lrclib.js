@@ -4,7 +4,9 @@
     import { DateTime } from 'luxon';
     import { cn } from '../helpers/utils';
     import { badgeVariants } from './ui/badge';
-	import { pushState } from '$app/navigation';
+	import { goto, pushState } from '$app/navigation';
+    import Button from './ui/button/button.svelte';
+    import Preview from 'lucide-svelte/icons/play';
 
     export let track: Track;
 
@@ -14,11 +16,18 @@
 </script>
 
 <div {...$$props} class={cn("min-h-24 w-full rounded-md bg-accent/10 p-4", $$props.class)}>
-    <h3 class="text-lg font-bold text-primary overflow-hidden text-ellipsis pb-2" title={track.trackName}>
-        <a href="/track?id={track.id}" on:click|preventDefault={showModal}>
-            {track.trackName}
-        </a>
-    </h3>
+    <div class="flex gap-2 items-center pb-2">
+        {#if track.isSynced}
+            <Button class="shrink-0 p-0 h-7 w-7 rounded-full" on:click={() => goto(`/preview?id=${track.id}#open`)}>
+                <Preview size="16"/>
+            </Button>
+        {/if}
+        <h3 class="text-lg font-bold text-primary overflow-hidden text-ellipsis w-full" title={track.trackName}>
+            <a href="/track?id={track.id}" on:click|preventDefault={showModal}>
+                {track.trackName}
+            </a>
+        </h3>
+    </div>
     <p class="text-sm leading-6">
         <a class={cn(badgeVariants({ variant: 'default' }))} title={track.artistName} href="/search?q={encodeURIComponent(track.artistName)}">
             {track.artistName}

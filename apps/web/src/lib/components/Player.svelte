@@ -80,7 +80,7 @@
             </div>
         </div>
         <div class="lyrics h-full w-1/2">
-            <PlayerLyrics bind:track bind:currentTime bind:currentTimeLineIndex bind:$enableBlur/>
+            <PlayerLyrics bind:track bind:currentTime bind:currentTimeLineIndex bind:allowBlur={$enableBlur}/>
         </div>
     </div>
 </div>

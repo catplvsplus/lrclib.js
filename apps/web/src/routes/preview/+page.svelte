@@ -27,7 +27,7 @@
     }
 </script>
 
-{#if !file || !track}
+{#if !file || !audioURL || !track}
     <div class="h-full w-full flex justify-center items-center">
         <div class="flex flex-col gap-4">
             <h2 class="text-2xl text-center font-medium">Select an audio file</h2>

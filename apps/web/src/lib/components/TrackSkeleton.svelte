@@ -12,7 +12,10 @@
         $$props.class
     )}
 >
-    <Skeleton class="w-full max-w-80 h-5"/>
+    <div class="flex gap-2 items-center">
+        <Skeleton class="h-7 w-7 rounded-full"/>
+        <Skeleton class="w-full max-w-80 h-5"/>
+    </div>
     <div class="flex gap-1">
         <Skeleton class="w-20 h-5"/>
         <Skeleton class="w-16 h-5"/>

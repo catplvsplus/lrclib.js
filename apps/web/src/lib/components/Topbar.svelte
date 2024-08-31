@@ -6,6 +6,7 @@
     import SearchInput from './SearchInput.svelte';
     import { cn } from '../helpers/utils';
     import { enableBlur } from '../stores/enableBlur';
+    import { base } from '$app/paths';
 
     export let transparent: boolean = false;
 
@@ -34,7 +35,7 @@
 >
     <div class="flex justify-between items-center w-full max-w-7xl" class:searching>
         <h1 class={cn("text-xl font-medium shrink-0 mr-4 title", transparent ? "text-white" : "")}>
-            <a href="/">
+            <a href="{base}/">
                 Lrclib<span class="text-primary font-bold">.js</span>
             </a>
         </h1>

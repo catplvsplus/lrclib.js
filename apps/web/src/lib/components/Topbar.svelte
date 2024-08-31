@@ -6,8 +6,8 @@
     import Github from 'lucide-svelte/icons/github';
     import { search } from '../stores/search';
     import SearchInput from './SearchInput.svelte';
-    import { onMount } from 'svelte';
     import { cn } from '../helpers/utils';
+    import { enableBlur } from '../stores/enableBlur';
 
     let searching: boolean = false;
     let minimized: boolean = false;
@@ -19,7 +19,14 @@
 
 <svelte:window on:resize={onRezise}/>
 
-<header class="flex justify-center items-center w-full h-14 py-2 px-3 fixed bg-background/90 backdrop-blur-lg backdrop-saturate-200 border-b z-50">
+<header
+    class={cn(
+        "flex justify-center items-center w-full h-14 py-2 px-3 fixed border-b z-50",
+        $enableBlur
+            ? "bg-background/50 backdrop-blur-lg backdrop-saturate-200"
+            : "bg-background"
+    )}
+>
     <div class="flex justify-between items-center w-full max-w-7xl" class:searching>
         <h1 class="text-xl font-medium shrink-0 mr-4 title">
             <a href="/">

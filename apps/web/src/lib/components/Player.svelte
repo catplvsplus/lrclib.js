@@ -1,13 +1,13 @@
 <script lang="ts">
     import type { Track } from 'lrclib';
     import { parseBlob, selectCover, type IAudioMetadata } from 'music-metadata';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import PlayerProgress from './PlayerProgress.svelte';
     import PlayerControls from './PlayerControls.svelte';
     import { cn, getCurrentTimeLineIndex } from '../helpers/utils';
     import PlayerLyrics from './PlayerLyrics.svelte';
     import { FastAverageColor, type FastAverageColorResult } from 'fast-average-color';
-    import isMobile from 'is-mobile';
+    import { enableBlur } from '../stores/enableBlur';
 
     export let track: Track;
     export let name: string;
@@ -24,7 +24,6 @@
     let currentTimeLineIndex: number|undefined = undefined;
 
     let albumCoverElement: HTMLImageElement;
-    let allowBlur: boolean = false;
     let primaryColor: FastAverageColorResult|undefined = undefined;
 
     onMount(async () => {
@@ -40,9 +39,9 @@
 
         const fac = new FastAverageColor();
         primaryColor = await fac.getColorAsync(albumCover).catch(() => undefined);
-
-        allowBlur = !isMobile();
     });
+
+    onDestroy(() => albumCover ? URL.revokeObjectURL(albumCover) : null);
 
     $: currentTime, currentTimeLineIndex = getCurrentTimeLineIndex(currentTime, track.syncedLyricsJSON);
 </script>
@@ -51,9 +50,9 @@
 <img src={albumCover} class="fixed -top-full -left-full" bind:this={albumCoverElement}>
 <div
     class="h-full w-full relative overflow-hidden"
-    style={!allowBlur && primaryColor ? `background: ${primaryColor.hex}` : ''}
+    style={!$enableBlur && primaryColor ? `background: ${primaryColor.hex}` : ''}
 >
-    {#if allowBlur}
+    {#if $enableBlur}
         <div class="h-full w-full top-0 left-0 absolute overflow-hidden">
             <img src={albumCover} alt="" class="absolute h-full w-full">
             <img src={albumCover} alt="" class="animate-spin absolute h-screen top-0 left-0" style="animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">
@@ -63,7 +62,7 @@
     {/if}
     <div class={cn(
         "content h-full w-full top-0 left-0 absolute dark:backdrop-saturate-150 bg-black/60 pt-14 flex justify-center items-center gap-16",
-        allowBlur ? 'backdrop-blur-[10vh]' : ''
+        $enableBlur ? 'backdrop-blur-[10vh]' : ''
     )}>
         <div class="player flex flex-col gap-4 shrink-0 w-1/3 items-center">
             <div class="cover rounded-md overflow-hidden h-96 w-96 relative">
@@ -81,7 +80,7 @@
             </div>
         </div>
         <div class="lyrics h-full w-1/2">
-            <PlayerLyrics bind:track bind:currentTime bind:currentTimeLineIndex bind:allowBlur/>
+            <PlayerLyrics bind:track bind:currentTime bind:currentTimeLineIndex bind:$enableBlur/>
         </div>
     </div>
 </div>

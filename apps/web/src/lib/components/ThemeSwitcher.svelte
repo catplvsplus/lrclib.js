@@ -7,6 +7,7 @@
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import { Button } from "$lib/components/ui/button/index.js";
     import { cn } from '$lib/helpers/utils';
+    import { enableBlur } from '../stores/enableBlur';
 </script>
 
 <DropdownMenu.Root>
@@ -33,6 +34,10 @@
         <DropdownMenu.Item on:click={() => resetMode()}>
             <Check size=16 class={cn($userPrefersMode === 'system' ? "text-primary" : "text-transparent", "mr-2")}/>
             System
+        </DropdownMenu.Item>
+        <DropdownMenu.Item on:click={() => $enableBlur = !$enableBlur}>
+            <Check size=16 class={cn($enableBlur ? "text-primary" : "text-transparent", "mr-2")}/>
+            Enable Blur
         </DropdownMenu.Item>
     </DropdownMenu.Content>
 </DropdownMenu.Root>

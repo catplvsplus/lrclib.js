@@ -9,7 +9,7 @@
     import type { Track } from 'lrclib';
     import { parseBlob } from 'music-metadata';
     import { buttonVariants } from './ui/button';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
 
     export let paused: boolean;
     export let muted: boolean;
@@ -26,6 +26,8 @@
         downloadURL = URL.createObjectURL(new Blob([buff]));
         console.log(name, downloadURL);
     });
+
+    onDestroy(() => downloadURL ? URL.revokeObjectURL(downloadURL) : null);
 </script>
 
 <div {...$$props} class={cn("flex items-center gap-4", $$props.class)}>

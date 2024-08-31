@@ -1,7 +1,7 @@
 <script lang="ts">
     import { queryParam } from 'sveltekit-search-params';
     import { lrclib, type Track as LrcTrack } from 'lrclib';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import Input from '../../lib/components/ui/input/input.svelte';
     import type { FormInputEvent } from '../../lib/components/ui/input';
@@ -10,6 +10,7 @@
     let id = queryParam('id');
     let track: LrcTrack|null = null;
     let file: File|null = null;
+    let audioURL: string|null = null;
 
     onMount(async () => {
         if (!$id) return goto('/');
@@ -18,8 +19,11 @@
         if (!track) return goto('/');
     });
 
+    onDestroy(() => audioURL ? URL.revokeObjectURL(audioURL) : null);
+
     function onFileChange(e: FormInputEvent<Event>) {
         file = e.currentTarget.files?.[0] ?? null;
+        audioURL = file && URL.createObjectURL(file);
     }
 </script>
 
@@ -31,5 +35,5 @@
         </div>
     </div>
 {:else}
-    <Player track={track} audio={URL.createObjectURL(file)} blob={file} name={file.name}/>
+    <Player track={track} audio={audioURL} blob={file} name={file.name}/>
 {/if}

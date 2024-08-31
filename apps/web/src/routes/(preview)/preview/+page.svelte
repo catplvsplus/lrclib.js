@@ -37,7 +37,7 @@
 
 {#if !file || !audioURL || !track || !$page.state.playing}
     <div class="h-full w-full flex justify-center items-center">
-        <div class="flex flex-col gap-4 w-full max-w-96">
+        <div class="flex flex-col gap-4 w-full max-w-96 p-4">
             <h2 class="text-2xl text-center font-medium">Select an audio file</h2>
             <Dropzone
                 accept="audio/*"

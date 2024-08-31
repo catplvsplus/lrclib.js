@@ -84,6 +84,10 @@ export function getCurrentTimeLineIndex(currentTime: number, syncedLyrics: Track
     return index >= 0 ? index : undefined;
 }
 
+export function isID3WriteSupported(blob: Blob): boolean {
+    return blob.type === 'audio/mpeg';
+}
+
 export function getAdlibs(line: string): { adlibs: string[]; line: string; } {
     const adlibs: string[] = [];
     const tokens = line.split(/\s+/);

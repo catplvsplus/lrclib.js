@@ -5,9 +5,8 @@
     import Unmuted from 'lucide-svelte/icons/volume-2';
     import Muted from 'lucide-svelte/icons/volume-off';
     import Download from 'lucide-svelte/icons/download';
-    import { cn, writeID3Tags } from '../helpers/utils';
+    import { cn, isID3WriteSupported, writeID3Tags } from '../helpers/utils';
     import type { Track } from 'lrclib';
-    import { parseBlob } from 'music-metadata';
     import { buttonVariants } from './ui/button';
     import { onDestroy, onMount } from 'svelte';
 
@@ -20,11 +19,12 @@
     let downloadURL: string = '';
 
     onMount(async () => {
+        if (!isID3WriteSupported(blob)) return;
+
         const buff = await writeID3Tags(blob, track).catch(() => null);
         if (!buff) return;
 
         downloadURL = URL.createObjectURL(new Blob([buff]));
-        console.log(name, downloadURL);
     });
 
     onDestroy(() => downloadURL ? URL.revokeObjectURL(downloadURL) : null);

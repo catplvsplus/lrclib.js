@@ -7,6 +7,7 @@
     import { isPlaying } from '$lib/stores/isPlaying';
     import Dropzone from 'svelte-file-dropzone';
     import { page } from '$app/stores';
+    import isMobile from 'is-mobile';
 
     let id = queryParam('id');
     let track: LrcTrack|null = null;
@@ -43,12 +44,14 @@
                 accept="audio/*"
                 multiple={false}
                 required={true}
-                containerStyles="background: var(--background); border-radius: var(--radius); color: hsl(var(--primary)); border: 2px dashed hsl(var(--primary)); font-weight: 500;"
+                containerStyles="background: var(--background); border-radius: var(--radius); color: hsl(var(--primary)); border: 2px dashed hsl(var(--primary)); font-weight: 500; text-align: center;"
                 on:drop={onFileChange}
             >
                 <p>Choose audio to upload</p>
-                <p class="opacity-40">or</p>
-                <p>Drag and drop it here</p>
+                {#if !isMobile()}
+                    <p class="opacity-40">or</p>
+                    <p>Drag and drop it here</p>
+                {/if}
             </Dropzone>
         </div>
     </div>

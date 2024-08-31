@@ -83,6 +83,40 @@ export function getCurrentTimeLineIndex(currentTime: number, syncedLyrics: Track
 	return index > 0 ? index - 1 : index;
 }
 
+export function getAdlibs(line: string): { adlibs: string[]; line: string; } {
+    const adlibs: string[] = [];
+    const tokens = line.split(/\s+/);
+
+    let subtokens: string[]|null = null;
+    let newLine: string[] = [];
+
+    for (const token of tokens) {
+        if (token.startsWith('(') && !subtokens) {
+            subtokens = [token];
+            continue;
+        }
+
+        if (token.endsWith(')') && subtokens) {
+            subtokens.push(token);
+            adlibs.push(subtokens.join(' '));
+            subtokens = null;
+            continue;
+        }
+
+        if (subtokens) {
+            subtokens.push(token);
+            continue;
+        }
+
+        newLine.push(token);
+    }
+
+    return {
+        line: newLine.join(' '),
+        adlibs
+    };
+}
+
 export async function writeID3Tags(blob: Blob, track: Track): Promise<ArrayBuffer> {
     const id3 = new ID3Writer(await blob.arrayBuffer());
 

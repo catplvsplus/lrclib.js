@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Track } from 'lrclib';
-    import { cn } from '../helpers/utils';
+    import { cn, getAdlibs } from '../helpers/utils';
 
     export let track: Track;
     export let currentTime: number;
@@ -30,6 +30,7 @@
 >
     {#if track.isSynced}
         {#each track.syncedLyricsJSON as line, index}
+            {@const { adlibs, line: newLine } = getAdlibs(line.text)}
             <a
                 href="#lyric-{index}"
                 class={cn(
@@ -43,7 +44,12 @@
                 on:click|preventDefault={() => currentTime = line.timeMs / 1000}
                 data-active={index === currentTimeLineIndex}
             >
-                {line.text}
+                {newLine}
+                {#if adlibs.length}
+                    {#each adlibs as adlib}
+                        <p class="text-3xl font-normal adlib">{adlib}</p>
+                    {/each}
+                {/if}
             </a>
         {/each}
     {:else}

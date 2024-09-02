@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Track } from 'lrclib';
+    import type { APITrackSignatureResponse, Track, TrackSyncedLyrics } from 'lrclib';
     import { parseBlob, selectCover, type IAudioMetadata } from 'music-metadata';
     import { onDestroy, onMount } from 'svelte';
     import PlayerProgress from './PlayerProgress.svelte';
@@ -10,13 +10,15 @@
     import { enableBlur } from '../stores/enableBlur';
     import { base } from '$app/paths';
 
-    export let track: Track;
+    export let lyrics: TrackSyncedLyrics|string;
+    export let track: Pick<APITrackSignatureResponse, 'artistName'|'trackName'>;
     export let name: string;
     export let blob: Blob;
     export let audio: string;
 
     let data: IAudioMetadata|null = null;
     let albumCover: string = base + '/images/album.png';
+    let albumCoverBlob: Uint8Array|undefined = undefined;
 
     let duration: number;
     let currentTime: number;
@@ -30,11 +32,13 @@
     onMount(async () => {
         data = await parseBlob(blob);
 
-        const imageData = data?.common?.picture?.[0] ? selectCover(data.common.picture) : null;
+        const cover = data?.common?.picture?.[0] ? selectCover(data.common.picture) ?? undefined : undefined;
 
-        albumCover = imageData
-            ? URL.createObjectURL(new Blob([imageData.data], {
-                type: imageData.format
+        albumCoverBlob =  cover?.data;
+
+        albumCover = cover
+            ? URL.createObjectURL(new Blob([cover.data], {
+                type: cover.format
             }))
             : base + '/images/album.png';
 
@@ -60,7 +64,7 @@
 
     onDestroy(() => albumCover ? URL.revokeObjectURL(albumCover) : null);
 
-    $: currentTime, currentTimeLineIndex = getCurrentTimeLineIndex(currentTime, track.syncedLyricsJSON);
+    $: currentTime, currentTimeLineIndex = typeof lyrics !== 'string' ? getCurrentTimeLineIndex(currentTime, lyrics) : undefined;
 </script>
 
 <audio
@@ -101,12 +105,12 @@
                 <div class="controls flex flex-col gap-2 max-w-96 w-full">
                     <PlayerProgress bind:duration bind:currentTime class="progress"/>
                     <div class="buttons flex justify-center">
-                        <PlayerControls bind:paused bind:muted bind:blob bind:track bind:name class="mb-4"/>
+                        <PlayerControls bind:paused bind:muted bind:blob bind:track bind:lyrics bind:cover={albumCoverBlob} bind:name class="mb-4"/>
                     </div>
                 </div>
             </div>
             <div class="lyrics h-full w-1/2 max-w-[800px]">
-                <PlayerLyrics bind:track bind:currentTime bind:currentTimeLineIndex bind:allowBlur={$enableBlur}/>
+                <PlayerLyrics bind:lyrics bind:currentTime bind:currentTimeLineIndex bind:allowBlur={$enableBlur}/>
             </div>
         </div>
     </div>

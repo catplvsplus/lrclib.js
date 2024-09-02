@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
-import type { Track, TrackSyncedLyrics } from 'lrclib';
+import type { APITrackSignatureResponse, TrackSyncedLyrics } from 'lrclib';
 import { ID3Writer } from 'browser-id3-writer';
 
 export function cn(...inputs: ClassValue[]) {
@@ -122,24 +122,43 @@ export function getAdlibs(line: string): { adlibs: string[]; line: string; } {
     };
 }
 
-export async function writeID3Tags(blob: Blob, track: Track): Promise<ArrayBuffer> {
-    const id3 = new ID3Writer(await blob.arrayBuffer());
+export interface WriteID3TagsOptions {
+    blob: Blob;
+    track: Pick<APITrackSignatureResponse, 'artistName'|'trackName'>;
+    lyrics: TrackSyncedLyrics|string;
+    cover?: Uint8Array;
+}
 
-    if (track.isSynced) {
+export async function writeID3Tags(options: WriteID3TagsOptions): Promise<ArrayBuffer> {
+    const id3 = new ID3Writer(await options.blob.arrayBuffer());
+
+    if (typeof options.lyrics !== 'string') {
         id3.setFrame('SYLT', {
             type: 1,
             timestampFormat: 2,
-            text: track.syncedLyricsJSON.map(l => [l.text, l.timeMs]),
+            text: options.lyrics.map(l => [l.text, l.timeMs]),
             language: 'eng',
-            description: track.trackName
+            description: options.track.trackName
+        });
+
+        id3.setFrame('USLT', {
+            lyrics: options.lyrics.map(l => l.raw).join('\n'),
+            description: options.track.trackName,
+            language: 'eng',
+        });
+    } else {
+        id3.setFrame('USLT', {
+            lyrics: options.lyrics,
+            description: options.track.trackName,
+            language: 'eng',
         });
     }
 
-    if (track.isPlain) {
-        id3.setFrame('USLT', {
-            lyrics: track.isSynced ? track.syncedLyrics : track.plainLyrics,
-            description: track.trackName,
-            language: 'eng',
+    if (options.cover) {
+        id3.setFrame('APIC', {
+            data: options.cover,
+            type: 3,
+            description: options.track.trackName,
         });
     }
 

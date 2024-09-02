@@ -1,14 +1,16 @@
 <script lang="ts">
-    import type { Track } from 'lrclib';
+    import type { TrackSyncedLyrics } from 'lrclib';
     import { cn, getAdlibs } from '../helpers/utils';
 
-    export let track: Track;
+    export let lyrics: TrackSyncedLyrics|string;
     export let currentTime: number;
     export let currentTimeLineIndex: number|undefined;
     export let allowBlur: boolean = false;
 
     let container: HTMLDivElement;
+    let isSynced: boolean;
 
+    $: lyrics, isSynced = typeof lyrics !== 'string';
     $: currentTimeLineIndex, (() => {
         const line = container?.querySelector<HTMLDivElement>(`#lyric-${currentTimeLineIndex}`);
         if (!line) return;
@@ -26,10 +28,10 @@
     {...$$props}
     class={cn("h-full w-full overflow-y-auto text-5xl font-bold p-6 leading-relaxed no-scrollbar", $$props.class)}
     bind:this={container}
-    style={track.isSynced ? "mask: var(--mask); -webkit-mask: var(--mask);" : ""}
+    style={isSynced ? "mask: var(--mask); -webkit-mask: var(--mask);" : ""}
 >
-    {#if track.isSynced}
-        {#each track.syncedLyricsJSON as line, index}
+    {#if typeof lyrics !== 'string'}
+        {#each lyrics as line, index}
             {@const { adlibs, line: newLine } = getAdlibs(line.text)}
             <a
                 href="#lyric-{index}"
@@ -37,7 +39,7 @@
                     'block data-[active="true"]:text-white/80 data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%] data-[active="true"]:animate-glow hover:text-white/85 hover:!blur-0 text-muted-foreground/60',
                     allowBlur ? 'data-[active="false"]:blur-sm' : 'data-[active="false"]:opacity-55 noblur',
                     index === 0 ? 'beginning' : '',
-                    index === track.syncedLyricsJSON.length - 1 ? 'ending' : ''
+                    index === lyrics.length - 1 ? 'ending' : ''
                 )}
                 id="lyric-{index}"
                 style="transition: 0.5s; max-width: 90%;"
@@ -53,7 +55,7 @@
             </a>
         {/each}
     {:else}
-        {@const lines = (track.plainLyrics ?? '').split('\n')}
+        {@const lines = (lyrics ?? '').split('\n')}
         {#each lines as line, index}
             {#if line}
                 <p class={cn(

@@ -6,13 +6,15 @@
     import Muted from 'lucide-svelte/icons/volume-off';
     import Download from 'lucide-svelte/icons/download';
     import { cn, isID3WriteSupported, writeID3Tags } from '../helpers/utils';
-    import type { Track } from 'lrclib';
+    import type { APITrackSignatureResponse, Track, TrackSyncedLyrics } from 'lrclib';
     import { buttonVariants } from './ui/button';
     import { onDestroy, onMount } from 'svelte';
 
     export let paused: boolean;
     export let muted: boolean;
-    export let track: Track;
+    export let lyrics: TrackSyncedLyrics|string;
+    export let cover: Uint8Array|undefined;
+    export let track: Pick<APITrackSignatureResponse, 'artistName'|'trackName'>;
     export let blob: Blob;
     export let name: string;
 
@@ -21,7 +23,7 @@
     onMount(async () => {
         if (!isID3WriteSupported(blob)) return;
 
-        const buff = await writeID3Tags(blob, track).catch(() => null);
+        const buff = await writeID3Tags({ blob, track, lyrics, cover }).catch(() => null);
         if (!buff) return;
 
         downloadURL = URL.createObjectURL(new Blob([buff]));

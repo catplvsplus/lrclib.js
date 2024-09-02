@@ -156,8 +156,8 @@ export async function writeID3Tags(options: WriteID3TagsOptions): Promise<ArrayB
 
     if (options.cover) {
         id3.setFrame('APIC', {
-            data: options.cover,
             type: 3,
+            data: options.cover,
             description: options.track.trackName,
         });
     }

@@ -24,6 +24,8 @@
                 inline: 'nearest'
             });
         }
+
+        updateScrollOwner();
     })();
 
     function updateScrollOwner() {

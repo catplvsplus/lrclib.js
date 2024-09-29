@@ -164,3 +164,28 @@ export async function writeID3Tags(options: WriteID3TagsOptions): Promise<ArrayB
 
     return id3.addTag();
 }
+
+export function getBlurAmount(currentIndex: number, activeIndex: number): string {
+    const indexDistance = activeIndex - currentIndex;
+
+    let amount: number = 0;
+
+    switch (indexDistance) {
+        case 0:
+            amount = 0;
+            break;
+        case 1:
+        case -1:
+            amount = 1;
+            break;
+        case 2:
+        case -2:
+            amount = 3;
+            break;
+        default:
+            amount = 4;
+            break;
+    }
+
+    return `filter: blur(${amount}px);`;
+}

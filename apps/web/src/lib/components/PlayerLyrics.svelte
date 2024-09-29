@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { TrackSyncedLyrics } from 'lrclib';
-    import { cn, getAdlibs } from '../helpers/utils';
+    import { cn, getAdlibs, getBlurAmount } from '../helpers/utils';
 
     export let lyrics: TrackSyncedLyrics|string;
     export let currentTime: number;
@@ -9,6 +9,7 @@
 
     let container: HTMLDivElement;
     let isSynced: boolean;
+    let scrollOwner: 'user'|'auto' = 'auto';
 
     $: lyrics, isSynced = typeof lyrics !== 'string';
     $: currentTimeLineIndex, (() => {
@@ -16,12 +17,29 @@
         if (!line) return;
 
         // container.scrollTop = line.offsetTop - (container.offsetHeight / 2) + line.offsetHeight / 2;
-        line.scrollIntoView({
-            behavior: 'smooth',
-            block: ('center'),
-            inline: 'nearest'
-        });
+        if (scrollOwner === 'auto') {
+            line.scrollIntoView({
+                behavior: 'smooth',
+                block: ('center'),
+                inline: 'nearest'
+            });
+        }
     })();
+
+    function updateScrollOwner() {
+        if (!isSynced) return;
+
+        const line = container?.querySelector<HTMLDivElement>(`#lyric-${currentTimeLineIndex}`);
+        if (!line) return;
+
+        const isVisible = container.scrollTop > line.offsetTop - (container.offsetHeight / 2) + line.offsetHeight / 2 || container.scrollTop < line.offsetTop - (container.offsetHeight / 2) - line.offsetHeight / 2;
+
+        if (isVisible && scrollOwner === 'auto') {
+            scrollOwner = 'user';
+        } else if (!isVisible && scrollOwner === 'user') {
+            scrollOwner = 'auto';
+        }
+    }
 </script>
 
 <div
@@ -29,22 +47,32 @@
     class={cn("h-full w-full overflow-y-auto text-5xl font-bold p-6 leading-relaxed no-scrollbar", $$props.class)}
     bind:this={container}
     style={isSynced ? "mask: var(--mask); -webkit-mask: var(--mask);" : ""}
+    on:wheel={updateScrollOwner}
 >
     {#if typeof lyrics !== 'string'}
         {#each lyrics as line, index}
             {@const { adlibs, line: newLine } = getAdlibs(line.text)}
+            {@const blurAmount = allowBlur
+                ? typeof currentTimeLineIndex === 'number'
+                    ? getBlurAmount(index, currentTimeLineIndex ?? index)
+                    : 'filter: blur(2px);'
+                : ''}
+            {@const active = index === currentTimeLineIndex}
             <a
                 href="#lyric-{index}"
                 class={cn(
                     'block data-[active="true"]:text-white/80 data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%] data-[active="true"]:animate-glow hover:text-white/85 hover:!blur-0 text-muted-foreground/60',
-                    allowBlur ? 'data-[active="false"]:blur-sm' : 'data-[active="false"]:opacity-55 noblur',
+                    allowBlur && 'data-[active="false"]:opacity-55 noblur',
                     index === 0 ? 'beginning' : '',
                     index === lyrics.length - 1 ? 'ending' : ''
                 )}
                 id="lyric-{index}"
-                style="transition: 0.5s; max-width: 90%;"
-                on:click|preventDefault={() => currentTime = line.timeMs / 1000}
-                data-active={index === currentTimeLineIndex}
+                style="transition: 0.5s; max-width: 90%;{blurAmount}"
+                on:click|preventDefault={() => {
+                    currentTime = line.timeMs / 1000;
+                    updateScrollOwner();
+                }}
+                data-active={active}
             >
                 {newLine}
                 {#if adlibs.length}

@@ -9,6 +9,7 @@
     import { page } from '$app/stores';
     import isMobile from 'is-mobile';
     import Input from '../../../lib/components/ui/input/input.svelte';
+    import { MetaTags } from 'svelte-meta-tags';
 
     let id = queryParam('id');
     let track: LrcTrack|null = null;
@@ -36,6 +37,11 @@
         pushState('', { playing: !!audioURL });
     }
 </script>
+
+<svelte:head>
+    <title>{track?.trackName ? `Lrclib.js | ${track.trackName}` : 'Lrclib.js'}</title>
+</svelte:head>
+<MetaTags title="Lrclib.js | {track?.trackName ?? 'Preview'}" description="Preview synced lyrics from Lrclib.js"/>
 
 {#if !file || !audioURL || !track || !$page.state.playing}
     <div class="h-full w-full flex justify-center items-center">

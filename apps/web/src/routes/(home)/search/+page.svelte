@@ -8,6 +8,7 @@
     import { page } from '$app/stores';
     import LyricsModal from '$lib/components/LyricsModal.svelte';
     import TrackSkeleton from '$lib/components/TrackSkeleton.svelte';
+    import { MetaTags } from 'svelte-meta-tags';
 
     let results: Promise<LrcTrack[]> = Promise.resolve([]);
     let throttle: NodeJS.Timeout|null = null;
@@ -28,6 +29,12 @@
 
     $: $search, (() => searchTracks($search ?? ''))();
 </script>
+
+<svelte:head>
+    <title>{$search ? `Lrclib.js | ${$search}` : 'Lrclib.js Search'}</title>
+</svelte:head>
+
+<MetaTags title="Lrclib.js | {$search || 'Search'}" description="Search synced lyrics from Lrclib.js"/>
 
 <div class="container max-w-3xl p-4">
     {#if $search?.trim()}

@@ -16,5 +16,8 @@
   "workspaces": [
     "packages/*",
     "apps/*"
-  ]
+  ],
+  "dependencies": {
+    "svelte-meta-tags": "^3.1.4"
+  }
 }

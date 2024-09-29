@@ -1,7 +1,14 @@
 <script lang="ts">
     import * as PageHeader from "$lib/components/ui/page-header/index.js";
     import SearchInput from '$lib/components/SearchInput.svelte';
+    import { MetaTags } from 'svelte-meta-tags';
 </script>
+
+<svelte:head>
+    <title>Lrclib.js</title>
+</svelte:head>
+
+<MetaTags title="Lrclib.js" description="A javascript library for interacting with lrclib.net API"/>
 
 <div class="container relative">
     <PageHeader.Root class="pb-8">

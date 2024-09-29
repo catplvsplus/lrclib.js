@@ -23,9 +23,9 @@
                 block: ('center'),
                 inline: 'nearest'
             });
+        } else {
+            updateScrollOwner();
         }
-
-        updateScrollOwner();
     })();
 
     function updateScrollOwner() {

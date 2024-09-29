@@ -36,7 +36,7 @@
         bind:this={input}
         placeholder="Search"
         type="search"
-        class="w-full max-w-72 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground"
+        class="w-full max-w-72 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-neutral-400"
     />
     <button type="submit" class="shrink-0 w-10 h-10 p-0 flex justify-center items-center outline-none">
         <Search size="18" font-weight="bold" class="text-primary"/>

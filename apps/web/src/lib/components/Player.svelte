@@ -91,7 +91,7 @@
             </div>
         {/if}
         <div class={cn(
-            "content h-full w-full top-0 left-0 absolute dark:backdrop-saturate-150 bg-black/60 pt-14 flex justify-center items-center gap-16",
+            "content h-full w-full top-0 left-0 absolute backdrop-saturate-150 bg-black/60 pt-14 flex justify-center items-center gap-16",
             $enableBlur ? 'backdrop-blur-[10vh]' : ''
         )}>
             <div class="player flex flex-col gap-4 shrink-0 w-1/3 max-w-[500px] items-center">
@@ -100,7 +100,7 @@
                 </div>
                 <div class="details flex flex-col text-center max-w-96 w-full">
                     <h1 class="text-3xl text-white font-bold max-w-96 whitespace-nowrap overflow-hidden">{data?.common.title || track.trackName}</h1>
-                    <p class="text-muted-foreground max-w-96 whitespace-nowrap overflow-hidden">{data?.common.artists || track.artistName}</p>
+                    <p class="text-neutral-400 max-w-96 whitespace-nowrap overflow-hidden">{data?.common.artists || track.artistName}</p>
                 </div>
                 <div class="controls flex flex-col gap-2 max-w-96 w-full">
                     <PlayerProgress bind:duration bind:currentTime class="progress"/>

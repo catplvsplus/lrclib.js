@@ -61,7 +61,7 @@
             <a
                 href="#lyric-{index}"
                 class={cn(
-                    'block data-[active="true"]:text-white/80 data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%] data-[active="true"]:animate-glow hover:text-white/85 hover:!blur-0 text-muted-foreground/60',
+                    'block data-[active="true"]:text-white/80 data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%] data-[active="true"]:animate-glow hover:text-white/90 hover:!blur-0 text-neutral-400/60',
                     allowBlur && 'data-[active="false"]:opacity-55 noblur',
                     index === 0 ? 'beginning' : '',
                     index === lyrics.length - 1 ? 'ending' : ''

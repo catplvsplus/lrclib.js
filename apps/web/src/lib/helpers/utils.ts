@@ -180,10 +180,10 @@ export function getBlurAmount(currentIndex: number, activeIndex: number): string
             break;
         case 2:
         case -2:
-            amount = 3;
+            amount = 2;
             break;
         default:
-            amount = 4;
+            amount = 3;
             break;
     }
 

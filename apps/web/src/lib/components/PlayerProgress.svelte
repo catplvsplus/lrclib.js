@@ -32,10 +32,10 @@
 
 <div
     {...$$props}
-    class={cn("flex gap-2 items-center text-muted-foreground", $$props.class)}
+    class={cn("flex gap-2 items-center text-neutral-400", $$props.class)}
 >
     <span>{DateTime.fromSeconds(currentTime).toFormat('mm:ss')}</span>
-    <div class="w-full h-2 rounded bg-muted-foreground/40 overflow-hidden" on:pointerdown|preventDefault={pointerSeek} bind:this={target}>
+    <div class="w-full h-2 rounded bg-neutral-400/40 overflow-hidden" on:pointerdown|preventDefault={pointerSeek} bind:this={target}>
         <span class="block bg-white h-2" style="width: {percent}%"></span>
     </div>
     <span>{DateTime.fromSeconds(duration).toFormat('mm:ss')}</span>

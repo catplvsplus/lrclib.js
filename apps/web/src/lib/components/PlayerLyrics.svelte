@@ -63,8 +63,8 @@
             <a
                 href="#lyric-{index}"
                 class={cn(
-                    'block data-[active="true"]:text-white/80 data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%] data-[active="true"]:animate-glow hover:text-white/90 hover:!blur-0 text-neutral-400/60',
-                    allowBlur && 'data-[active="false"]:opacity-55 noblur',
+                    'block data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%] hover:text-white/60 hover:!blur-0 text-neutral-400/60',
+                    allowBlur ? 'data-[active="false"]:opacity-55 data-[active="true"]:animate-glow data-[active="true"]:text-white/80' : 'text-neutral-400/50 data-[active="true"]:text-white noblur',
                     index === 0 ? 'beginning' : '',
                     index === lyrics.length - 1 ? 'ending' : ''
                 )}
@@ -121,10 +121,6 @@
             a {
                 @apply data-[active="true"]:scale-105 data-[active="true"]:translate-x-[2%];
                 margin-bottom: 1rem;
-
-                &:not(.noblur) {
-                    @apply data-[active="false"]:blur-[2px];
-                }
             }
 
             p {

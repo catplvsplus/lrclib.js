@@ -9,6 +9,7 @@
     import { base } from '$app/paths';
 
     export let transparent: boolean = false;
+    export let bindSearchValue: boolean = true;
 
     let searching: boolean = false;
     let minimized: boolean = false;
@@ -42,6 +43,7 @@
         <div class="w-full px-1 form flex">
             <SearchInput
                 bind:focused={searching}
+                bindValue={bindSearchValue}
                 mini
                 class={cn(
                     "max-w-72",

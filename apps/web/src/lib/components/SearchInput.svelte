@@ -4,13 +4,19 @@
     import { cn } from '../helpers/utils';
     import Search from 'lucide-svelte/icons/search';
     import { base } from '$app/paths';
+    import { onMount } from 'svelte';
 
     export let focused = false;
     export let mini = false;
     export let input: HTMLInputElement|null = null;
+    export let bindValue: boolean = true;
+
+    let value: string = '';
+
+    $: value, bindValue && search.set(value);
 
     function onSubmit() {
-        const query = encodeURIComponent($search?.trim() ?? '');
+        const query = encodeURIComponent(value.trim() ?? '');
         if (!query) {
             setTimeout(() => input?.focus(), 500);
             return;
@@ -18,6 +24,11 @@
 
         goto(`${base}/search?q=${query}`);
     }
+
+    onMount(() => {
+        const unsubscribe = search.subscribe(v => value = v ?? '');
+        return () => unsubscribe();
+    });
 </script>
 
 <form
@@ -32,7 +43,7 @@
     on:focusout={() => (focused = false)}
 >
     <input
-        bind:value={$search}
+        bind:value={value}
         bind:this={input}
         placeholder="Search"
         type="search"

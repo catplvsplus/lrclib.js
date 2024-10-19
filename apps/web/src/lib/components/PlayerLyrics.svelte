@@ -78,13 +78,13 @@
             >
                 {#if startAdlibs.length}
                     {#each startAdlibs as adlib}
-                        <p class="text-3xl font-normal adlib">{adlib}</p>
+                        <p class="text-3xl font-normal adlib" style="line-height: unset;">{adlib}</p>
                     {/each}
                 {/if}
                 {newLine}
                 {#if endAdlibs.length}
                     {#each endAdlibs as adlib}
-                        <p class="text-3xl font-normal adlib">{adlib}</p>
+                        <p class="text-3xl font-normal adlib" style="line-height: unset;">{adlib}</p>
                     {/each}
                 {/if}
             </a>

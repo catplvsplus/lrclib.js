@@ -88,37 +88,66 @@ export function isID3WriteSupported(blob: Blob): boolean {
     return blob.type === 'audio/mpeg';
 }
 
-export function getAdlibs(line: string): { adlibs: string[]; line: string; } {
+export function getAdlibs(raw: string): { adlibs: string[]; startAdlibs: string[]; endAdlibs: string[]; line: string; } {
     const adlibs: string[] = [];
-    const tokens = line.split(/\s+/);
+    const startAdlibs: string[] = [];
+    const endAdlibs: string[] = [];
 
-    let subtokens: string[]|null = null;
-    let newLine: string[] = [];
+    const lines = raw.split('\n');
 
-    for (const token of tokens) {
-        if (token.startsWith('(') && !subtokens) {
-            subtokens = [token];
+    let i = 0;
+    let newLine: string = '';
+
+    for (const line of lines) {
+        if (line.startsWith('(') && line.endsWith(')')) {
+            adlibs.push(line);
+            i++;
+
+            if (newLine) {
+                endAdlibs.push(line);
+            } else {
+                startAdlibs.push(line);
+            }
+
             continue;
         }
 
-        if (token.endsWith(')') && subtokens) {
-            subtokens.push(token);
-            adlibs.push(subtokens.join(' '));
-            subtokens = null;
-            continue;
+        const tokens = line.split(/\s+/g);
+
+        let adlibType: 'start'|'end' = 'start';
+        let adlib: string[] = [];
+        let lineTokens: string[] = [];
+
+        for (const token of tokens) {
+            if (token.startsWith('(')) {
+                if (lineTokens.length) adlibType = 'end';
+                adlib = [token];
+                continue;
+            }
+
+            if (token.endsWith(')') && adlib) {
+                adlib.push(token);
+                if (adlibType === 'start') {
+                    startAdlibs.push(adlib.join(' '));
+                } else {
+                    endAdlibs.push(adlib.join(' '));
+                }
+                continue;
+            }
+
+            lineTokens.push(token);
         }
 
-        if (subtokens) {
-            subtokens.push(token);
-            continue;
-        }
-
-        newLine.push(token);
+        newLine = lineTokens.join(' ');
     }
 
+    endAdlibs.reverse();
+
     return {
-        line: newLine.join(' '),
-        adlibs
+        line: newLine,
+        adlibs,
+        startAdlibs,
+        endAdlibs
     };
 }
 

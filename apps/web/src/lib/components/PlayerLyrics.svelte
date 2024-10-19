@@ -53,7 +53,7 @@
 >
     {#if typeof lyrics !== 'string'}
         {#each lyrics as line, index}
-            {@const { adlibs, line: newLine } = getAdlibs(line.text)}
+            {@const { startAdlibs, endAdlibs, line: newLine } = getAdlibs(line.text)}
             {@const blurAmount = allowBlur
                 ? typeof currentTimeLineIndex === 'number'
                     ? getBlurAmount(index, currentTimeLineIndex ?? index)
@@ -76,9 +76,14 @@
                 }}
                 data-active={active}
             >
+                {#if startAdlibs.length}
+                    {#each startAdlibs as adlib}
+                        <p class="text-3xl font-normal adlib">{adlib}</p>
+                    {/each}
+                {/if}
                 {newLine}
-                {#if adlibs.length}
-                    {#each adlibs as adlib}
+                {#if endAdlibs.length}
+                    {#each endAdlibs as adlib}
                         <p class="text-3xl font-normal adlib">{adlib}</p>
                     {/each}
                 {/if}

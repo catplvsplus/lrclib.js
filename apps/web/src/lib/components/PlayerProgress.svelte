@@ -36,7 +36,7 @@
 >
     <span>{DateTime.fromSeconds(currentTime).toFormat('mm:ss')}</span>
     <div class="w-full h-2 rounded bg-neutral-400/40 overflow-hidden" on:pointerdown|preventDefault={pointerSeek} bind:this={target}>
-        <span class="block bg-white h-2" style="width: {percent}%"></span>
+        <span class="block bg-white h-2 transition-all duration-100" style="width: {percent}%"></span>
     </div>
     <span>{DateTime.fromSeconds(duration).toFormat('mm:ss')}</span>
 </div>

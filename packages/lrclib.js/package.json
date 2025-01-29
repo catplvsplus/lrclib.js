@@ -1,6 +1,6 @@
 {
   "name": "lrclib.js",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,10 +17,11 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@discordjs/collection": "^2.1.0",
-    "ky": "^1.7.1"
+    "@discordjs/collection": "^2.1.1",
+    "fallout-utility": "^2.9.1",
+    "ky": "^1.7.4"
   },
   "devDependencies": {
-    "tsup": "^8.2.4"
+    "tsup": "^8.3.6"
   }
 }

@@ -11,6 +11,12 @@ export interface TrackSyncedLyric {
 
 export type TrackSyncedLyrics = TrackSyncedLyric[];
 
+export interface TrackDurationLyrics {
+    lines: TrackSyncedLyric[];
+    indexes: number[];
+    duration: number;
+}
+
 export class Track implements APIResponse.Get.TrackSignature {
     public id!: number;
     public trackName!: string;
@@ -41,6 +47,15 @@ export class Track implements APIResponse.Get.TrackSignature {
 
     public isPlain(): this is Track & { instrumental: false; syncedLyricsJSON: null; } {
         return this.instrumental === false;
+    }
+
+    public getDurationLyrics(duration: number): TrackDurationLyrics{
+        if (!this.isSynced()) return { lines: [], indexes: [], duration };
+
+        const lines = this.syncedLyricsJSON.filter(lyrics => (lyrics.timeMs / 1000) <= duration);
+        const indexes = lines.map(lyrics => this.syncedLyricsJSON.indexOf(lyrics));
+
+        return { lines, indexes, duration };
     }
 
     public toAPIJSON(): APIOptions.Get.TrackSignatureOptions & APIOptions.Get.TrackById {

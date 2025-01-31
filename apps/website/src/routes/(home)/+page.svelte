@@ -1,5 +1,8 @@
 <script lang="ts">
-    import { Button } from "$lib/components/ui/button";
+    import { base } from '$app/paths';
+    import NavBar from '../../lib/components/shared/NavBar.svelte';
 
 </script>
-<Button>Button</Button>
+
+<NavBar/>
+<img src="{base}/favicon.png" alt="" class="w-1/2">

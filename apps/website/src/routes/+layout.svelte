@@ -3,7 +3,9 @@
     import { onMount } from 'svelte';
     import { Toaster } from '../lib/components/ui/sonner';
     import { toast } from 'svelte-sonner';
-    import { ModeWatcher, toggleMode } from 'mode-watcher';
+    import { ModeWatcher } from 'mode-watcher';
+    import { isMobile } from 'is-mobile';
+    import { isBlurAllowed } from '../lib/helpers/stores';
 
 	let { children } = $props();
 
@@ -30,7 +32,11 @@
         });
     }
 
-    onMount(() => updateServiceWorker());
+    onMount(() => {
+        updateServiceWorker();
+
+        $isBlurAllowed = !isMobile() && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    });
 </script>
 
 <Toaster/>

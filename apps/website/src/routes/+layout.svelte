@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '$lib/styles/app.pcss';
+    import '$lib/styles/global.scss';
     import { onMount } from 'svelte';
     import { Toaster } from '../lib/components/ui/sonner';
     import { toast } from 'svelte-sonner';

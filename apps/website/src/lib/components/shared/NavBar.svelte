@@ -6,6 +6,8 @@
     import { buttonVariants } from '../ui/button';
     import SearchBox from './SearchBox.svelte';
     import AppearanceSettings from './AppearanceSettings.svelte';
+
+    let { addSearchBox = true, ...props }: { addSearchBox?: boolean; [key: string]: any; } = $props();
 </script>
 <div
     class={cn(
@@ -14,13 +16,15 @@
     )}
 >
     <div class="flex items-center justify-between gap-5 w-full max-w-screen-2xl px-5">
-        <h1 class="text-2xl font-medium">
+        <h1 class="text-2xl font-semibold tracking-tight">
             <a href="{base}">
                 Lrclib<span class="text-primary">.js</span>
             </a>
         </h1>
         <div class="w-full flex gap-2 justify-end">
-            <SearchBox class="max-w-96"/>
+            {#if addSearchBox}
+                <SearchBox class="max-w-96"/>
+            {/if}
             <a href="http://github.com/catplvsplus/lrclib.js" target="_blank" rel="noopener noreferrer" class={cn(buttonVariants({ variant: 'outline' }), 'h-11 w-11 rounded-lg')}>
                 <Github/>
             </a>

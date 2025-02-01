@@ -67,7 +67,7 @@ export class Client implements ClientOptions {
      * @returns The track
      * @throws Errors if the track is not found
      */
-    public async getTrackById(id: number, cache: boolean = true): Promise<Track> {
+    public async fetchTrackById(id: number, cache: boolean = true): Promise<Track> {
         if (cache) {
             const track = this.cache.get(id);
             if (track) return track;
@@ -83,7 +83,7 @@ export class Client implements ClientOptions {
      * @returns The track
      * @throws Errors if the track is not found
      */
-    public async getTrack(data: APIOptions.Get.TrackSignatureOptions|JSONEncodable<APIOptions.Get.TrackSignatureOptions>, cache: boolean = true): Promise<Track> {
+    public async fetchTrack(data: APIOptions.Get.TrackSignatureOptions|JSONEncodable<APIOptions.Get.TrackSignatureOptions>, cache: boolean = true): Promise<Track> {
         data = isJSONEncodable(data) ? data.toJSON() : data;
 
         if (cache) {

@@ -6,7 +6,7 @@
     import ResultsSkeleton from '$lib/components/shared/ResultsSkeleton.svelte';
     import { onMount } from 'svelte';
     import AdvancedSearch from '../../lib/components/shared/AdvancedSearch.svelte';
-    import { isAdvancedSearchOptions } from '../../lib/helpers/utils';
+    import { getSearchName, isAdvancedSearchOptions } from '../../lib/helpers/utils';
 
     const params = queryParameters({
         q: true,
@@ -53,6 +53,11 @@
         await fetchTracks();
     });
 </script>
+
+<svelte:head>
+    <title>Lrclib.js | Search "{getSearchName(getQuery())}"</title>
+</svelte:head>
+
 <NavBar addSearchBox={false}/>
 
 <div class="pt-16 flex justify-center h-full">

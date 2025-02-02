@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "@discordjs/collection": "^2.1.1",
-    "fallout-utility": "^2.9.1",
     "ky": "^1.7.4"
   },
   "devDependencies": {

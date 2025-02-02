@@ -8,6 +8,10 @@
     import Install from '../../lib/components/shared/Install.svelte';
 </script>
 
+<svelte:head>
+    <title>Lrclib.js</title>
+</svelte:head>
+
 <NavBar addSearchBox={false}/>
 <div class={cn("w-full h-[70%] min-h-96 flex justify-center items-center pt-16")}>
     <div class="text-center px-5">

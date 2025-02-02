@@ -2,7 +2,6 @@ import { Collection } from '@discordjs/collection';
 import { Track } from './Track.js';
 import { REST, type RESTOptions } from './REST.js';
 import type { APIOptions, APIPublishTokenData, APIResponse } from '../types/API.js';
-import { isJSONEncodable, type JSONEncodable } from 'fallout-utility';
 import { Routes } from './Routes.js';
 import { Utils } from './Utils.js';
 
@@ -31,14 +30,14 @@ export class Client implements ClientOptions {
      * @param track The track to publish
      * @param token The API publish token
      */
-    public async publishTrack(track: APIOptions.Post.Publish|JSONEncodable<APIOptions.Post.Publish>, token?: string|APIPublishTokenData): Promise<void> {
+    public async publishTrack(track: APIOptions.Post.Publish|Utils.JSONEncodable<APIOptions.Post.Publish>, token?: string|APIPublishTokenData): Promise<void> {
         if (!token) {
             const challenge = await this.rest.post(Routes['/api/request-challenge'](), {});
             token = await Utils.solveChallenge(challenge.prefix, challenge.target);
         }
 
         await this.rest.post(Routes['/api/publish'](), {
-            json: isJSONEncodable(track) ? track.toJSON() : track,
+            json: Utils.isJSONEncodable(track) ? track.toJSON() : track,
             headers: {
                 'X-Publish-Token': typeof token === 'string' ? token : Utils.parseAPIPublishToken(token)
             }
@@ -51,8 +50,8 @@ export class Client implements ClientOptions {
      * @param cache Whether to cache the results
      * @returns The search results
      */
-    public async search(search: string|JSONEncodable<APIOptions.Get.Search>, cache: boolean = true): Promise<Track[]> {
-        const query = isJSONEncodable(search) ? search.toJSON() : search;
+    public async search(search: string|APIOptions.Get.Search|Utils.JSONEncodable<APIOptions.Get.Search>, cache: boolean = true): Promise<Track[]> {
+        const query = Utils.isJSONEncodable(search) ? search.toJSON() : search;
         const tracks = await this.rest.get(Routes['/api/search'](
             typeof query === 'string' ? { q: query } : query
         )).then(t => cache ? this._patchCache(t) : t.map(t => new Track(t)));
@@ -67,7 +66,9 @@ export class Client implements ClientOptions {
      * @returns The track
      * @throws Errors if the track is not found
      */
-    public async fetchTrackById(id: number, cache: boolean = true): Promise<Track> {
+    public async fetchTrackById(id: number|APIOptions.Get.TrackById, cache: boolean = true): Promise<Track> {
+        id = typeof id === 'number' ? id : id.id;
+
         if (cache) {
             const track = this.cache.get(id);
             if (track) return track;
@@ -83,8 +84,8 @@ export class Client implements ClientOptions {
      * @returns The track
      * @throws Errors if the track is not found
      */
-    public async fetchTrack(data: APIOptions.Get.TrackSignatureOptions|JSONEncodable<APIOptions.Get.TrackSignatureOptions>, cache: boolean = true): Promise<Track> {
-        data = isJSONEncodable(data) ? data.toJSON() : data;
+    public async fetchTrack(data: APIOptions.Get.TrackSignatureOptions|Utils.JSONEncodable<APIOptions.Get.TrackSignatureOptions>, cache: boolean = true): Promise<Track> {
+        data = Utils.isJSONEncodable(data) ? data.toJSON() : data;
 
         if (cache) {
             const track = this.cache.find(t => data.track_name === t.trackName && data.artist_name === t.artistName && data.album_name === t.albumName && (!data.duration || data.duration === t.duration));

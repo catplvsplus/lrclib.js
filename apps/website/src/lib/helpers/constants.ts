@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export const exampleCode = `import { lrclib, Client } from 'lrclib.js';
 
 // Get lyrics for a track
@@ -16,3 +18,9 @@ await client.publishTrack({
     plainLyrics: 'Feet don\\'t fail me now...',
     syncedLyrics: '[00:22.83] Feet, don\\'t fail me now...'
 });`;
+
+export const trackSignatureSearchSchema = z.object({
+    track_name: z.string(),
+    artist_name: z.string().optional(),
+    album_name: z.string().optional()
+})

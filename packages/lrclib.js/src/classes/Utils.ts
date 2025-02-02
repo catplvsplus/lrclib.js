@@ -19,6 +19,7 @@ export class Utils {
         if (!entries.length) return '';
 
         return '?' + entries
+            .filter(([key, value]) => value !== undefined)
             .map(([key, value]) => `${key}=${value}`)
             .join('&');
     }
@@ -118,5 +119,15 @@ export class Utils {
         }
 
         return { prefix, nonce: nonce.toString()};
+    }
+
+    public static isJSONEncodable<T extends any = any>(value: any): value is Utils.JSONEncodable<any> {
+        return typeof value.toJSON === 'function';
+    }
+}
+
+export namespace Utils {
+    export interface JSONEncodable<T> {
+        toJSON(): T;
     }
 }

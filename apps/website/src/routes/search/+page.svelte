@@ -30,7 +30,8 @@
         return { q: $params.q ?? '' };
     }
 
-    async function fetchTracks(data?: APIOptions.Get.Search): Promise<void> {
+    async function fetchTracks(data?: APIOptions.Get.Search, debounce: boolean = true): Promise<void> {
+        results = null;
         $params = data
             ? {
                 q: 'q' in data ? data.q : null,
@@ -39,19 +40,16 @@
                 album_name: 'album_name' in data ? data.album_name ?? null : null
             }
             : $params;
-        results = null;
 
         if (timeout) clearTimeout(timeout);
 
         timeout = setTimeout(async () => {
             results = await lrclib.search(data ?? getQuery());
             timeout = null;
-        }, 500);
+        }, debounce ? 500 : 0);
     }
 
-    onMount(async () => {
-        await fetchTracks();
-    });
+    onMount(async () => await fetchTracks(getQuery(), false));
 </script>
 
 <svelte:head>

@@ -57,7 +57,7 @@
             bind:value
             onfocus={() => isFocused = true}
             onblur={() => isFocused = false}
-            onkeypress={event => props.onChange?.(event)}
+            oninput={event => props.onChange?.(event)}
             autocomplete="off"
             aria-autocomplete="none"
         />

@@ -4,7 +4,7 @@
     import { resetMode, setMode, userPrefersMode } from 'mode-watcher';
     import { Check, Settings } from 'lucide-svelte';
     import { buttonVariants } from '../ui/button';
-    import { isBlurAllowed } from '../../helpers/stores';
+    import { isBlurAllowed, isPreviewAllowed } from '../../helpers/stores';
 </script>
 
 <DropdownMenu.Root>
@@ -29,6 +29,10 @@
             <DropdownMenu.Item onclick={() => $isBlurAllowed = !$isBlurAllowed}>
                 <Check size=16 class={cn($isBlurAllowed ? "text-primary" : "text-transparent", "mr-2")}/>
                 Enable Blur
+            </DropdownMenu.Item>
+            <DropdownMenu.Item onclick={() => $isPreviewAllowed = !$isPreviewAllowed}>
+                <Check size=16 class={cn($isPreviewAllowed ? "text-primary" : "text-transparent", "mr-2")}/>
+                Lyrics Preview
             </DropdownMenu.Item>
         </DropdownMenu.Group>
     </DropdownMenu.Content>

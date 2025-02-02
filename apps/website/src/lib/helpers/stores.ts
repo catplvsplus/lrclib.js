@@ -6,3 +6,9 @@ export const isBlurAllowed = persist(
         createLocalStorage(true),
         'allow-blurs'
     );
+
+export const isPreviewAllowed = persist(
+        writable<boolean>(true),
+        createLocalStorage(true),
+        'allow-previews'
+    );

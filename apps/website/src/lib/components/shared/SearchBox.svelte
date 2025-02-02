@@ -5,7 +5,6 @@
     import { onMount } from 'svelte';
     import { fade } from 'svelte/transition';
     import { goto } from '$app/navigation';
-    import type { ChangeEventHandler } from 'svelte/elements';
 
     const placeholders: string[] = [
         "Search...",
@@ -16,10 +15,11 @@
 
     let {
         value = $bindable(""),
+        onChange,
         ...props
     }: {
         value?: string;
-        onChange?: ChangeEventHandler<HTMLInputElement>;
+        onChange?: (data: string) => void;
         [key: string]: any;
     } = $props();
 
@@ -29,7 +29,9 @@
     function onSubmit(event: SubmitEvent) {
         event.preventDefault();
 
-        if (value) goto(`${base}/search?q=${encodeURIComponent(value)}`);
+        if (!value) return;
+        onChange?.(value);
+        goto(`${base}/search?q=${encodeURIComponent(value)}`);
     }
 
     onMount(() => {
@@ -57,7 +59,7 @@
             bind:value
             onfocus={() => isFocused = true}
             onblur={() => isFocused = false}
-            oninput={event => props.onChange?.(event)}
+            oninput={event => onChange?.(event.currentTarget.value)}
             autocomplete="off"
             aria-autocomplete="none"
         />

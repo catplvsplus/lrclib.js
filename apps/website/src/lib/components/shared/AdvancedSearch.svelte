@@ -43,16 +43,16 @@
         <div in:slide out:slide>
             <SearchBox
                 value={getSearchName(search)}
-                onChange={event => updateSearch({ q: event.currentTarget.value })}
+                onChange={val => updateSearch({ q: val })}
             />
         </div>
     {/if}
     <div class="flex justify-between p-1">
-        <p class="text-muted-foreground text-sm">
+        <p class="text-muted-foreground text-sm whitespace-nowrap overflow-hidden text-ellipsis">
             {#if results !== null}
                 {@const searchName = getSearchName(search).trim()}
                 {#if searchName}
-                    {results.length} results for "{searchName}"
+                    {results.length.toLocaleString()} results for "{searchName}"
                 {/if}
             {/if}
         </p>

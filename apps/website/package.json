@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite dev --host",
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
@@ -41,6 +41,8 @@
 		"@macfja/svelte-persistent-store": "^2.4.2",
 		"is-mobile": "^5.0.0",
 		"lrclib": "file:../../packages/lrclib.js",
+		"luxon": "^3.5.0",
+		"music-metadata": "^10.8.2",
 		"sass": "^1.83.4",
 		"sveltekit-search-params": "^3.0.0"
 	}

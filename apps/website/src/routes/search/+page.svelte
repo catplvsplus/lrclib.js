@@ -7,6 +7,7 @@
     import { onMount } from 'svelte';
     import AdvancedSearch from '../../lib/components/shared/AdvancedSearch.svelte';
     import { getSearchName, isAdvancedSearchOptions } from '../../lib/helpers/utils';
+    import SearchResult from '../../lib/components/shared/SearchResult.svelte';
 
     const params = queryParameters({
         q: true,
@@ -73,16 +74,16 @@
                 {#if results === null}
                     <ResultsSkeleton/>
                 {:else if results.length === 0}
-                    <h1 class="text-xl font-semibold ml-2">No results</h1>
+                    <div class="text-center">
+                        <h1 class="text-xl font-semibold ml-2">No results</h1>
+                        <p class="text-muted-foreground ml-2">Try searching for something else</p>
+                    </div>
                 {/if}
             </div>
         {:else}
-            <div class="flex items-center gap-2 flex-col flex-shrink-0">
+            <div class="columns-xs pb-5">
                 {#each results as result}
-                    <div>
-                        <a href="/track/{result.id}">{result.trackName}</a>
-                        <a href="/artist/{result.artistName}">{result.artistName}</a>
-                    </div>
+                    <SearchResult {result}/>
                 {/each}
             </div>
         {/if}

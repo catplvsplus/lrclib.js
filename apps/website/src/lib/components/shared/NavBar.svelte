@@ -12,7 +12,7 @@
 <div
     class={cn(
         "h-16 w-full fixed top-0 left-0 z-50 border-b flex justify-center",
-        $isBlurAllowed ? 'backdrop-blur-xl bg-background/80' : 'bg-background'
+        $isBlurAllowed ? 'backdrop-blur-lg bg-background/70' : 'bg-background'
     )}
 >
     <div class="flex items-center justify-between gap-5 w-full max-w-screen-2xl px-5">

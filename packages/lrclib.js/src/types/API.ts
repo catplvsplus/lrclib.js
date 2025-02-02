@@ -98,8 +98,8 @@ export namespace APIResponse {
             albumName: string;
             duration: number;
             instrumental: boolean;
-            plainLyrics: string;
-            syncedLyrics: string;
+            plainLyrics: string|null;
+            syncedLyrics: string|null;
         }
 
         export interface TrackById extends TrackSignature {}

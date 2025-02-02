@@ -70,16 +70,16 @@
             />
         </div>
         {#if !results?.length}
-            <div class="h-full w-full flex justify-center items-center">
                 {#if results === null}
                     <ResultsSkeleton/>
                 {:else if results.length === 0}
-                    <div class="text-center">
-                        <h1 class="text-xl font-semibold ml-2">No results</h1>
-                        <p class="text-muted-foreground ml-2">Try searching for something else</p>
+                    <div class="h-full w-full flex justify-center items-center">
+                        <div class="text-center">
+                            <h1 class="text-xl font-semibold ml-2">No results</h1>
+                            <p class="text-muted-foreground ml-2">Try searching for something else</p>
+                        </div>
                     </div>
                 {/if}
-            </div>
         {:else}
             <div class="columns-xs pb-5">
                 {#each results as result}

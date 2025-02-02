@@ -1,6 +1,7 @@
 <script lang="ts">
 
     import { cn } from "$lib/helpers/utils";
+    import { isPreviewAllowed } from '../../helpers/stores';
     import { Skeleton } from '../ui/skeleton';
 
 </script>
@@ -24,9 +25,11 @@
                     <Skeleton class="h-4 w-12" />
                     <Skeleton class="h-4 w-12" />
                 </div>
-                <div>
-                    <Skeleton style="height: {height}px" class="min-h-20 w-full" />
-                </div>
+                {#if $isPreviewAllowed}
+                    <div>
+                        <Skeleton style="height: {height}px" class="min-h-20 w-full" />
+                    </div>
+                {/if}
             </div>
         </div>
     {/each}

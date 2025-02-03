@@ -40,7 +40,7 @@
     });
 </script>
 
-<main class="w-full h-full" data-vaul-drawer-wrapper="">
+<main class="w-full h-full bg-background" data-vaul-drawer-wrapper="">
     <Toaster/>
     <ModeWatcher defaultMode="system"/>
     {@render children()}

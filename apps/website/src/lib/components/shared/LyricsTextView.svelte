@@ -1,9 +1,8 @@
 <script lang="ts">
     import type { Track } from 'lrclib';
     import * as Tabs from "../ui/tabs";
-    import { ScrollArea, Scrollbar } from '../ui/scroll-area';
+    import { ScrollArea } from '../ui/scroll-area';
     import { cn } from '../../helpers/utils';
-    import { onMount } from 'svelte';
 
     let { track = $bindable(), ...props }: { track: Track; [key: string]: any; } = $props();
 </script>
@@ -12,8 +11,6 @@
     {@const lines = content.split('\n')}
     <div class="h-full w-full">
         <ScrollArea class="h-full p-3 rounded-lg bg-muted text-lg" orientation="both">
-            <Scrollbar orientation="vertical"/>
-            <Scrollbar orientation="horizontal"/>
             {#each lines as line, index}
                 <p id="{track.id}-{index}">
                     {line}

@@ -58,7 +58,7 @@
 <Drawer.Root bind:open>
     <Drawer.Portal>
         <Drawer.Overlay class="fixed inset-0 bg-black/30"/>
-        <Drawer.Content class="fixed bottom-0 left-0 flex max-h-[96%] h-[calc(100%-1rem)] flex-col">
+        <Drawer.Content class="fixed bottom-0 left-0 flex max-h-[96%] h-full flex-col shadow-md">
             <Drawer.Header class="gap-0 pb-2">
                 <Drawer.Title class="text-lg font-semibold text-primary">{track.trackName}</Drawer.Title>
                 <Drawer.Description class="flex flex-col gap-2">
@@ -68,7 +68,7 @@
                     <div class="flex flex-wrap gap-1 pb-2 justify-center sm:justify-start">{@render Badges()}</div>
                 </Drawer.Description>
             </Drawer.Header>
-            <div class="px-4 pb-4 w-full h-[calc(100%-8rem)]">
+            <div class="px-4 pb-4 w-full h-[calc(100%-9rem)]">
                 <LyricsTextView {track}/>
             </div>
         </Drawer.Content>

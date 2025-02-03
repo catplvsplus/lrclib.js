@@ -6,6 +6,9 @@
     import { isPreviewAllowed } from '../../helpers/stores';
     import { fly, slide } from 'svelte/transition';
     import { cn } from '../../helpers/utils';
+    import { pushState } from '$app/navigation';
+    import { page } from '$app/state';
+    import TrackModal from './TrackModal.svelte';
 
     let { result = $bindable(), ...props }: { result: Track; [key: string]: any; } = $props();
     let preview: [string, number][] = $derived(
@@ -17,6 +20,12 @@
     );
 
     const animationDelay = Math.random() * 100;
+
+    function showModal(line?: number) {
+        pushState(`${base}/track?id=${result.id}${typeof line === 'number' ? `#${result.id}-${line}` : ''}`, {
+            showLyricsModal: result.id
+        });
+    }
 </script>
 
 <div
@@ -29,7 +38,14 @@
     <div>
         <div class="flex justify-between">
             <h1 class="text-lg font-bold text-primary w-full text-ellipsis overflow-hidden leading-5">
-                <a href="{base}/track?id={result.id}" title="{result.trackName}">
+                <a
+                    href="{base}/track?id={result.id}"
+                    title="{result.trackName}"
+                    onclick={e => {
+                        e.preventDefault();
+                        showModal();
+                    }}
+                >
                     {result.trackName}
                 </a>
             </h1>
@@ -56,10 +72,23 @@
             <div class="text-ellipsis text-xl font-bold tracking-tight leading-6">
                 {#each preview as lyric}
                     <p>
-                        <a href="{base}/track?id={result.id}#line-{lyric[1]}" title="{lyric[0]}">{lyric[0]}</a>
+                        <a
+                            href="{base}/track?id={result.id}#line-{lyric[1]}"
+                            title="{lyric[0]}"
+                            onclick={e => {
+                                e.preventDefault();
+                                showModal(lyric[1]);
+                            }}
+                        >
+                            {lyric[0]}
+                        </a>
                     </p>
                 {/each}
             </div>
         </div>
     {/if}
 </div>
+
+{#if page.state.showLyricsModal === result.id}
+    <TrackModal track={result} open/>
+{/if}

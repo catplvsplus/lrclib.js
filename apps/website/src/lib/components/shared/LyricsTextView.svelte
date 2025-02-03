@@ -3,6 +3,7 @@
     import * as Tabs from "../ui/tabs";
     import { ScrollArea, Scrollbar } from '../ui/scroll-area';
     import { cn } from '../../helpers/utils';
+    import { onMount } from 'svelte';
 
     let { track = $bindable(), ...props }: { track: Track; [key: string]: any; } = $props();
 </script>
@@ -14,7 +15,9 @@
             <Scrollbar orientation="vertical"/>
             <Scrollbar orientation="horizontal"/>
             {#each lines as line, index}
-                <p id="{track.id}-{index}">{line}</p>
+                <p id="{track.id}-{index}">
+                    {line}
+                </p>
             {/each}
         </ScrollArea>
     </div>

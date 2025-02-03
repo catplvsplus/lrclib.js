@@ -2,12 +2,11 @@
     import NavBar from "$lib/components/shared/NavBar.svelte";
     import { lrclib, type APIOptions, type Track } from 'lrclib';
     import { queryParameters, ssp } from 'sveltekit-search-params';
-    import SearchBox from '$lib/components/shared/SearchBox.svelte';
     import ResultsSkeleton from '$lib/components/shared/ResultsSkeleton.svelte';
     import { onMount } from 'svelte';
-    import AdvancedSearch from '../../lib/components/shared/AdvancedSearch.svelte';
-    import { getSearchName, isAdvancedSearchOptions } from '../../lib/helpers/utils';
-    import SearchResult from '../../lib/components/shared/SearchResult.svelte';
+    import AdvancedSearch from '$lib/components/shared/AdvancedSearch.svelte';
+    import { getSearchName, isAdvancedSearchOptions } from '$lib/helpers/utils';
+    import SearchResult from '$lib/components/shared/SearchResult.svelte';
 
     const params = queryParameters({
         q: true,
@@ -54,7 +53,7 @@
 </script>
 
 <svelte:head>
-    <title>Lrclib.js | Search "{getSearchName(getQuery())}"</title>
+    <title>Lrclib.js | Search {getSearchName(getQuery())}</title>
 </svelte:head>
 
 <NavBar addSearchBox={false}/>

@@ -61,21 +61,18 @@
 {#snippet TextViewer(content: string|TrackSyncedLyrics)}
     <div class="h-full w-full">
         <ScrollArea class="h-full p-3 rounded-lg bg-muted leading-{typeof content === 'string' ? 'normal' : 'relaxed'}" orientation="both">
-            {#if typeof content === 'string'}
-                {@const lines = content.split('\n')}
-                {#each lines as line, index}
-                    <p id="{track.id}-{index}">
-                        {line}
-                    </p>
-                {/each}
-            {:else}
-                {#each content as line, index}
-                    <p id="{track.id}-{index}">
-                        <span class="text-primary/90 font-extrabold font-mono">{line.rawTime}</span>
-                        {line.text}
-                    </p>
-                {/each}
-            {/if}
+            <div class="flex flex-col">
+                {#if typeof content === 'string'}
+                    {@const lines = content.split('\n')}
+                    {#each lines as line, index}
+                        <span id="{track.id}-{index}">{line}</span>
+                    {/each}
+                {:else}
+                    {#each content as line, index}
+                        <span id="{track.id}-{index}"><span class="text-primary/90 font-extrabold font-mono mr-2">{line.rawTime}</span>{line.text}</span>
+                    {/each}
+                {/if}
+            </div>
         </ScrollArea>
     </div>
 {/snippet}

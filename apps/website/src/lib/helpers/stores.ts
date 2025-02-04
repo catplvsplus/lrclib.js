@@ -12,3 +12,9 @@ export const isPreviewAllowed = persist(
         createLocalStorage(true),
         'allow-previews'
     );
+
+export const lastActiveTab = persist(
+        writable<null|'plain'|'synced'>(null),
+        createLocalStorage(true),
+        'last-active-tab'
+    );

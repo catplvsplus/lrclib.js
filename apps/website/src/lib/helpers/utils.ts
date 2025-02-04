@@ -34,3 +34,17 @@ export function selectText(node: HTMLElement): boolean {
         return false;
     }
 }
+
+export function copyText(options: { text?: string; container?: HTMLElement; selectRequired?: boolean; }) {
+    const text = options.text ?? options.container?.textContent ?? '';
+    const selected = options.container ? selectText(options.container) : false;
+    if (options.selectRequired && !selected) return false;
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text);
+    } else {
+        document.execCommand('copy');
+    }
+
+    return true;
+}

@@ -1,14 +1,32 @@
 <script lang="ts">
     import * as Tabs from '$lib/components/ui/tabs/index';
     import { SiBun, SiDeno, SiNpm, SiPnpm, SiYarn } from '@icons-pack/svelte-simple-icons';
-    import { cn } from '../../helpers/utils';
+    import { cn, copyText } from '../../helpers/utils';
+    import { Button } from '../ui/button';
+    import { Clipboard } from 'lucide-svelte';
+    import { toast } from 'svelte-sonner';
 
     let props = $props();
+
+    let command = $state('npm i lrclib.js');
+
+    function copyCommand(text: string, id: string) {
+        const copied = copyText({
+            text,
+            container: document.getElementById(id) ?? undefined
+        });
+
+        if (!copied) return;
+        toast.success('Command copied to clipboard!');
+    }
 </script>
 
 {#snippet installCodeblock(command: string)}
-    <div class="border rounded-lg p-5">
-        <code>{command}</code>
+    <div class="border rounded-lg p-5 relative overflow-auto pr-12">
+        <code id="command-{command.split(' ')[0]}">{command}</code>
+        <Button variant="outline" size="icon" title="Copy" class="absolute right-3 top-3" onclick={() => copyCommand(command, `command-${command.split(' ')[0]}`)}>
+            <Clipboard/>
+        </Button>
     </div>
 {/snippet}
 

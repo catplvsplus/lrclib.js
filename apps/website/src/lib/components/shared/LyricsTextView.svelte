@@ -2,7 +2,7 @@
     import type { Track, TrackSyncedLyrics } from 'lrclib';
     import * as Tabs from "../ui/tabs";
     import { ScrollArea } from '../ui/scroll-area';
-    import { cn, selectText } from '../../helpers/utils';
+    import { cn, copyText, selectText } from '../../helpers/utils';
     import { lastActiveTab } from '../../helpers/stores';
     import { Button } from '../ui/button';
     import { Clipboard, Download, Play } from 'lucide-svelte';
@@ -38,14 +38,7 @@
         const text = activeTab === 'plain' ? track.plainLyrics : track.syncedLyrics;
         const container = activeTab === 'plain' ? plainContainer : syncedContainer;
 
-        if (!selectText(container)) return;
-
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(text);
-        } else {
-            document.execCommand('copy');
-        }
-
+        if (!copyText({ text, container, selectRequired: true })) return;
         toast.success('Lyrics copied to clipboard!');
     }
 

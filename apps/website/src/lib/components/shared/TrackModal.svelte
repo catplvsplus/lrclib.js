@@ -49,7 +49,7 @@
             <Dialog.Description class="items-center text-muted-foreground leading-5 text-sm text-ellipsis overflow-hidden">
                 {@render ArtistAlbum()}
             </Dialog.Description>
-            <div class="flex flex-wrap gap-1 pt-2 pb-4">{@render Badges()}</div>
+            <div class="flex flex-wrap gap-1 pt-2 pb-4 justify-center sm:justify-start">{@render Badges()}</div>
         </Dialog.Header>
         <LyricsTextView {track} class="h-[calc(100%-7rem)]"/>
     </Dialog.Content>

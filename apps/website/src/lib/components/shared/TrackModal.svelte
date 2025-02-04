@@ -17,7 +17,7 @@
         [key: string]: any;
     } = $props();
 
-    const isDesktop = new MediaQuery("(min-width: 768px)");
+    const isDesktop = new MediaQuery("(min-width: 600px)");
 
     $effect(() => {
         if (!open) window.history.back();
@@ -43,15 +43,15 @@
 
 {#if isDesktop.current}
 <Dialog.Root bind:open>
-    <Dialog.Content class="max-w-3xl max-h-[calc(100%-3rem)] min-h-80 overflow-auto">
-        <Dialog.Header class="space-y-0">
+    <Dialog.Content class="max-w-3xl w-[calc(100%-2rem)] h-[calc(100%-3rem)] min-h-96 flex flex-col">
+        <Dialog.Header class="space-y-0 shrink-0">
             <Dialog.Title class="text-lg font-semibold text-primary">{track.trackName}</Dialog.Title>
             <Dialog.Description class="items-center text-muted-foreground leading-5 text-sm text-ellipsis overflow-hidden">
                 {@render ArtistAlbum()}
             </Dialog.Description>
             <div class="flex flex-wrap gap-1 pt-2 pb-4">{@render Badges()}</div>
         </Dialog.Header>
-        <LyricsTextView {track}/>
+        <LyricsTextView {track} class="h-[calc(100%-7rem)]"/>
     </Dialog.Content>
 </Dialog.Root>
 {:else}

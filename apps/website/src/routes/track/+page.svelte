@@ -27,7 +27,7 @@
 <NavBar/>
 
 <div class="h-full w-full pt-16 flex justify-center">
-    <div class="w-full max-w-screen-md p-5">
+    <div class="w-full h-full max-w-screen-md p-5">
         {#if track}
             {#await track}
                 <div class="flex flex-col mb-4 gap-2">
@@ -43,25 +43,27 @@
                     <Skeleton class="h-96 w-full"/>
                 </div>
             {:then track}
-                <div class="flex flex-col mb-4">
-                    <h1 class="text-lg font-semibold text-primary leading-5">{track.trackName}</h1>
-                    <p class="items-center text-muted-foreground leading-5 text-sm text-ellipsis overflow-hidden">
-                        <span title="{track.artistName}">{track.artistName}</span>
-                        <span class="inline-block mx-0.5">•</span>
-                        <span title="{track.albumName}">{track.albumName}</span>
-                    </p>
-                    <div class="flex flex-wrap gap-1 pt-2">
-                        {#if track.isSynced()}
-                            <Badge variant="outline" class="bg-green-600/10 border-current text-green-600">Synced</Badge>
-                        {:else}
-                            <Badge variant="outline">Unsynced</Badge>
-                        {/if}
-                        {#if track.isInstrumental()}
-                            <Badge variant="outline">Instrumental</Badge>
-                        {/if}
+                <div class="flex flex-col h-full">
+                    <div class="flex flex-col mb-4">
+                        <h1 class="text-lg font-semibold text-primary leading-5">{track.trackName}</h1>
+                        <p class="items-center text-muted-foreground leading-5 text-sm text-ellipsis overflow-hidden">
+                            <span title="{track.artistName}">{track.artistName}</span>
+                            <span class="inline-block mx-0.5">•</span>
+                            <span title="{track.albumName}">{track.albumName}</span>
+                        </p>
+                        <div class="flex flex-wrap gap-1 pt-2">
+                            {#if track.isSynced()}
+                                <Badge variant="outline" class="bg-green-600/10 border-current text-green-600">Synced</Badge>
+                            {:else}
+                                <Badge variant="outline">Unsynced</Badge>
+                            {/if}
+                            {#if track.isInstrumental()}
+                                <Badge variant="outline">Instrumental</Badge>
+                            {/if}
+                        </div>
                     </div>
+                    <LyricsTextView {track} class="h-[calc(100%-5rem)] min-h-60"/>
                 </div>
-                <LyricsTextView {track} class="h-auto"/>
             {:catch error}
                 <div class="h-full w-full flex justify-center items-center">
                     <div class="flex flex-col gap-2 items-center">

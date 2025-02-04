@@ -39,7 +39,10 @@
                     </div>
                 </div>
                 <div class="flex flex-col gap-2">
-                    <Skeleton class="h-10 w-44"/>
+                    <div class="flex gap-2">
+                        <Skeleton class="h-10 sm:w-44 w-full"/>
+                        <Skeleton class="h-10 w-44"/>
+                    </div>
                     <Skeleton class="h-96 w-full"/>
                 </div>
             {:then track}

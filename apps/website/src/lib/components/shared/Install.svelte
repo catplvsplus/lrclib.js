@@ -8,8 +8,6 @@
 
     let props = $props();
 
-    let command = $state('npm i lrclib.js');
-
     function copyCommand(text: string, id: string) {
         const copied = copyText({
             text,

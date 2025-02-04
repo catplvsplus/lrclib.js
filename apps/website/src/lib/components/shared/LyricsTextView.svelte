@@ -13,7 +13,7 @@
 
     let plainContainer: HTMLDivElement;
     let syncedContainer: HTMLDivElement;
-    let activeTab: 'plain' | 'synced' = $state($lastActiveTab ?? (track.isSynced() ? 'synced' : 'plain'));
+    let activeTab: 'plain' | 'synced' = $state($lastActiveTab ? track.isSynced() ? $lastActiveTab : 'plain' : (track.isSynced() ? 'synced' : 'plain'));
 
     function downloadLyrics() {
         const text = activeTab === 'plain' ? track.plainLyrics : track.syncedLyrics;

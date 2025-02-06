@@ -7,6 +7,7 @@
     import Controls from './Controls.svelte';
     import Background from './Background.svelte';
     import NavBar from '../../../lib/components/shared/NavBar.svelte';
+    import Lyrics from './Lyrics.svelte';
 
     let {
         track = $bindable(),
@@ -16,6 +17,8 @@
         track: Track;
         file: Blob;
     } = $props();
+
+    const seekAmount = 5;
 
     let metadata: IAudioMetadata = $state(getTrackDefaultMetadata(track));
     let audio: string|null = $state(null);
@@ -36,7 +39,9 @@
 
     $effect(() => {
         if (isFullscreen) {
-
+            document.body.requestFullscreen({
+                navigationUI: 'hide'
+            });
         }
     });
 
@@ -52,6 +57,21 @@
     }
 </script>
 
+<svelte:window
+    onfullscreenchange={() => {
+        isFullscreen = !!document.fullscreenElement;
+    }}
+    onkeydown={(e) => {
+        e.preventDefault();
+        if (e.key === 'Escape') isFullscreen = false;
+        if (e.key === ' ') paused = !paused;
+        if (e.key === 'f' || e.key === 'F11') isFullscreen = !isFullscreen;
+        if (e.key === 'ArrowLeft') currentTime = currentTime - seekAmount < 0 ? 0 : currentTime - seekAmount;
+        if (e.key === 'ArrowRight') currentTime = currentTime + seekAmount > duration ? duration : currentTime + seekAmount;
+        console.log(e.key);
+    }}
+/>
+
 {#if audio}
     <audio
         src={audio}
@@ -61,12 +81,16 @@
         onplay={() => createWakeLock()}
         onpause={() => wakelock?.release()}
     ></audio>
-    {#if !isFullscreen}<NavBar addSearchBox={false}/>{/if}
+    {#if !isFullscreen}<NavBar addSearchBox={false} useAnimation useTransparency/>{/if}
     <Background class="z-0 top-0 left-0 fixed" bind:metadata bind:averageColor bind:paused/>
-    <div class={cn("relative z-10 transition-all duration-500 select-none text-white flex justify-center h-full pt-0", !isFullscreen && "pt-16")}>
-        <div class={cn("min-w-[calc(500px+2rem)] h-full shrink-0 flex justify-center items-center")}>
-            <Controls bind:metadata bind:averageColor bind:paused bind:currentTime bind:duration bind:isFullscreen/>
+    <div class={cn("relative z-10 transition-all duration-500 select-none text-white flex justify-center h-full px-5 pt-0", !isFullscreen && "pt-16")}>
+        <div class="w-full h-full flex max-w-screen-2xl gap-20">
+            <div class={cn("min-w-[500px] h-full shrink-0 flex justify-center items-center")}>
+                <Controls bind:metadata bind:averageColor bind:paused bind:currentTime bind:duration bind:isFullscreen/>
+            </div>
+            <div class="w-full h-full">
+                <Lyrics/>
+            </div>
         </div>
-        <div class="w-1/2 h-full"></div>
     </div>
 {/if}

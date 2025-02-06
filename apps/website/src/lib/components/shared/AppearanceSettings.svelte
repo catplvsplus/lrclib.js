@@ -5,10 +5,12 @@
     import { Check, Settings } from 'lucide-svelte';
     import { buttonVariants } from '../ui/button';
     import { isBlurAllowed, isPreviewAllowed } from '../../helpers/stores';
+
+    let props = $props();
 </script>
 
 <DropdownMenu.Root>
-    <DropdownMenu.Trigger class={cn(buttonVariants({ variant: 'outline' }), 'h-11 w-11 rounded-lg')}>
+    <DropdownMenu.Trigger {...props} class={cn(buttonVariants({ variant: 'outline' }), 'h-11 w-11 rounded-lg bg-background/50', props.class)}>
         <Settings/>
     </DropdownMenu.Trigger>
     <DropdownMenu.Content class="mx-2 mt-3">

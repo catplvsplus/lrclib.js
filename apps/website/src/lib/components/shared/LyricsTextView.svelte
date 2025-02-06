@@ -8,6 +8,8 @@
     import { Clipboard, Download, Play } from 'lucide-svelte';
     import { Separator } from 'bits-ui';
     import { toast } from 'svelte-sonner';
+    import { goto } from '$app/navigation';
+    import { base } from '$app/paths';
 
     let { track = $bindable(), ...props }: { track: Track; [key: string]: any; } = $props();
 
@@ -43,7 +45,7 @@
     }
 
     function playLyrics() {
-
+        goto(`${base}/preview?id=${track.id}`);
     }
 
     $effect(() => {

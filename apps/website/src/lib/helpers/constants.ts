@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import SpotifyWebApi from 'spotify-web-api-js';
 
 export const exampleCode = `import { lrclib, Client } from 'lrclib.js';
 
@@ -19,8 +19,4 @@ await client.publishTrack({
     syncedLyrics: '[00:22.83] Feet, don\\'t fail me now...'
 });`;
 
-export const trackSignatureSearchSchema = z.object({
-    track_name: z.string(),
-    artist_name: z.string().optional(),
-    album_name: z.string().optional()
-})
+export const spotifyAPI = new SpotifyWebApi();

@@ -1,7 +1,11 @@
 import { type ClassValue, clsx } from "clsx";
-import type { APIOptions } from 'lrclib';
+import type { APIOptions, Track } from 'lrclib';
+import { parseBlob, selectCover, type IPicture } from 'music-metadata';
 import { toast } from 'svelte-sonner';
 import { twMerge } from "tailwind-merge";
+import { spotifyAPI } from './constants';
+import { base } from '$app/paths';
+import type { IAudioMetadata } from './types';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -47,4 +51,54 @@ export function copyText(options: { text?: string; container?: HTMLElement; sele
     }
 
     return true;
+}
+
+export function getMetadataCoverURL(covers: IPicture[]): string|null {
+    const cover = selectCover(covers);
+    if (!cover) return null;
+
+    const data = new Blob([cover.data], { type: cover.format });
+    return URL.createObjectURL(data);
+}
+
+export async function getAudioMetadata(blob: Blob|File, track: Track, fetchSpotify: boolean = true): Promise<IAudioMetadata> {
+    const fileData = await parseBlob(blob);
+
+    let cover = fileData.common.picture?.length ? getMetadataCoverURL(fileData.common.picture) : null;
+    let title = fileData.common.title ?? null;
+    let artist = fileData.common.artist ?? null;
+    let album = fileData.common.album ?? null;
+
+    console.log({ cover, title, artist, album });
+
+    if (fetchSpotify && (!cover || !title || !artist || !album)) {
+        const data = await spotifyAPI.searchTracks(`${title ?? track.trackName} ${artist ?? track.artistName}`, {
+            limit: 1
+        })
+        .then(res => res.tracks.items[0])
+        .catch(() => null);
+
+        if (data) {
+            cover ??= data.album.images.length ? data.album.images[0].url : null;
+            title ??= data.name;
+            artist ??= data.artists.join(', ');
+            album ??= data.album.name;
+        }
+    }
+
+    cover ??= `${base}/audio.png`;
+    title ??= track.trackName;
+    artist ??= track.artistName;
+    album ??= track.albumName;
+
+    return { cover, title, artist, album };
+}
+
+export function getTrackDefaultMetadata(track: Track): IAudioMetadata {
+    return {
+        cover: `${base}/audio.png`,
+        title: track.trackName,
+        artist: track.artistName,
+        album: track.albumName
+    }
 }

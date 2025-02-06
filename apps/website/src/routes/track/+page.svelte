@@ -9,18 +9,17 @@
     import { Skeleton } from '$lib/components/ui/skeleton';
     import { X } from 'lucide-svelte';
     import SearchBox from '$lib/components/shared/SearchBox.svelte';
+    import { error } from '@sveltejs/kit';
 
     let track: Promise<Track>|null = $state(null);
     let id = queryParam('id', ssp.number());
-
-    onMount(async () => {});
 
     $effect(() => {
         if (id) fetchTrack();
     })
 
     function fetchTrack() {
-        if (!$id) return;
+        if (!$id) error(404, 'No track ID provided');
         track = lrclib.fetchTrackById($id);
     }
 </script>

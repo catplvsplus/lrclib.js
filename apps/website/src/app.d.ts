@@ -6,7 +6,8 @@ declare global {
 		// interface Locals {}
 		// interface PageData {}
 		interface PageState {
-            showLyricsModal: number;
+            showLyricsModal?: number;
+            previewPlaying?: boolean;
         }
 		// interface Platform {}
 	}

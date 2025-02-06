@@ -6,10 +6,13 @@
     import { buttonVariants } from '../ui/button';
     import SearchBox from './SearchBox.svelte';
     import AppearanceSettings from './AppearanceSettings.svelte';
+    import { fly } from 'svelte/transition';
 
     let { addSearchBox = true, value = $bindable(""), ...props }: { addSearchBox?: boolean; value?: string; [key: string]: any; } = $props();
 </script>
 <div
+    out:fly={{ y: -65, opacity: 1 }}
+    in:fly={{ y: -65, opacity: 1 }}
     class={cn(
         "h-16 w-full fixed top-0 left-0 z-50 border-b flex justify-center",
         $isBlurAllowed ? 'backdrop-blur-lg bg-background/70' : 'bg-background'

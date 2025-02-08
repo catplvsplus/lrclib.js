@@ -52,6 +52,7 @@ async function serveFromCache(request: Request) {
         const response = await fetch(request);
 
         if (response.ok && url.protocol.startsWith('http')) {
+            console.log(response);
             cache.put(request, response.clone());
         }
 

@@ -1,7 +1,7 @@
 {
   "name": "lrclib.js",
   "short_name": "lrclib.js",
-  "start_url": "/",
+  "start_url": "/lrclib.js",
   "display": "standalone",
   "background_color": "#fff",
   "theme_color": "#e11d48",

@@ -64,7 +64,7 @@
     {#if typeof lyrics === 'string'}
         {@const lines = lyrics.split('\n').map((line, index) => [line, index])}
         <ScrollArea class="h-full w-full" style="mask: var(--mini-mask);" orientation="vertical">
-            <div class="p-20 text-5xl font-bold leading-snug">
+            <div class="p-20 pb-80 text-5xl font-bold leading-snug">
                 {#each lines as [line, index]}
                     <p id={index.toString()}>{line}</p>
                 {/each}
@@ -77,7 +77,7 @@
             bind:this={scrollArea}
             onwheel={updateScrollOwner}
         >
-            <div class="p-20 text-5xl font-bold leading-snug flex flex-col gap-4">
+            <div class="p-20 pt-80 pb-80 text-5xl font-bold leading-snug flex flex-col gap-4">
                 {#snippet SyncedLine(line: TrackSyncedLyric, index: number, isActive: boolean)}
                     {#if isActive}
                         <a href="#lyric-{index.toString()}" onclick={e => onLineClick(e, line)} bind:this={activeLine}>
@@ -94,7 +94,7 @@
                         <p
                             id={`lyric-${index.toString()}`}
                             class={cn(
-                                "cursor-pointer duration-1000 transition-all leading-tight",
+                                "cursor-pointer duration-1000 transition-all leading-tight will-change-transform",
                                 isActive
                                     ? $isBlurAllowed
                                         ? `text-white animate-glow scale-105 translate-x-[2%]`

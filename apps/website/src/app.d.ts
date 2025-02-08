@@ -8,6 +8,7 @@ declare global {
 		interface PageState {
             showLyricsModal?: number;
             previewPlaying?: boolean;
+            isSearching?: boolean;
         }
 		// interface Platform {}
 	}

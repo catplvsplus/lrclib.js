@@ -46,6 +46,7 @@
 		"lrclib": "file:../../packages/lrclib.js",
 		"luxon": "^3.5.0",
 		"music-metadata": "^10.8.2",
+		"runed": "^0.23.2",
 		"sass": "^1.83.4",
 		"spotify-web-api-js": "^1.5.2",
 		"sveltekit-search-params": "^3.0.0"

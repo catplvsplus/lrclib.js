@@ -6,25 +6,19 @@
     import { fade } from 'svelte/transition';
     import { goto } from '$app/navigation';
 
-    const placeholders: string[] = [
-        "Search...",
-        "Search for a song...",
-        "Search for an artist...",
-        "Search for an album..."
-    ];
-
     let {
         value = $bindable(""),
+        ref = $bindable(),
+        autofocus = false,
         onChange,
         ...props
     }: {
         value?: string;
+        ref?: HTMLInputElement;
         onChange?: (data: string) => void;
+        autofocus?: boolean;
         [key: string]: any;
     } = $props();
-
-    let currentPlaceholder = $state(0);
-    let isFocused = $state(false);
 
     function onSubmit(event: SubmitEvent) {
         event.preventDefault();
@@ -35,10 +29,7 @@
     }
 
     onMount(() => {
-        setInterval(() => {
-            if (isFocused || value) return;
-            currentPlaceholder = currentPlaceholder + 1 >= placeholders.length ? 0 : currentPlaceholder + 1;
-        }, 10000);
+        if (autofocus) setTimeout(() => ref?.focus(), 500);
     });
 </script>
 
@@ -50,21 +41,17 @@
         props.class
     )}
 >
-    {#key currentPlaceholder}
-        <!-- <span>{placeholders[currentPlaceholder]}</span> -->
-        <input
-            type="text"
-            in:fade placeholder={placeholders[currentPlaceholder]}
-            class="py-2 px-4 w-full outline-none bg-transparent"
-            bind:value
-            onfocus={() => isFocused = true}
-            onblur={() => isFocused = false}
-            oninput={event => onChange?.(event.currentTarget.value)}
-            autocomplete="off"
-            aria-autocomplete="none"
-        />
-    {/key}
-    <button class="p-2 w-11 h-11 flex-shrink-0 outline-none bg-none text-primary flex justify-center items-center enabled:scale-110 transition-transform duration-300" disabled={!value}>
+    <input
+        type="text"
+        placeholder="Search..."
+        bind:this={ref}
+        class="py-2 px-4 w-full outline-none bg-transparent"
+        bind:value
+        oninput={event => onChange?.(event.currentTarget.value)}
+        autocomplete="off"
+        aria-autocomplete="none"
+    />
+    <button class="p-2 w-11 h-full flex-shrink-0 outline-none bg-none text-primary flex justify-center items-center enabled:scale-110 transition-transform duration-300" disabled={!value}>
         <Search size={20}/>
     </button>
 </form>

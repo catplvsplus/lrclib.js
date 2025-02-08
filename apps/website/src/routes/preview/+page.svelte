@@ -18,7 +18,7 @@
 
     async function fetchTrack() {
         if (!$id) error(404, 'No track ID provided');
-        track = await lrclib.fetchTrackById($id);
+        track = await lrclib.fetchTrackById($id, false);
     }
 
     function onFileChange(e: Event & { currentTarget: HTMLInputElement }) {

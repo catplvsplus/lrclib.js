@@ -20,7 +20,7 @@
 
     function fetchTrack() {
         if (!$id) error(404, 'No track ID provided');
-        track = lrclib.fetchTrackById($id);
+        track = lrclib.fetchTrackById($id, false);
     }
 </script>
 <NavBar/>

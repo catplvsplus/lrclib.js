@@ -44,7 +44,7 @@
         if (timeout) clearTimeout(timeout);
 
         timeout = setTimeout(async () => {
-            results = await lrclib.search(data ?? getQuery());
+            results = await lrclib.search(data ?? getQuery(), false);
             timeout = null;
         }, debounce ? 500 : 0);
     }

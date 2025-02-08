@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Utils, type TrackDurationLyrics, type TrackSyncedLyric, type TrackSyncedLyrics } from 'lrclib';
     import { cn, getBlurAmount } from '$lib/helpers/utils';
-    import { ScrollArea } from '../../../lib/components/ui/scroll-area';
-    import { isBlurAllowed } from '../../../lib/helpers/stores';
+    import { ScrollArea } from '$lib/components/ui/scroll-area';
+    import { isBlurAllowed } from '$lib/helpers/stores';
 
     let {
         lyrics = $bindable(),
@@ -14,7 +14,8 @@
         [key: string]: any;
     } = $props();
 
-    let scrollArea: HTMLDivElement|null = $state(null);
+    let scrollArea: HTMLDivElement = $state()!;
+    let container: HTMLDivElement = $state()!;
     let scrollOwner: 'user'|'auto' = $state('auto');
     let scrollPosition: ScrollLogicalPosition = $state('center');
     let activeLines: TrackDurationLyrics|null = $derived(
@@ -41,16 +42,17 @@
         e.preventDefault();
 
         currentTime = line.timeMs / 1000;
-        updateScrollOwner();
+        scrollOwner = 'auto';
     }
 
     function updateScrollOwner() {
-        if (!isSynced || !activeLines?.lastLineIndex || !scrollArea) return;
+        if (!isSynced || !activeLines?.lastLineIndex) return;
 
-        const line = scrollArea?.querySelector<HTMLDivElement>(`#lyric-${activeLines?.lastLineIndex}`)?.parentElement;
+        const line = activeLine?.parentElement as HTMLParagraphElement;
         if (!line) return;
 
-        const isVisible = line.getBoundingClientRect().top >= 0 && line.getBoundingClientRect().bottom <= window.innerHeight;
+        // check if the active line is visible in the scroll area
+        const isVisible = scrollArea.scrollTop > line.offsetTop - (scrollArea.offsetHeight / 2) + line.offsetHeight / 2 || scrollArea.scrollTop < line.offsetTop - (scrollArea.offsetHeight / 2) - line.offsetHeight / 2;
 
         if (isVisible && scrollOwner === 'auto') {
             scrollOwner = 'user';
@@ -60,11 +62,11 @@
     }
 </script>
 
-<div {...props} class={cn("h-full w-full text-white/90", props.class)}>
+<div {...props} class={cn("h-full w-full text-white/90", props.class)} bind:this={container}>
     {#if typeof lyrics === 'string'}
         {@const lines = lyrics.split('\n').map((line, index) => [line, index])}
-        <ScrollArea class="h-full w-full" style="mask: var(--mini-mask);" orientation="vertical">
-            <div class="p-20 pb-80 text-5xl font-bold leading-snug">
+        <ScrollArea class="h-full w-full" style="mask: var(--mini-mask); -webkit-mask: var(--mini-mask);" orientation="vertical">
+            <div class="p-5 pt-80 pb-80 text-5xl font-bold leading-snug">
                 {#each lines as [line, index]}
                     <p id={index.toString()}>{line}</p>
                 {/each}
@@ -73,11 +75,11 @@
     {:else if Array.isArray(lyrics) && lyrics.length > 0}
         <div
             class="h-full w-full overflow-auto no-scrollbar"
-            style="mask: var(--large-mask);"
+            style="mask: var(--large-mask); -webkit-mask: var(--large-mask);"
             bind:this={scrollArea}
             onwheel={updateScrollOwner}
         >
-            <div class="p-20 pt-80 pb-80 text-5xl font-bold leading-snug flex flex-col gap-4">
+            <div class="p-5 pr-8 pt-80 pb-80 text-5xl font-bold leading-snug flex flex-col gap-4 w-full">
                 {#snippet SyncedLine(line: TrackSyncedLyric, index: number, isActive: boolean)}
                     {#if isActive}
                         <a href="#lyric-{index.toString()}" onclick={e => onLineClick(e, line)} bind:this={activeLine}>
@@ -94,7 +96,7 @@
                         <p
                             id={`lyric-${index.toString()}`}
                             class={cn(
-                                "cursor-pointer duration-1000 transition-all leading-tight will-change-transform",
+                                "duration-1000 transition-all leading-tight will-change-transform text-wrap",
                                 isActive
                                     ? $isBlurAllowed
                                         ? `text-white animate-glow scale-105 translate-x-[2%]`

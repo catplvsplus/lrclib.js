@@ -34,7 +34,7 @@
         <div class="shrink-0">
             <AppearanceSettings class="bg-white/10 hover:bg-white/20 rounded-full border-none">
                 <DropdownMenu.Separator />
-                <DropdownMenu.Item onclick={() => goto(base)}>
+                <DropdownMenu.Item onclick={() => goto(base + '/')}>
                     <Home size=16 class="mr-2"/>
                     Homepage
                 </DropdownMenu.Item>

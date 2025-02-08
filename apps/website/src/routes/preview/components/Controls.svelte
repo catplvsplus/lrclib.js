@@ -68,7 +68,7 @@
 </script>
 
 <div class={cn("flex flex-col items-center w-full gap-3", props.class)}>
-    <div class={cn("max-[1020px]:hidden")}>
+    <div class={cn("max-[1020px]:hidden w-full")}>
         <AspectRatio ratio={1/1} class="w-full relative overflow-hidden rounded-lg shadow-lg">
             <img src={metadata.cover} alt={metadata.title} class="object-cover h-full w-full" bind:this={image}>
         </AspectRatio>

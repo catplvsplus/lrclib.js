@@ -75,9 +75,10 @@
             </div>
         </ScrollArea>
     {:else if Array.isArray(lyrics) && lyrics.length > 0}
+        {@const mask = isSmallScreen.current ? '--mobile-mask' : '--large-mask' }
         <div
             class="h-full w-full overflow-auto no-scrollbar {isSmallScreen.current && "scroll-pt-16"}"
-            style="mask: var(--large-mask); -webkit-mask: var(--large-mask);"
+            style="mask: var({mask}); -webkit-mask: var({mask});"
             bind:this={scrollArea}
             onwheel={updateScrollOwner}
         >

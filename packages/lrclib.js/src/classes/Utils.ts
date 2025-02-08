@@ -1,5 +1,5 @@
 import type { APIPublishTokenData } from '../types/API.js';
-import type { TrackSyncedLyrics } from './Track.js';
+import type { TrackDurationLyrics, TrackSyncedLyrics } from './Track.js';
 
 export class Utils {
     private constructor() {}
@@ -54,6 +54,25 @@ export class Utils {
         }
 
         return lyrics;
+    }
+
+    /**
+     * Get the active lines based on the duration
+     * @param lyrics The synced lyrics
+     * @param duration The duration in ms
+     * @returns The active lines
+     */
+    public static getActiveLines(lyrics: TrackSyncedLyrics, duration: number): TrackDurationLyrics {
+        const lines = lyrics.filter(lyrics => lyrics.timeMs <= duration);
+        const indexes = lines.map(lrc => lyrics.indexOf(lrc));
+
+        return {
+            lines,
+            indexes,
+            duration,
+            lastLine: lines[lines.length - 1],
+            lastLineIndex: indexes[indexes.length - 1]
+        };
     }
 
     /**

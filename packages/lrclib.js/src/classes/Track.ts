@@ -15,6 +15,8 @@ export interface TrackDurationLyrics {
     lines: TrackSyncedLyric[];
     indexes: number[];
     duration: number;
+    lastLine?: TrackSyncedLyric;
+    lastLineIndex?: number;
 }
 
 export class Track implements APIResponse.Get.TrackSignature {
@@ -49,13 +51,9 @@ export class Track implements APIResponse.Get.TrackSignature {
         return this.instrumental === false;
     }
 
-    public getDurationLyrics(duration: number): TrackDurationLyrics{
+    public getActiveLines(duration: number): TrackDurationLyrics {
         if (!this.isSynced()) return { lines: [], indexes: [], duration };
-
-        const lines = this.syncedLyricsJSON.filter(lyrics => (lyrics.timeMs / 1000) <= duration);
-        const indexes = lines.map(lyrics => this.syncedLyricsJSON.indexOf(lyrics));
-
-        return { lines, indexes, duration };
+        return Utils.getActiveLines(this.syncedLyricsJSON, duration);
     }
 
     public toAPIJSON(): APIOptions.Get.TrackSignatureOptions & APIOptions.Get.TrackById {

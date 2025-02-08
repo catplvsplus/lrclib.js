@@ -69,8 +69,6 @@ export async function getAudioMetadata(blob: Blob|File, track: Track, fetchSpoti
     let artist = fileData.common.artist ?? null;
     let album = fileData.common.album ?? null;
 
-    console.log({ cover, title, artist, album });
-
     if (fetchSpotify && (!cover || !title || !artist || !album)) {
         const data = await spotifyAPI.searchTracks(`${title ?? track.trackName} ${artist ?? track.artistName}`, {
             limit: 1
@@ -101,4 +99,29 @@ export function getTrackDefaultMetadata(track: Track): IAudioMetadata {
         artist: track.artistName,
         album: track.albumName
     }
+}
+
+export function getBlurAmount(currentIndex: number, activeIndex: number): string {
+    const indexDistance = activeIndex - currentIndex;
+
+    let amount: number|string = 0;
+
+    switch (indexDistance) {
+        case 0:
+            amount = 0;
+            break;
+        case 1:
+        case -1:
+            amount = 1;
+            break;
+        case 2:
+        case -2:
+            amount = 2;
+            break;
+        default:
+            amount = 3;
+            break;
+    }
+
+    return `blur(${amount}px)`;
 }

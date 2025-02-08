@@ -66,7 +66,7 @@
     });
 </script>
 
-<div class={cn("flex flex-col items-center w-fit gap-3", props.class)}>
+<div class={cn("flex flex-col items-center w-full gap-3", props.class)}>
     <div class={cn("h-[500px] w-[500px] relative overflow-hidden rounded-lg shadow-lg")}>
         <img src={metadata.cover} alt={metadata.title} class="object-cover h-full w-full" bind:this={image}>
     </div>

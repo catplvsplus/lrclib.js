@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { IAudioMetadata } from '$lib/helpers/types';
     import { error } from '@sveltejs/kit';
-    import type { Track } from 'lrclib';
+    import type { Track, TrackSyncedLyrics } from 'lrclib';
     import { cn, getAudioMetadata, getTrackDefaultMetadata } from '$lib/helpers/utils';
     import type { FastAverageColorResult } from 'fast-average-color';
     import Controls from './Controls.svelte';
@@ -28,6 +28,7 @@
     let paused: boolean = $state(false);
     let wakelock: WakeLockSentinel|null = $state(null);
     let isFullscreen: boolean = $state(false);
+    let lyrics: string|TrackSyncedLyrics|null = $state(null);
 
     $effect(() => {
         if (!track) error(403, 'No track provided');
@@ -42,6 +43,8 @@
             document.body.requestFullscreen({
                 navigationUI: 'hide'
             });
+        } else {
+            if (document.fullscreenElement) document.exitFullscreen();
         }
     });
 
@@ -55,6 +58,14 @@
         wakelock?.addEventListener('release', () => wakelock = null);
         return wakelock;
     }
+
+    function switchLyricsType() {
+        if (typeof lyrics === 'string') {
+            lyrics = track.isSynced() ? track.syncedLyricsJSON : track.plainLyrics;
+        } else {
+            lyrics = track.isPlain() ? track.plainLyrics : track.syncedLyricsJSON;
+        }
+    }
 </script>
 
 <svelte:window
@@ -66,9 +77,9 @@
         if (e.key === 'Escape') isFullscreen = false;
         if (e.key === ' ') paused = !paused;
         if (e.key === 'f' || e.key === 'F11') isFullscreen = !isFullscreen;
+        if (e.key === 'l') switchLyricsType();
         if (e.key === 'ArrowLeft') currentTime = currentTime - seekAmount < 0 ? 0 : currentTime - seekAmount;
         if (e.key === 'ArrowRight') currentTime = currentTime + seekAmount > duration ? duration : currentTime + seekAmount;
-        console.log(e.key);
     }}
 />
 
@@ -84,13 +95,15 @@
     {#if !isFullscreen}<NavBar addSearchBox={false} useAnimation useTransparency/>{/if}
     <Background class="z-0 top-0 left-0 fixed" bind:metadata bind:averageColor bind:paused/>
     <div class={cn("relative z-10 transition-all duration-500 select-none text-white flex justify-center h-full px-5 pt-0", !isFullscreen && "pt-16")}>
-        <div class="w-full h-full flex max-w-screen-2xl gap-20">
-            <div class={cn("min-w-[500px] h-full shrink-0 flex justify-center items-center")}>
+        <div class="w-full h-full flex justify-center max-w-screen-2xl gap-20">
+            <div class={cn("w-[500px] h-full shrink-0 flex justify-center items-center")}>
                 <Controls bind:metadata bind:averageColor bind:paused bind:currentTime bind:duration bind:isFullscreen/>
             </div>
-            <div class="w-full h-full">
-                <Lyrics/>
-            </div>
+            {#if track.isSynced() || track.plainLyrics}
+                <div class="w-full h-full">
+                    <Lyrics lyrics={lyrics ?? (track.isSynced() ? track.syncedLyricsJSON : track.plainLyrics)} bind:currentTime/>
+                </div>
+            {/if}
         </div>
     </div>
 {/if}

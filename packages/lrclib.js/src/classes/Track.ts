@@ -1,4 +1,4 @@
-import type { APITrackSignatureResponse } from '../types/API.js';
+import type { APIOptions, APIResponse } from '../types/API.js';
 import type { Client } from './Client.js';
 import { Utils } from './Utils.js';
 
@@ -11,40 +11,62 @@ export interface TrackSyncedLyric {
 
 export type TrackSyncedLyrics = TrackSyncedLyric[];
 
-export class Track implements APITrackSignatureResponse {
-    public id: number;
-    public trackName: string;
-    public artistName: string;
-    public albumName: string;
-    public duration: number;
-    public instrumental: boolean;
-    public plainLyrics: string;
-    public syncedLyrics: string;
+export interface TrackDurationLyrics {
+    lines: TrackSyncedLyric[];
+    indexes: number[];
+    duration: number;
+    lastLine?: TrackSyncedLyric;
+    lastLineIndex?: number;
+}
 
-    get isSynced(): boolean {
+export class Track implements APIResponse.Get.TrackSignature {
+    public id!: number;
+    public trackName!: string;
+    public artistName!: string;
+    public albumName!: string;
+    public instrumental!: boolean;
+    public plainLyrics!: string;
+    public syncedLyrics!: string;
+    public duration!: number;
+
+    private createdAt: Date = new Date();
+
+    public get syncedLyricsJSON(): TrackSyncedLyrics|null {
+        return this.isSynced() ? Utils.parseTrackSyncedLyricsJSON(this.syncedLyrics) : null;
+    }
+
+    public constructor(options: APIResponse.Get.TrackSignature, public client?: Client) {
+        Track._patch(this, options);
+    }
+
+    public isSynced(): this is Track & { instrumental: false; syncedLyricsJSON: TrackSyncedLyrics; } {
         return !!this.syncedLyrics;
     }
 
-    get isPlain(): boolean {
-        return !!this.plainLyrics;
+    public isInstrumental(): this is Track & { instrumental: true; syncedLyricsJSON: null; } {
+        return this.instrumental === true;
     }
 
-    get syncedLyricsJSON(): TrackSyncedLyrics {
-        return this.isSynced ? Utils.parseTrackSyncedLyricsJSON(this.syncedLyrics) : [];
+    public isPlain(): this is Track & { instrumental: false; syncedLyricsJSON: null; } {
+        return this.instrumental === false;
     }
 
-    constructor(track: APITrackSignatureResponse, public readonly client: Client) {
-        this.id = track.id;
-        this.trackName = track.trackName;
-        this.artistName = track.artistName;
-        this.albumName = track.albumName;
-        this.duration = track.duration;
-        this.instrumental = track.instrumental;
-        this.plainLyrics = track.plainLyrics;
-        this.syncedLyrics = track.syncedLyrics;
+    public getActiveLines(duration: number): TrackDurationLyrics {
+        if (!this.isSynced()) return { lines: [], indexes: [], duration };
+        return Utils.getActiveLines(this.syncedLyricsJSON, duration);
     }
 
-    public toJSON(): APITrackSignatureResponse {
+    public toAPIJSON(): APIOptions.Get.TrackSignatureOptions & APIOptions.Get.TrackById {
+        return {
+            id: this.id,
+            track_name: this.trackName,
+            artist_name: this.artistName,
+            album_name: this.albumName,
+            duration: this.duration
+        }
+    }
+
+    public toJSON(): APIResponse.Get.TrackSignature {
         return {
             id: this.id,
             trackName: this.trackName,
@@ -57,15 +79,19 @@ export class Track implements APITrackSignatureResponse {
         };
     }
 
-    public static _patch(track: Track, data: Track|APITrackSignatureResponse): Track {
-        track.id = data.id;
-        track.trackName = data.trackName;
-        track.artistName = data.artistName;
-        track.albumName = data.albumName;
-        track.duration = data.duration;
-        track.instrumental = data.instrumental;
-        track.plainLyrics = data.plainLyrics;
-        track.syncedLyrics = data.syncedLyrics;
+    public static _patch(track: Track, options: APIResponse.Get.TrackSignature): Track {
+        track.id = options.id;
+        track.trackName = options.trackName;
+        track.artistName = options.artistName;
+        track.albumName = options.albumName;
+        track.instrumental = options.instrumental;
+        track.plainLyrics = options.plainLyrics || '';
+        track.syncedLyrics = options.syncedLyrics || '';
+        track.duration = options.duration;
         return track;
+    }
+
+    public static getCreatedAt(track: Track): Date {
+        return track.createdAt;
     }
 }

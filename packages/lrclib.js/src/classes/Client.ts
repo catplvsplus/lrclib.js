@@ -1,57 +1,124 @@
-import type { APITrackSignatureResponse, RoutesGetIDLyricsOptions, RoutesGetSearchQueryOptions, RoutesGetTrackLyricsOptions } from '../types/API.js';
-import { REST, type RESTOptions } from './REST.js';
-import { Routes } from './Routes.js';
-import { Track } from './Track.js';
 import { Collection } from '@discordjs/collection';
+import { Track } from './Track.js';
+import { REST, type RESTOptions } from './REST.js';
+import type { APIOptions, APIPublishTokenData, APIResponse } from '../types/API.js';
+import { Routes } from './Routes.js';
+import { Utils } from './Utils.js';
 
-export interface ClientOptions extends RESTOptions {}
+export interface ClientOptions {
+    rest?: RESTOptions|REST;
+    cache?: Collection<number, Track>;
+    cacheMaxAge?: number;
+}
 
-export class Client {
-    public rest: REST;
+export class Client implements ClientOptions {
+    public rest: REST = new REST();
+    public cache: Collection<number, Track> = new Collection();
+    public cacheMaxAge: number = 86400000;
 
-    public cache: Collection<string, Track> = new Collection();
+    private cacheSweeper?: NodeJS.Timeout;
 
-    constructor(options?: ClientOptions) {
-        this.rest = new REST(options);
+    public constructor(options?: ClientOptions) {
+        if (options?.rest) this.rest = options.rest instanceof REST ? options.rest : new REST(options.rest);
+        if (options?.cache) this.cache = options.cache;
+
+        this.createCacheSweeper(options?.cacheMaxAge);
     }
 
-    public async search(data: RoutesGetSearchQueryOptions|RoutesGetSearchQueryOptions|string): Promise<Track[]> {
-        const tracks = (await this.rest.get(Routes['/api/search'](
-            typeof data === 'string'
-                ? { q: data }
-                : data
-        ))).map(track => this._patchCache(track));
+    /**
+     * Publish a track to the API
+     * @param track The track to publish
+     * @param token The API publish token
+     */
+    public async publishTrack(track: APIOptions.Post.Publish|Utils.JSONEncodable<APIOptions.Post.Publish>, token?: string|APIPublishTokenData): Promise<void> {
+        if (!token) {
+            const challenge = await this.rest.post(Routes['/api/request-challenge'](), {});
+            token = await Utils.solveChallenge(challenge.prefix, challenge.target);
+        }
+
+        await this.rest.post(Routes['/api/publish'](), {
+            json: Utils.isJSONEncodable(track) ? track.toJSON() : track,
+            headers: {
+                'X-Publish-Token': typeof token === 'string' ? token : Utils.parseAPIPublishToken(token)
+            }
+        });
+    }
+
+    /**
+     * Search for tracks
+     * @param search Search query or options
+     * @param cache Whether to cache the results
+     * @returns The search results
+     */
+    public async search(search: string|APIOptions.Get.Search|Utils.JSONEncodable<APIOptions.Get.Search>, cache: boolean = true): Promise<Track[]> {
+        const query = Utils.isJSONEncodable(search) ? search.toJSON() : search;
+        const tracks = await this.rest.get(Routes['/api/search'](
+            typeof query === 'string' ? { q: query } : query
+        )).then(t => cache ? this._patchCache(t) : t.map(t => new Track(t)));
 
         return tracks;
     }
 
-    public async fetchId(data: number|string|RoutesGetIDLyricsOptions): Promise<Track> {
-        const track = await this.rest.get(Routes['/api/get/{id}']({
-            id: Number(typeof data === 'object' ? data.id : data)
-        }));
+    /**
+     * Get a track by its ID
+     * @param id The track ID
+     * @param cache Whether to cache the track
+     * @returns The track
+     * @throws Errors if the track is not found
+     */
+    public async fetchTrackById(id: number|APIOptions.Get.TrackById, cache: boolean = true): Promise<Track> {
+        id = typeof id === 'number' ? id : id.id;
 
-        return this._patchCache(track);
-    }
-
-    public async fetchTrack(data: RoutesGetTrackLyricsOptions & { cached?: boolean; }): Promise<Track> {
-        if (data.cached !== false) {
-            const track = this.cache.find(t => data.album_name === t.albumName && data.artist_name === t.artistName && data.track_name === t.trackName && data.duration === t.duration);
+        if (cache) {
+            const track = this.cache.get(id);
             if (track) return track;
-
-            const trackData = await this.rest.get(Routes['/api/get-cached'](data));
-            return this._patchCache(trackData);
         }
 
-        const trackData = await this.rest.get(Routes['/api/get'](data));
-        return this._patchCache(trackData);
+        return this.rest.get(Routes['/api/get/{id}']({ id })).then(t => cache ? this._patchCache([t])[0] : new Track(t, this));
     }
 
-    private _patchCache(track: Track|APITrackSignatureResponse): Track {
-        const cache = this.cache.get(track.id.toString());
-        if (cache) return Track._patch(cache, track);
+    /**
+     * Get a track by its signature data
+     * @param data The track signature data
+     * @param cache Whether to cache the track
+     * @returns The track
+     * @throws Errors if the track is not found
+     */
+    public async fetchTrack(data: APIOptions.Get.TrackSignatureOptions|Utils.JSONEncodable<APIOptions.Get.TrackSignatureOptions>, cache: boolean = true): Promise<Track> {
+        data = Utils.isJSONEncodable(data) ? data.toJSON() : data;
 
-        const newTrack = new Track(track, this);
-        this.cache.set(track.id.toString(), newTrack);
-        return newTrack;
+        if (cache) {
+            const track = this.cache.find(t => data.track_name === t.trackName && data.artist_name === t.artistName && data.album_name === t.albumName && (!data.duration || data.duration === t.duration));
+            if (track) return track;
+        }
+
+        return this.rest.get(Routes['/api/get'](data)).then(t => cache ? this._patchCache([t])[0] : new Track(t, this));
+    }
+
+    /**
+     * Create a cache sweeper
+     * @param maxAge The maximum age of the cache
+     */
+    public createCacheSweeper(maxAge?: number): void {
+        if (maxAge) this.cacheMaxAge = maxAge;
+
+        if (this.cacheSweeper) clearInterval(this.cacheSweeper);
+        if (this.cacheMaxAge === Infinity || this.cacheMaxAge <= 0) return;
+
+        this.cacheSweeper = setInterval(() => this.cache.sweep(t => Date.now() - Track.getCreatedAt(t).getTime() > this.cacheMaxAge), 60000);
+    }
+
+    private _patchCache(data: (Track|APIResponse.Get.TrackSignature)[]): Track[] {
+        return data.map(t => {
+            let track = this.cache.get(t.id);
+
+            if (!track) {
+                this.cache.set(t.id, track = t instanceof Track ? t : new Track(t));
+            } else {
+                Track._patch(track, t);
+            }
+
+            return track;
+        });
     }
 }

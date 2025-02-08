@@ -1,4 +1,5 @@
 import { defineConfig } from "tsup";
+import { esbuildPluginVersionInjector } from 'esbuild-plugin-version-injector';
 
 export default defineConfig({
     entry: ['src/index.ts'],
@@ -19,7 +20,10 @@ export default defineConfig({
     keepNames: true,
     dts: true,
     sourcemap: true,
-    esbuildPlugins: [],
+    esbuildPlugins: [
+        // @ts-expect-error
+        esbuildPluginVersionInjector()
+    ],
     treeshake: true,
     outDir: './dist',
     tsconfig: 'tsconfig.json',

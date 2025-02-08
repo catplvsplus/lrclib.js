@@ -1,17 +1,34 @@
-import type { TrackSyncedLyrics } from './Track.js';
+import type { APIPublishTokenData } from '../types/API.js';
+import type { TrackDurationLyrics, TrackSyncedLyrics } from './Track.js';
 
 export class Utils {
     private constructor() {}
 
-    public static recordToSearchQuery(record: Record<string, any>): string {
+    /**
+     * The version of the library
+     */
+    public static version: string = '[VI]{{inject}}[/VI]';
+
+    /**
+     * Convert a record to a query string
+     * @param record The record to convert to queries
+     * @returns The query string
+     */
+    public static recordToQueries(record: Record<string, any>): string {
         const entries = Object.entries(record);
         if (!entries.length) return '';
 
         return '?' + entries
+            .filter(([key, value]) => value !== undefined)
             .map(([key, value]) => `${key}=${value}`)
             .join('&');
     }
 
+    /**
+     * Parse a track synced lyrics JSON
+     * @param raw The raw synced lyrics
+     * @returns The parsed synced lyrics
+     */
     public static parseTrackSyncedLyricsJSON(raw: string): TrackSyncedLyrics {
         const lines: string[] = raw.split('\n').filter(Boolean);
         const lyrics: TrackSyncedLyrics = [];
@@ -37,5 +54,99 @@ export class Utils {
         }
 
         return lyrics;
+    }
+
+    /**
+     * Get the active lines based on the duration
+     * @param lyrics The synced lyrics
+     * @param duration The duration in ms
+     * @returns The active lines
+     */
+    public static getActiveLines(lyrics: TrackSyncedLyrics, duration: number): TrackDurationLyrics {
+        const lines = lyrics.filter(lyrics => lyrics.timeMs <= duration);
+        const indexes = lines.map(lrc => lyrics.indexOf(lrc));
+
+        return {
+            lines,
+            indexes,
+            duration,
+            lastLine: lines[lines.length - 1],
+            lastLineIndex: indexes[indexes.length - 1]
+        };
+    }
+
+    /**
+     * Parse an API publish token
+     * @param data The data to parse
+     * @returns The parsed token
+     */
+    public static parseAPIPublishToken(data: APIPublishTokenData): string {
+        return `${data.prefix}:${data.nonce}`;
+    }
+
+    /**
+     * Compute the SHA-256 hash of a string
+     * @param message The message to hash
+     * @returns The hash
+     */
+    public static async sha256(message: string): Promise<Uint8Array> {
+        const msgBuffer = new TextEncoder().encode(message);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        return new Uint8Array(hashBuffer);
+    }
+
+    /**
+     * Verify a nonce for API publish token
+     * @param result The nonce to verify
+     * @param target The target nonce
+     * @returns Whether the nonce is valid
+     */
+    public static verifyNonce(result: Uint8Array, target: Uint8Array): boolean {
+        if (result.length !== target.length) return false;
+
+        for (let i = 0; i < result.length - 1; i++) {
+            if (result[i] > target[i]) {
+                return false;
+            } else if (result[i] < target[i]) {
+                break;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Solve an API publish token challenge
+     * @param prefix The prefix of the challenge
+     * @param targetHex The target hex of the challenge
+     * @returns The nonce
+     */
+    public static async solveChallenge(prefix: string, targetHex: string): Promise<APIPublishTokenData> {
+        let nonce = 0;
+        let hashed: Uint8Array;
+        const target = Uint8Array.from(Buffer.from(targetHex, 'hex'));
+
+        while (true) {
+            const input = `${prefix}${nonce}`;
+            hashed = await this.sha256(input);
+
+            if (this.verifyNonce(hashed, target)) {
+                break;
+            } else {
+                nonce += 1;
+            }
+        }
+
+        return { prefix, nonce: nonce.toString()};
+    }
+
+    public static isJSONEncodable<T extends any = any>(value: any): value is Utils.JSONEncodable<any> {
+        return typeof value.toJSON === 'function';
+    }
+}
+
+export namespace Utils {
+    export interface JSONEncodable<T> {
+        toJSON(): T;
     }
 }

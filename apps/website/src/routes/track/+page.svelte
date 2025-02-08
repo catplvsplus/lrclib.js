@@ -1,8 +1,6 @@
 <script lang="ts">
-    import { page } from '$app/state';
     import NavBar from "$lib/components/shared/NavBar.svelte";
     import { lrclib, type Track } from 'lrclib';
-    import { onMount } from 'svelte';
     import { queryParam, ssp } from 'sveltekit-search-params';
     import LyricsTextView from '$lib/components/shared/LyricsTextView.svelte';
     import { Badge } from '$lib/components/ui/badge';

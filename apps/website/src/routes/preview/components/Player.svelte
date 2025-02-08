@@ -96,7 +96,7 @@
     <Background class="z-0 top-0 left-0 fixed" bind:metadata bind:averageColor bind:paused/>
     <div class={cn("relative z-10 transition-all duration-500 select-none text-white flex justify-center h-full px-5 pt-0", !isFullscreen && "pt-16")}>
         <div class="w-full h-full flex justify-center max-w-screen-2xl gap-20 p-5">
-            <div class={cn("w-[500px] h-full shrink-0 flex justify-center items-center")}>
+            <div class={cn("w-[600px] h-full shrink-0 flex justify-center items-center pl-24")}>
                 <Controls bind:metadata bind:averageColor bind:paused bind:currentTime bind:duration bind:isFullscreen/>
             </div>
             {#if track.isSynced() || track.plainLyrics}

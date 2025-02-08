@@ -6,6 +6,7 @@
     import { fade } from 'svelte/transition';
     import { Button } from '../../../lib/components/ui/button';
     import { Download, Maximize2, Minimize2, Pause, Play } from 'lucide-svelte';
+    import { AspectRatio } from '../../../lib/components/ui/aspect-ratio';
 
     let {
         averageColor = $bindable(),
@@ -67,9 +68,9 @@
 </script>
 
 <div class={cn("flex flex-col items-center w-full gap-3", props.class)}>
-    <div class={cn("h-[500px] w-[500px] relative overflow-hidden rounded-lg shadow-lg")}>
+    <AspectRatio ratio={1/1} class="w-full relative overflow-hidden rounded-lg shadow-lg">
         <img src={metadata.cover} alt={metadata.title} class="object-cover h-full w-full" bind:this={image}>
-    </div>
+    </AspectRatio>
     <div class="text-center flex flex-col text-nowrap w-full mt-2 *:text-ellipsis *:overflow-hidden">
         <h1 class="text-3xl font-bold">{metadata.title}</h1>
         <h4 class="opacity-65">{metadata.artist}</h4>

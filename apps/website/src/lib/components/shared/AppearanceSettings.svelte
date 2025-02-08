@@ -36,6 +36,7 @@
                 <Check size=16 class={cn($isPreviewAllowed ? "text-primary" : "text-transparent", "mr-2")}/>
                 Lyrics Preview
             </DropdownMenu.Item>
+            {@render props.children?.()}
         </DropdownMenu.Group>
     </DropdownMenu.Content>
 </DropdownMenu.Root>

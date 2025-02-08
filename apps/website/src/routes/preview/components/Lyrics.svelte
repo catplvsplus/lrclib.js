@@ -3,6 +3,7 @@
     import { cn, getBlurAmount } from '$lib/helpers/utils';
     import { ScrollArea } from '$lib/components/ui/scroll-area';
     import { isBlurAllowed } from '$lib/helpers/stores';
+    import { MediaQuery } from 'svelte/reactivity';
 
     let {
         lyrics = $bindable(),
@@ -17,7 +18,6 @@
     let scrollArea: HTMLDivElement = $state()!;
     let container: HTMLDivElement = $state()!;
     let scrollOwner: 'user'|'auto' = $state('auto');
-    let scrollPosition: ScrollLogicalPosition = $state('center');
     let activeLines: TrackDurationLyrics|null = $derived(
         typeof lyrics !== 'string' && Array.isArray(lyrics)
             ? Utils.getActiveLines(lyrics, currentTime * 1000)
@@ -25,6 +25,8 @@
     );
     let activeLine: HTMLAnchorElement|null = $state(null);
     let isSynced: boolean = $derived(typeof lyrics === 'string' ? false : !!lyrics);
+    let isSmallScreen = new MediaQuery("(max-width: 1020px)");
+    let scrollPosition: ScrollLogicalPosition = $derived(isSmallScreen.current ? 'start' : 'center');
 
     $effect(() => {
         if (scrollOwner === 'auto') {
@@ -74,12 +76,18 @@
         </ScrollArea>
     {:else if Array.isArray(lyrics) && lyrics.length > 0}
         <div
-            class="h-full w-full overflow-auto no-scrollbar"
+            class="h-full w-full overflow-auto no-scrollbar {isSmallScreen.current && "scroll-pt-16"}"
             style="mask: var(--large-mask); -webkit-mask: var(--large-mask);"
             bind:this={scrollArea}
             onwheel={updateScrollOwner}
         >
-            <div class="p-5 pr-8 pt-80 pb-80 text-5xl font-bold leading-snug flex flex-col gap-4 w-full">
+            <div
+                class={cn(
+                    " gap-4 font-bold leading-snug flex flex-col w-full",
+                    isSmallScreen.current ? "text-4xl p-2" : "text-5xl p-5",
+                    "pr-8 pt-80 pb-80"
+                )}
+            >
                 {#snippet SyncedLine(line: TrackSyncedLyric, index: number, isActive: boolean)}
                     {#if isActive}
                         <a href="#lyric-{index.toString()}" onclick={e => onLineClick(e, line)} bind:this={activeLine}>

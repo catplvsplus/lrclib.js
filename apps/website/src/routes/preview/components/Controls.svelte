@@ -68,14 +68,16 @@
 </script>
 
 <div class={cn("flex flex-col items-center w-full gap-3", props.class)}>
-    <AspectRatio ratio={1/1} class="w-full relative overflow-hidden rounded-lg shadow-lg">
-        <img src={metadata.cover} alt={metadata.title} class="object-cover h-full w-full" bind:this={image}>
-    </AspectRatio>
-    <div class="text-center flex flex-col text-nowrap w-full mt-2 *:text-ellipsis *:overflow-hidden">
+    <div class={cn("max-[1020px]:hidden")}>
+        <AspectRatio ratio={1/1} class="w-full relative overflow-hidden rounded-lg shadow-lg">
+            <img src={metadata.cover} alt={metadata.title} class="object-cover h-full w-full" bind:this={image}>
+        </AspectRatio>
+    </div>
+    <div class={cn("text-center flex flex-col text-nowrap w-full mt-2 *:text-ellipsis *:overflow-hidden max-[1020px]:hidden")}>
         <h1 class="text-3xl font-bold">{metadata.title}</h1>
         <h4 class="opacity-65">{metadata.artist}</h4>
     </div>
-    <div class="flex items-center justify-between w-full gap-4 mt-2 font-semibold text-white/70">
+    <div class={cn("flex items-center justify-between w-full gap-4 mt-2 font-semibold text-white/70 max-[1020px]:[&>span]:hidden max-[1020px]:flex-col")}>
         <span class="min-w-11 text-left" in:fade>{DateTime.fromSeconds(currentTime).toFormat('mm:ss')}</span>
         <div class="w-full h-1.5 rounded-full bg-white/50" onpointerdown={pointerSeek} bind:this={progressTrack}>
             <span class="block relative h-1.5 rounded-full bg-white/70" style="width: {(currentTime / duration) * 100}%;">
@@ -83,6 +85,10 @@
             </span>
         </div>
         <span class="min-w-11 text-right">{DateTime.fromSeconds(duration).toFormat('mm:ss')}</span>
+        <div class={cn("flex justify-between w-full text-sm min-[1020px]:hidden text-white/50")}>
+            <span class="min-w-11 text-left" in:fade>{DateTime.fromSeconds(currentTime).toFormat('mm:ss')}</span>
+            <span class="min-w-11 text-right">{DateTime.fromSeconds(duration).toFormat('mm:ss')}</span>
+        </div>
     </div>
     <div class="flex items-center gap-5 mt-1">
         <Button

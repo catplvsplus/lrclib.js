@@ -17,11 +17,11 @@
     </DropdownMenu.Trigger>
     <DropdownMenu.Content
         class={cn(
-            "mx-2 mt-3 bg- backdrop-blur-xl",
+            "mx-2 mt-3",
             useTransparency
                 ? 'bg-transparent border-transparent' 
                 : $isBlurAllowed
-                    ? 'backdrop-blur-lg bg-background/70 border-border/60'
+                    ? 'backdrop-blur-lg dark:bg-background/70 dark:border-border/60 bg-background/50 border-border/40'
                     : 'bg-background',
         )}
     >

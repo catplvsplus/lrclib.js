@@ -132,7 +132,7 @@
 
     @media screen and (max-width: 1020px) {
         .items {
-            @apply gap-0 flex-col-reverse items-start justify-normal px-0 h-full max-w-[600px];
+            @apply gap-0 flex-col-reverse items-start justify-normal px-0 h-full max-w-[800px];
 
             .controls,
             .lyrics {

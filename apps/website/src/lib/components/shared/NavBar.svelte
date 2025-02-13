@@ -1,12 +1,12 @@
 <script lang="ts">
     import { base } from '$app/paths';
     import { cn } from "$lib/helpers/utils";
-    import { ArrowLeft, ArrowRight, Github, Search } from 'lucide-svelte';
+    import { ArrowLeft, Github, Search } from 'lucide-svelte';
     import { isBlurAllowed } from '../../helpers/stores';
     import { Button, buttonVariants } from '../ui/button';
     import SearchBox from './SearchBox.svelte';
     import AppearanceSettings from './AppearanceSettings.svelte';
-    import { blur, fly, slide, type FlyParams, type TransitionConfig } from 'svelte/transition';
+    import { fly, type FlyParams, type TransitionConfig } from 'svelte/transition';
     import { MediaQuery } from 'svelte/reactivity';
     import { page } from '$app/state';
     import { pushState } from '$app/navigation';

@@ -70,18 +70,18 @@
             <Input type="text" id="track_name" bind:value={track_name} placeholder="Track name" oninput={() => updateSearch()} disabled={parsingAudioFile}/>
         </div>
     </div>
-    <div class="flex gap-2">
-        <div class="w-1/2">
+    <div class="flex gap-2 sm:flex-row flex-col">
+        <div class="sm:w-1/2">
             <Label for="artist_name">Artist name</Label>
             <Input type="text" id="artist_name" bind:value={artist_name} placeholder="Artist name" oninput={() => updateSearch()} disabled={parsingAudioFile}/>
         </div>
-        <div class={cn("w-[calc(50%-3rem)]")}>
+        <div class={cn("sm:w-[calc(50%-3rem)]")}>
             <Label for="album_name">Album name</Label>
             <Input type="text" id="album_name" bind:value={album_name} placeholder="Album name" oninput={() => updateSearch()} disabled={parsingAudioFile}/>
         </div>
         <div class="shrink-0">
-            <Label>&nbsp;</Label>
-            <Button type="submit" class="flex" size="icon" disabled={!track_name || parsingAudioFile}>
+            <Label class="sm:inline-block hidden">&nbsp;</Label>
+            <Button type="submit" class="flex w-full sm:w-10" size="icon" disabled={!track_name || parsingAudioFile}>
                 <Search strokeWidth={2.5}/>
             </Button>
         </div>

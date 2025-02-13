@@ -42,7 +42,7 @@
         {/await}
     </div>
 </div>
-<style lang="scss">
+<style lang="postcss">
     .usage :global(pre) {
         @apply p-4 w-full;
     }

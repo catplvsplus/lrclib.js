@@ -105,7 +105,7 @@
     <div class={cn("relative z-10 transition-all min-h-[500px] duration-500 select-none text-white flex justify-center h-full px-5 pt-0", !isFullscreen || isSmallScreen.current ? "pt-16" : "" )}>
         <div class="w-full h-full flex justify-center max-w-screen-2xl gap-20 p-5 items">
             <div class={cn("w-[500px] h-full shrink-0 flex justify-center items-center controls")}>
-                <Controls bind:metadata bind:averageColor bind:paused bind:currentTime bind:duration bind:isFullscreen/>
+                <Controls bind:metadata bind:averageColor bind:paused bind:currentTime bind:duration bind:isFullscreen bind:lyrics/>
             </div>
             {#if track.isSynced() || track.plainLyrics}
                 <div class="w-full h-full max-w-2xl lyrics">

@@ -2,7 +2,7 @@
     import type { Track, TrackSyncedLyrics } from 'lrclib';
     import * as Tabs from "../ui/tabs";
     import { ScrollArea } from '../ui/scroll-area';
-    import { cn, copyText, selectText } from '../../helpers/utils';
+    import { cn, copyText, createLocalDownload } from '../../helpers/utils';
     import { lastActiveTab } from '../../helpers/stores';
     import { Button } from '../ui/button';
     import { Clipboard, Download, Play } from 'lucide-svelte';
@@ -19,21 +19,9 @@
 
     function downloadLyrics() {
         const text = activeTab === 'plain' ? track.plainLyrics : track.syncedLyrics;
-        const blob = new Blob([text], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
 
-        const a = document.createElement('a');
-
-        a.href = url;
-        a.download = `${track.trackName}.lrc`;
-
+        createLocalDownload(text, `${track.trackName}.lrc`);
         toast.success(`Lyrics downloaded!`);
-
-        document.body.appendChild(a);
-        a.click();
-
-        URL.revokeObjectURL(url);
-        a.remove();
     }
 
     function copyLyrics() {

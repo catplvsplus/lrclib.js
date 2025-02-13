@@ -5,7 +5,6 @@
     import type { Track } from 'lrclib';
     import { Badge } from '../ui/badge';
     import LyricsTextView from './LyricsTextView.svelte';
-    import { cn } from '../../helpers/utils';
 
     let {
         track = $bindable(),

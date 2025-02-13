@@ -1,12 +1,14 @@
 <script lang="ts">
     import { FastAverageColor, type FastAverageColorResult } from 'fast-average-color';
     import type { IAudioMetadata } from '$lib/helpers/types';
-    import { cn } from '$lib/helpers/utils';
+    import { cn, createLocalDownload } from '$lib/helpers/utils';
     import { DateTime } from 'luxon';
     import { fade } from 'svelte/transition';
     import { Button } from '../../../lib/components/ui/button';
     import { Download, Maximize2, Minimize2, Pause, Play } from 'lucide-svelte';
     import { AspectRatio } from '../../../lib/components/ui/aspect-ratio';
+    import { toast } from 'svelte-sonner';
+    import type { TrackSyncedLyrics } from 'lrclib';
 
     let {
         averageColor = $bindable(),
@@ -15,6 +17,7 @@
         duration = $bindable(),
         paused = $bindable(),
         isFullscreen = $bindable(),
+        lyrics = $bindable(),
         ...props
     }: {
         averageColor: FastAverageColorResult|null;
@@ -23,6 +26,7 @@
         duration: number;
         paused: boolean;
         isFullscreen: boolean;
+        lyrics: string|TrackSyncedLyrics|null;
         [key: string]: any;
     } = $props();
 
@@ -65,6 +69,15 @@
             document.body.classList.remove('overflow-hidden');
         }
     });
+
+    function downloadLyrics() {
+        if (!lyrics) return;
+
+        const text = typeof lyrics === 'string' ? lyrics : lyrics.map(({ text }) => text).join('\n');
+
+        createLocalDownload(text, `${metadata.title}.lrc`);
+        toast.success(`Lyrics downloaded!`);
+    }
 </script>
 
 <div class={cn("flex flex-col items-center w-full gap-3", props.class)}>
@@ -96,6 +109,8 @@
             size="icon"
             title=""
             class="h-11 w-11 bg-white/5 hover:bg-white/10 rounded-full [&_svg]:size-5 !text-white"
+            onclick={downloadLyrics}
+            disabled={!lyrics}
         >
             <Download/>
         </Button>

@@ -125,3 +125,19 @@ export function getBlurAmount(currentIndex: number, activeIndex: number): string
 
     return `blur(${amount}px)`;
 }
+
+export function createLocalDownload(content: string|Blob, filename: string) {
+    const blob = typeof content !== 'string' ? content : new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+
+    a.href = url;
+    a.download = filename;
+
+    document.body.appendChild(a);
+    a.click();
+
+    URL.revokeObjectURL(url);
+    a.remove();
+}

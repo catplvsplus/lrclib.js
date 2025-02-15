@@ -68,7 +68,7 @@
     {#if typeof lyrics === 'string'}
         {@const lines = lyrics.split('\n').map((line, index) => [line, index])}
         <ScrollArea class="h-full w-full" style="mask: var(--mini-mask); -webkit-mask: var(--mini-mask);" orientation="vertical">
-            <div class="p-5 pt-80 pb-80 text-5xl font-bold leading-snug">
+            <div class="mm:p-5 sm:pt-80 pt-20 pb-80 sm:text-5xl text-3xl font-bold sm:leading-snug leading-relaxed w-full">
                 {#each lines as [line, index]}
                     <p id={index.toString()}>{line}</p>
                 {/each}

@@ -43,7 +43,7 @@
 >
     <input
         type="text"
-        placeholder="Search..."
+        placeholder="Search lyrics..."
         bind:this={ref}
         class="py-2 px-4 w-full outline-none bg-transparent"
         bind:value

@@ -7,7 +7,6 @@
     import { cn } from '../../lib/helpers/utils';
     import Install from '../../lib/components/shared/Install.svelte';
     import { base } from '$app/paths';
-    import { buttonVariants } from '../../lib/components/ui/button';
 </script>
 
 <svelte:head>
@@ -20,12 +19,12 @@
         <h1 class="text-6xl font-bold leading-tight tracking-tighter">Lrclib<span class="text-primary">.js</span></h1>
         <p class="text-lg sm:text-xl text-muted-foreground my-3">A javascript library for interacting with <a href="http://lrclib.net" target="_blank" rel="noopener noreferrer" class="text-primary">lrclib.net</a> API</p>
         <SearchBox class="max-w-96 mt-4 inline-flex"/>
-        <div class="mt-2 text-sm flex flex-col gap-2 items-center">
-            <p>or</p>
-            <a href="{base}/publish" class={cn(buttonVariants({ variant: 'secondary' }))}>
+        <p class="mt-2 text-sm text-muted-foreground">
+            Cannot find the lyrics?
+            <a href="{base}/publish" class="text-primary hover:underline">
                 Publish lyrics
             </a>
-        </div>
+        </p>
     </div>
 </div>
 <div class="text-center pb-4">

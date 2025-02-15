@@ -21,7 +21,7 @@
         <SearchBox class="max-w-96 mt-4 inline-flex"/>
         <p class="mt-2 text-sm text-muted-foreground">
             Cannot find the lyrics?
-            <a href="{base}/publish" class="text-primary hover:underline">
+            <a href="{base}/studio" class="text-primary hover:underline">
                 Publish lyrics
             </a>
         </p>

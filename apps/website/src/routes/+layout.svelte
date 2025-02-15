@@ -7,8 +7,12 @@
     import { ModeWatcher } from 'mode-watcher';
     import { isMobile } from 'is-mobile';
     import { isBlurAllowed } from '../lib/helpers/stores';
+    import { afterNavigate, beforeNavigate, onNavigate } from '$app/navigation';
+    import PageLoading from '../lib/components/shared/PageLoading.svelte';
 
 	let { children } = $props();
+
+    let isNavigating = $state(false);
 
     async function updateServiceWorker() {
         const registration = await navigator.serviceWorker.ready;
@@ -38,9 +42,25 @@
 
         $isBlurAllowed = !isMobile() && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     });
+
+    beforeNavigate(() => {
+        isNavigating = true;
+    });
+
+    afterNavigate(() => {
+        isNavigating = false;
+    })
 </script>
 
 <Toaster/>
+{#if isNavigating}
+    <PageLoading/>
+    <style>
+        main {
+            overflow: hidden;
+        }
+    </style>
+{/if}
 <main class="w-full h-full bg-background" data-vaul-drawer-wrapper="">
     <ModeWatcher defaultMode="system"/>
     {@render children()}

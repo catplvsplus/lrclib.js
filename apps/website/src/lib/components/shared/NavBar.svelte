@@ -54,7 +54,7 @@
     in:animate={{ y: -65, opacity: 1 }}
     {...props}
     class={cn(
-        "h-16 w-full fixed top-0 left-0 z-50 border-b flex justify-center",
+        "h-16 w-full fixed top-0 left-0 z-40 border-b flex justify-center",
         useTransparency
             ? 'bg-transparent border-transparent' 
             : $isBlurAllowed
@@ -112,7 +112,9 @@
                 >
                     <Github/>
                 </a>
-                <AppearanceSettings class={useTransparency && 'border-transparent bg-transparent hover:bg-background/70 text-white dark'}/>
+                <AppearanceSettings class={useTransparency && 'border-transparent bg-transparent hover:bg-background/70 text-white dark'}>
+                    {@render props.children?.()}
+                </AppearanceSettings>
             </div>
         {/if}
     </div>

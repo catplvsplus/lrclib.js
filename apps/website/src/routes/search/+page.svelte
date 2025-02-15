@@ -5,8 +5,11 @@
     import ResultsSkeleton from '$lib/components/shared/ResultsSkeleton.svelte';
     import { onMount } from 'svelte';
     import AdvancedSearch from '$lib/components/shared/AdvancedSearch.svelte';
-    import { getSearchName, isAdvancedSearchOptions } from '$lib/helpers/utils';
+    import { cn, getSearchName, isAdvancedSearchOptions } from '$lib/helpers/utils';
     import SearchResult from '$lib/components/shared/SearchResult.svelte';
+    import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+    import { isPreviewAllowed } from '$lib/helpers/stores';
+    import { Check } from 'lucide-svelte';
 
     const params = queryParameters({
         q: true,
@@ -56,7 +59,12 @@
     <title>Lrclib.js | Search {getSearchName(getQuery())}</title>
 </svelte:head>
 
-<NavBar addSearchBox={false}/>
+<NavBar addSearchBox={false}>
+    <DropdownMenu.Item onclick={() => $isPreviewAllowed = !$isPreviewAllowed}>
+        <Check size=16 class={cn($isPreviewAllowed ? "text-primary" : "text-transparent", "mr-2")}/>
+        Lyrics Preview
+    </DropdownMenu.Item>
+</NavBar>
 
 <div class="pt-16 flex justify-center h-full">
     <div class="w-full max-w-screen-2xl p-5 flex flex-col gap-5">

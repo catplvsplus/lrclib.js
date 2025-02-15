@@ -4,7 +4,7 @@
     import { resetMode, setMode, userPrefersMode } from 'mode-watcher';
     import { Check, Settings } from 'lucide-svelte';
     import { buttonVariants } from '../ui/button';
-    import { isBlurAllowed, isPreviewAllowed } from '../../helpers/stores';
+    import { isBlurAllowed } from '../../helpers/stores';
     import type { ComponentType } from 'svelte';
 
     let { icon = Settings, useTransparency = false, ...props}: { icon?: ComponentType; useTransparency?: boolean; [key: string]: any; } = $props();
@@ -42,10 +42,6 @@
             <DropdownMenu.Item onclick={() => $isBlurAllowed = !$isBlurAllowed}>
                 <Check size=16 class={cn($isBlurAllowed ? "text-primary" : "text-transparent", "mr-2")}/>
                 Enable Blur
-            </DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => $isPreviewAllowed = !$isPreviewAllowed}>
-                <Check size=16 class={cn($isPreviewAllowed ? "text-primary" : "text-transparent", "mr-2")}/>
-                Lyrics Preview
             </DropdownMenu.Item>
             {@render props.children?.()}
         </DropdownMenu.Group>

@@ -11,7 +11,7 @@
     import { goto } from '$app/navigation';
     import { base } from '$app/paths';
 
-    let { track = $bindable(), ...props }: { track: Track; [key: string]: any; } = $props();
+    let { track = $bindable(), previewSelectFile = true, ...props }: { track: Track; previewSelectFile?: boolean; [key: string]: any; } = $props();
 
     let plainContainer: HTMLDivElement;
     let syncedContainer: HTMLDivElement;
@@ -33,7 +33,7 @@
     }
 
     function playLyrics() {
-        goto(`${base}/preview?id=${track.id}`);
+        goto(`${base}/preview?id=${track.id}${previewSelectFile ? '&select=true' : ''}`);
     }
 
     $effect(() => {

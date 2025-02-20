@@ -9,10 +9,12 @@
     let {
         track = $bindable(),
         open = $bindable(false),
+        previewSelectFile = true,
         ...props
     }: {
         track: Track;
         open: boolean;
+        previewSelectFile?: boolean;
         [key: string]: any;
     } = $props();
 
@@ -50,7 +52,7 @@
             </Dialog.Description>
             <div class="flex flex-wrap gap-1 pt-2 pb-4 justify-center sm:justify-start">{@render Badges()}</div>
         </Dialog.Header>
-        <LyricsTextView {track} class="h-[calc(100%-7rem)]"/>
+        <LyricsTextView {track} {previewSelectFile} class="h-[calc(100%-7rem)]"/>
     </Dialog.Content>
 </Dialog.Root>
 {:else}
@@ -68,7 +70,7 @@
                 </Drawer.Description>
             </Drawer.Header>
             <div class="px-4 pb-4 w-full h-[calc(100%-9rem)]">
-                <LyricsTextView {track}/>
+                <LyricsTextView {track} {previewSelectFile}/>
             </div>
         </Drawer.Content>
     </Drawer.Portal>

@@ -10,7 +10,7 @@
     import { page } from '$app/state';
     import TrackModal from './TrackModal.svelte';
 
-    let { result = $bindable(), ...props }: { result: Track; [key: string]: any; } = $props();
+    let { result = $bindable(), previewSelectFile = true, ...props }: { result: Track; previewSelectFile?: boolean; [key: string]: any; } = $props();
     let preview: [string, number][] = $derived(
         result.plainLyrics
             .split('\n')
@@ -90,5 +90,5 @@
 </div>
 
 {#if page.state.showLyricsModal === result.id}
-    <TrackModal track={result} open/>
+    <TrackModal track={result} open {previewSelectFile}/>
 {/if}

@@ -28,7 +28,7 @@
 
 <div class={cn("h-full w-full relative", props.class)}>
     {#if $isBlurAllowed}
-        <div class={cn("h-full w-full z-20 absolute top-0 left-0 backdrop-saturate-200 backdrop-blur-[10vh] bg-black/50")} out:fade={{ delay: 500, duration: 500 }} in:fade={{ duration: 500 }}></div>
+        <div class={cn("h-full w-full z-20 absolute top-0 left-0 backdrop-saturate-200 backdrop-blur-[10vh] bg-black/50")} out:fade={{ delay: 1000, duration: 500 }} in:fade={{ duration: 300 }}></div>
         <div class="h-full w-full top-0 left-0 absolute overflow-hidden" out:fade={{ duration: 500 }} in:fade={{ duration: 500, delay: 500 }}>
             <img src={metadata.cover} alt="" class="absolute h-full w-full">
             <img src={metadata.cover} alt="" class="animate-spin rounded-full absolute h-screen top-0 left-0" style="scale: 1.23; animation-duration: 20s; animation-play-state: {paused ? 'paused' : 'running'};">

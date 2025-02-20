@@ -7,14 +7,21 @@
     import { pushState } from '$app/navigation';
     import { page } from '$app/state';
     import Player from './components/Player.svelte';
+    import { onMount } from 'svelte';
 
     let buffer: File|null = $state(null);
     let track: Track|null = $state(null);
+    let input: HTMLInputElement|null = $state(null);
     let id = queryParam('id', ssp.number());
+    let selectFile = queryParam('select', ssp.boolean()) ?? false;
 
     $effect(() => {
         if (id) fetchTrack();
-    })
+    });
+
+    $effect(() => {
+        if (selectFile) input?.click();
+    });
 
     async function fetchTrack() {
         if (!$id) error(404, 'No track ID provided');
@@ -46,6 +53,7 @@
                     accept="audio/*"
                     class="mt-5 w-64 inline-block"
                     onchange={onFileChange}
+                    bind:ref={input}
                 />
             </div>
         </div>

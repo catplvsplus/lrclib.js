@@ -10,6 +10,7 @@
         footer,
         title,
         description,
+        drawerDirection = 'bottom',
         minWidth = `639px`,
         open = $bindable(),
         ...props
@@ -18,6 +19,7 @@
         footer?: Snippet<[{ type: 'dialog'|'drawer' }]>;
         title?: Snippet<[{ type: 'dialog'|'drawer' }]>;
         description?: Snippet<[{ type: 'dialog'|'drawer' }]>;
+        drawerDirection?: 'left'|'right'|'top'|'bottom';
         minWidth?: string;
         open: boolean;
         [key: string]: any;
@@ -46,7 +48,7 @@
         </DialogContent>
     </Dialog>
 {:else}
-    <Drawer bind:open>
+    <Drawer bind:open direction={drawerDirection}>
         <DrawerContent {...props}>
             {#if title || description}
                 <DrawerHeader>

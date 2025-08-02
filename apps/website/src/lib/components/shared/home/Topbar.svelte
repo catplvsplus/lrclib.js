@@ -1,6 +1,6 @@
 <script lang="ts">
     import { base, resolve } from "$app/paths";
-    import { FileIcon, GitBranchIcon, Github, HouseIcon, Menu, MenuIcon, PhoneCallIcon } from '@lucide/svelte';
+    import { FileIcon, GitBranchIcon, Github, HouseIcon, Menu, MenuIcon, PhoneCallIcon, XIcon } from '@lucide/svelte';
     import Logo from '../../svg/logo.svelte';
     import { Button, buttonVariants } from '../../ui/button';
     import ModeToggle from '../ModeToggle.svelte';
@@ -31,7 +31,7 @@
 
 <header class="fixed top-0 z-50 w-full h-16 flex justify-center bg-background border-b">
     <div class="container h-full flex items-center justify-between py-2 px-4">
-        <a href={resolve("/(home)")} class="flex items-center gap-1 text-xl font-medium">
+        <a href={resolve("/(home)")} class="flex items-center gap-1 text-xl font-bold tracking-wide">
             <Logo class="size-7"/>
             <span>lrclib<span class="text-primary">.js</span></span>
         </a>
@@ -46,7 +46,7 @@
         </div>
     </div>
 </header>
-<ResponsiveDialog bind:open={menuOpen}>
+<ResponsiveDialog bind:open={menuOpen} drawerDirection="top">
     {#snippet title()}
         Quick links
     {/snippet}
@@ -54,7 +54,7 @@
         Navigate to other parts of lrclib.js
     {/snippet}
     {#snippet content()}
-        <div class="grid grid-cols-2 gap-2 p-2">
+        <div class="grid sm:grid-cols-2 gap-2 p-2">
             {@render Links({
                 className: buttonVariants({
                     variant: "secondary",

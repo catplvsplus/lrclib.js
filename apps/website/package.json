@@ -21,6 +21,7 @@
 		"bits-ui": "^2.9.1",
 		"clsx": "^2.1.1",
 		"mode-watcher": "^1.1.0",
+		"runed": "^0.31.1",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
 		"svelte-sonner": "^1.0.5",

@@ -33,5 +33,8 @@
 		"typescript": "^5.0.0",
 		"vaul-svelte": "^1.0.0-next.7",
 		"vite": "^7.0.4"
+	},
+	"dependencies": {
+		"@sveltejs/adapter-auto": "^6.0.1"
 	}
 }

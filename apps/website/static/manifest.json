@@ -1,4 +1,10 @@
 {
+  "name": "lrclib.js",
+  "short_name": "lrclib.js",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fcf5f7",
+  "theme_color": "#a84370",
   "icons": [
     { "src": "/favicon.ico", "type": "image/x-icon", "sizes": "16x16 32x32" },
     { "src": "/icon-192.png", "type": "image/png", "sizes": "192x192" },

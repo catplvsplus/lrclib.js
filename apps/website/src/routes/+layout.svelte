@@ -38,7 +38,7 @@
 <Toaster/>
 
 <svelte:head>
-    <title>Lrclib.js</title>
+    <title>lrclib.js</title>
 </svelte:head>
 
 {@render children?.()}

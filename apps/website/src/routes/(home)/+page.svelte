@@ -1,8 +1,10 @@
 <script lang="ts">
-    import Button from "$lib/components/ui/button/button.svelte";
-    import { mode, toggleMode } from 'mode-watcher';
-    import Logo from '../../lib/components/svg/logo.svelte';
+    import Topbar from '$lib/components/shared/home/Topbar.svelte';
 </script>
-<Button onclick={toggleMode}>
-    <Logo/>
-</Button>
+
+<Topbar/>
+<div class="h-full pt-16 flex justify-center">
+    <main class="container p-4">
+        <h1>Home</h1>
+    </main>
+</div>

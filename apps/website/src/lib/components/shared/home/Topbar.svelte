@@ -1,6 +1,6 @@
 <script lang="ts">
     import { resolve } from "$app/paths";
-    import { EqualIcon, FileIcon, GitBranchIcon, Github, HouseIcon, Menu, MenuIcon, PhoneCallIcon, XIcon } from '@lucide/svelte';
+    import { EqualIcon, FileIcon, GitBranchIcon, HouseIcon, UsersIcon, XIcon } from '@lucide/svelte';
     import Logo from '../../svg/logo.svelte';
     import { Button, buttonVariants } from '../../ui/button';
     import ModeSwitcher from '../ModeSwitcher.svelte';
@@ -27,7 +27,7 @@
         Contribute
     </a>
     <a class={className} href={links.contact} target="_blank" onclick={() => menuState.close()}>
-        <PhoneCallIcon class={!showIcons ? 'hidden' : ''}/>
+        <UsersIcon class={!showIcons ? 'hidden' : ''}/>
         Contact
     </a>
 {/snippet}

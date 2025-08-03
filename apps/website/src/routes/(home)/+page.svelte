@@ -15,7 +15,7 @@
                     <h1 class="sm:text-8xl text-5xl font-bold tracking-wide">lrclib<span class="text-primary">.js</span></h1>
                     <h2 class="sm:text-xl text-lg px-5 sm:px-0 font-light tracking-wide md:max-w-96">A Library for interacting with <a href={links.lrclib} class="text-primary">lrclib.net</a> API</h2>
                 </div>
-                <div class="flex gap-2 max-w-md">
+                <div class="flex gap-2 md:max-w-md">
                     <Input placeholder="Search song" class="h-10 p-4"/>
                     <Button size="icon" class="size-10">
                         <SearchIcon/>

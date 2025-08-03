@@ -3,7 +3,8 @@
     import { Drawer, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
     import { DrawerContent } from '$lib/components/ui/drawer/index.js';
     import { MediaQuery } from 'svelte/reactivity';
-    import type { Snippet } from 'svelte';
+    import { untrack, type Snippet } from 'svelte';
+    import { DialogState } from '../../helpers/classes/DialogState.svelte';
 
     let {
         content,
@@ -12,7 +13,7 @@
         description,
         drawerDirection = 'bottom',
         minWidth = `639px`,
-        open = $bindable(),
+        dialogState = new DialogState(),
         ...props
     }: {
         content?: Snippet<[{ type: 'dialog'|'drawer' }]>;
@@ -21,20 +22,26 @@
         description?: Snippet<[{ type: 'dialog'|'drawer' }]>;
         drawerDirection?: 'left'|'right'|'top'|'bottom';
         minWidth?: string;
-        open: boolean;
+        dialogState?: DialogState;
         [key: string]: any;
     } = $props();
 
     let isDesktop: MediaQuery = $state()!;
-    let isDialogOpen = $derived(!!isDesktop?.current && open);
-    let isDrawerOpen = $derived(!isDesktop?.current && open);
+    let isDialogOpen = $derived(!!isDesktop?.current && dialogState.isOpen);
+    let isDrawerOpen = $derived(!isDesktop?.current && dialogState.isOpen);
 
     $effect(() => {
         isDesktop = new MediaQuery(`(min-width: ${minWidth})`);
     });
+
+    $effect(() => {
+        if (dialogState.isOpen !== dialogState.isActive) dialogState.toggle(dialogState.isActive);
+    });
 </script>
 
-<Dialog bind:open={() => isDialogOpen, o => open = o}>
+
+
+<Dialog bind:open={() => isDialogOpen, dialogState.toggle}>
     <DialogContent {...props}>
         {#if title || description}
             <DialogHeader class="text-start">
@@ -48,7 +55,7 @@
         {/if}
     </DialogContent>
 </Dialog>
-<Drawer bind:open={() => isDrawerOpen, o => open = o} direction={drawerDirection}>
+<Drawer bind:open={() => isDrawerOpen, dialogState.toggle} direction={drawerDirection}>
     <DrawerContent {...props}>
         {#if title || description}
             <DrawerHeader>

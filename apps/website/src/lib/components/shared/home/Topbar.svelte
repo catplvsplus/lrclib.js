@@ -6,24 +6,27 @@
     import ModeSwitcher from '../ModeSwitcher.svelte';
     import { links } from '../../../helpers/constants';
     import ResponsiveDialog from '../ResponsiveDialog.svelte';
+    import { DialogState } from '../../../helpers/classes/DialogState.svelte';
 
-    let menuOpen = $state(false);
+    let menuState = new DialogState({
+        id: 'menu'
+    });
 </script>
 
 {#snippet Links({ className, showIcons }: { className?: string; showIcons?: boolean; } = {})}
-    <a class={className} href={resolve("/(home)")} onclick={() => menuOpen = false}>
+    <a class={className} href={resolve("/(home)")} onclick={() => menuState.close()}>
         <HouseIcon class={!showIcons ? 'hidden' : ''}/>
         Home
     </a>
-    <a class={className} href={resolve("/docs")} onclick={() => menuOpen = false}>
+    <a class={className} href={resolve("/docs")} onclick={() => menuState.close()}>
         <FileIcon class={!showIcons ? 'hidden' : ''}/>
         Docs
     </a>
-    <a class={className} href={links.github} target="_blank" onclick={() => menuOpen = false}>
+    <a class={className} href={links.github} target="_blank" onclick={() => menuState.close()}>
         <GitBranchIcon class={!showIcons ? 'hidden' : ''}/>
         Contribute
     </a>
-    <a class={className} href={links.contact} target="_blank" onclick={() => menuOpen = false}>
+    <a class={className} href={links.contact} target="_blank" onclick={() => menuState.close()}>
         <PhoneCallIcon class={!showIcons ? 'hidden' : ''}/>
         Contact
     </a>
@@ -40,13 +43,13 @@
         </nav>
         <div class="flex items-center gap-2">
             <ModeSwitcher/>
-            <Button class="sm:hidden" variant="outline" size="icon" onclick={() => menuOpen = !menuOpen}>
+            <Button class="sm:hidden" variant="outline" size="icon" onclick={() => menuState.toggle()}>
                 <EqualIcon/>
             </Button>
         </div>
     </div>
 </header>
-<ResponsiveDialog bind:open={menuOpen} drawerDirection="right">
+<ResponsiveDialog dialogState={menuState} drawerDirection="right">
     {#snippet title()}
         Quick links
     {/snippet}
@@ -66,6 +69,6 @@
         </div>
     {/snippet}
     {#snippet footer()}
-        <Button variant="secondary" size="lg" class="w-full" onclick={() => menuOpen = false}>Close</Button>
+        <Button variant="secondary" size="lg" class="w-full" onclick={() => menuState.close()}>Close</Button>
     {/snippet}
 </ResponsiveDialog>

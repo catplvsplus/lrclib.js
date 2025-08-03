@@ -48,8 +48,6 @@ async function serveFromCache(event: FetchEvent) {
         const clone = response.clone();
 
         if (response.ok && url.protocol.startsWith('http')) {
-            console.log('Serving from network', url);
-
             event.waitUntil((async () => {
                 const cache = await caches.open(cacheName);
                 await cache.put(request, clone);
@@ -58,15 +56,8 @@ async function serveFromCache(event: FetchEvent) {
 
         return response;
     } catch (error) {
-        console.log('Falling back to cache', url);
         const cached = await caches.match(request);
-
-        if (cached) {
-            console.log('Serving from cache', url);
-            return cached;
-        } else {
-            console.error('Cache miss', url);
-        }
+        if (cached) return cached;
     }
 
     return new Response(null, { status: 404 });

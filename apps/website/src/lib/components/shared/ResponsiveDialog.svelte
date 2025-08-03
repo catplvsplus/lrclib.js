@@ -72,5 +72,11 @@
         {#if footer}
             <DrawerFooter>{@render footer({ type: 'drawer' })}</DrawerFooter>
         {/if}
+        <style>
+            html,
+            body {
+                overscroll-behavior-y: contain;
+            }
+        </style>
     </DrawerContent>
 </Drawer>

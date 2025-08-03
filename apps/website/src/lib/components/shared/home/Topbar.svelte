@@ -7,6 +7,7 @@
     import { links } from '../../../helpers/constants';
     import ResponsiveDialog from '../ResponsiveDialog.svelte';
     import { DialogState } from '../../../helpers/classes/DialogState.svelte';
+    import { cn } from '../../../helpers/utils';
 
     let menuState = new DialogState({
         id: 'menu'
@@ -49,7 +50,7 @@
         </div>
     </div>
 </header>
-<ResponsiveDialog dialogState={menuState} drawerDirection="right" drawerContentProps={{ class: "w-full! max-w-sm" }}>
+<ResponsiveDialog dialogState={menuState} drawerDirection="right" drawerContentProps={{ class: "w-full! max-w-96" }}>
     {#snippet title({ type })}
         Quick links
         <Button variant="ghost" size="icon" class="absolute top-0 right-0 mt-4 mr-4 {type === 'dialog' && 'hidden'}" onclick={() => menuState.close()}>
@@ -59,13 +60,15 @@
     {#snippet description()}
         Navigate to other parts of lrclib.js
     {/snippet}
-    {#snippet content({type })}
+    {#snippet content({ type })}
         <div class="grid sm:grid-cols-2 gap-2 p-2">
             {@render Links({
                 className: buttonVariants({
                     variant: "secondary",
                     size: "lg",
-                    class: "justify-start bg-transparent border border-muted h-12 text-sm"
+                    class: cn(
+                        "justify-start bg-transparent border border-muted h-12 text-sm rounded-lg"
+                    )
                 }),
                 showIcons: true
             })}

@@ -5,6 +5,9 @@
     import { MediaQuery } from 'svelte/reactivity';
     import { untrack, type Snippet } from 'svelte';
     import { DialogState } from '../../helpers/classes/DialogState.svelte';
+    import type { DialogContentProps, DialogRootProps } from 'bits-ui';
+    import type { DrawerContentProps } from 'vaul-svelte';
+    import { cn } from '../../helpers/utils';
 
     let {
         content,
@@ -23,6 +26,8 @@
         drawerDirection?: 'left'|'right'|'top'|'bottom';
         minWidth?: string;
         dialogState?: DialogState;
+        dialogContentProps?: DialogContentProps;
+        drawerContentProps?: DrawerContentProps;
         [key: string]: any;
     } = $props();
 
@@ -42,7 +47,7 @@
 
 
 <Dialog bind:open={() => isDialogOpen, dialogState.toggle}>
-    <DialogContent {...props}>
+    <DialogContent {...props.dialogContentProps}>
         {#if title || description}
             <DialogHeader class="text-start">
                 {#if title}<DialogTitle>{@render title({ type: 'dialog' })}</DialogTitle>{/if}
@@ -56,7 +61,7 @@
     </DialogContent>
 </Dialog>
 <Drawer bind:open={() => isDrawerOpen, dialogState.toggle} direction={drawerDirection}>
-    <DrawerContent {...props}>
+    <DrawerContent {...props.drawerContentProps}>
         {#if title || description}
             <DrawerHeader>
                 {#if title}<DrawerTitle>{@render title({ type: 'drawer' })}</DrawerTitle>{/if}

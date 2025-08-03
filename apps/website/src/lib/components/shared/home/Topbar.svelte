@@ -42,21 +42,24 @@
             {@render Links()}
         </nav>
         <div class="flex items-center gap-2">
-            <ModeSwitcher/>
-            <Button class="sm:hidden" variant="outline" size="icon" onclick={() => menuState.toggle()}>
-                <EqualIcon/>
+            <ModeSwitcher class="hidden sm:flex"/>
+            <Button class="sm:hidden" variant="ghost" size="icon" onclick={() => menuState.toggle()}>
+                <EqualIcon class="size-6!"/>
             </Button>
         </div>
     </div>
 </header>
-<ResponsiveDialog dialogState={menuState} drawerDirection="right">
-    {#snippet title()}
+<ResponsiveDialog dialogState={menuState} drawerDirection="right" drawerContentProps={{ class: "w-full! max-w-sm" }}>
+    {#snippet title({ type })}
         Quick links
+        <Button variant="ghost" size="icon" class="absolute top-0 right-0 mt-4 mr-4 {type === 'dialog' && 'hidden'}" onclick={() => menuState.close()}>
+            <XIcon class="size-6!"/>
+        </Button>
     {/snippet}
     {#snippet description()}
         Navigate to other parts of lrclib.js
     {/snippet}
-    {#snippet content()}
+    {#snippet content({type })}
         <div class="grid sm:grid-cols-2 gap-2 p-2">
             {@render Links({
                 className: buttonVariants({
@@ -66,9 +69,10 @@
                 }),
                 showIcons: true
             })}
+            <ModeSwitcher labels={true} class="w-full h-10 {type === 'dialog' && 'hidden'}"/>
         </div>
     {/snippet}
-    {#snippet footer()}
-        <Button variant="secondary" size="lg" class="w-full" onclick={() => menuState.close()}>Close</Button>
+    {#snippet footer({ type })}
+        <Button variant="secondary" size="lg" class="w-full {type === 'drawer' && 'hidden'}" onclick={() => menuState.close()}>Close</Button>
     {/snippet}
 </ResponsiveDialog>

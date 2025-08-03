@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { base, resolve } from "$app/paths";
-    import { FileIcon, GitBranchIcon, Github, HouseIcon, Menu, MenuIcon, PhoneCallIcon, XIcon } from '@lucide/svelte';
+    import { resolve } from "$app/paths";
+    import { EqualIcon, FileIcon, GitBranchIcon, Github, HouseIcon, Menu, MenuIcon, PhoneCallIcon, XIcon } from '@lucide/svelte';
     import Logo from '../../svg/logo.svelte';
     import { Button, buttonVariants } from '../../ui/button';
-    import ModeToggle from '../ModeToggle.svelte';
+    import ModeSwitcher from '../ModeSwitcher.svelte';
     import { links } from '../../../helpers/constants';
     import ResponsiveDialog from '../ResponsiveDialog.svelte';
 
@@ -39,14 +39,14 @@
             {@render Links()}
         </nav>
         <div class="flex items-center gap-2">
-            <ModeToggle variant="outline"/>
+            <ModeSwitcher/>
             <Button class="sm:hidden" variant="outline" size="icon" onclick={() => menuOpen = !menuOpen}>
-                <MenuIcon/>
+                <EqualIcon/>
             </Button>
         </div>
     </div>
 </header>
-<ResponsiveDialog bind:open={menuOpen} drawerDirection="top">
+<ResponsiveDialog bind:open={menuOpen} drawerDirection="right">
     {#snippet title()}
         Quick links
     {/snippet}

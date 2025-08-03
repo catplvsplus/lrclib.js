@@ -41,4 +41,6 @@
     <title>lrclib.js</title>
 </svelte:head>
 
-{@render children?.()}
+<div data-vaul-drawer-wrapper="" class="contents">
+    {@render children?.()}
+</div>

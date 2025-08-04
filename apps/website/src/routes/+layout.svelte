@@ -3,6 +3,7 @@
     import { ModeWatcher } from 'mode-watcher';
     import { Toaster } from '$lib/components/ui/sonner/index';
     import { toast } from 'svelte-sonner';
+    import { TooltipProvider } from '../lib/components/ui/tooltip';
 
 	let { children } = $props();
 
@@ -41,4 +42,6 @@
     <title>Lrclib.js</title>
 </svelte:head>
 
-{@render children?.()}
+<TooltipProvider>
+    {@render children?.()}
+</TooltipProvider>

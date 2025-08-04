@@ -30,16 +30,11 @@ export class Client implements ClientOptions {
      * @param track The track to publish
      * @param token The API publish token
      */
-    public async publishTrack(track: APIOptions.Post.Publish|Utils.JSONEncodable<APIOptions.Post.Publish>, token?: string|APIPublishTokenData): Promise<void> {
-        if (!token) {
-            const challenge = await this.rest.post(Routes['/api/request-challenge'](), {});
-            token = await Utils.solveChallenge(challenge.prefix, challenge.target);
-        }
-
+    public async publishTrack(track: APIOptions.Post.Publish|Utils.JSONEncodable<APIOptions.Post.Publish>, token: string|APIPublishTokenData): Promise<void> {
         await this.rest.post(Routes['/api/publish'](), {
             json: Utils.isJSONEncodable(track) ? track.toJSON() : track,
             headers: {
-                'X-Publish-Token': typeof token === 'string' ? token : Utils.parseAPIPublishToken(token)
+                'X-Publish-Token': typeof token === 'string' ? token : `${token.prefix}:${token.nonce}`
             }
         });
     }

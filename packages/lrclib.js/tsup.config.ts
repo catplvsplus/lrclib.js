@@ -6,7 +6,7 @@ export default defineConfig({
     external: [],
     noExternal: [],
     platform: 'neutral',
-    format: ['esm'],
+    format: ['esm', 'cjs'],
     skipNodeModulesBundle: true,
     target: 'esnext',
     clean: true,
@@ -21,7 +21,6 @@ export default defineConfig({
     dts: true,
     sourcemap: true,
     esbuildPlugins: [
-        // @ts-expect-error
         esbuildPluginVersionInjector()
     ],
     treeshake: true,

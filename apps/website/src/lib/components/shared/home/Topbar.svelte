@@ -50,7 +50,7 @@
         </div>
     </div>
 </header>
-<ResponsiveDialog dialogState={menuState} drawerDirection="right" drawerContentProps={{ class: "w-full! max-w-96" }}>
+<ResponsiveDialog dialogState={menuState} drawerDirection="right" drawerContentProps={{ class: "w-full! max-w-75" }}>
     {#snippet title({ type })}
         Quick links
         <Button variant="ghost" size="icon" class="absolute top-0 right-0 mt-4 mr-4 {type === 'dialog' && 'hidden'}" onclick={() => menuState.close()}>

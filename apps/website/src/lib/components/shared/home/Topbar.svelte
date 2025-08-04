@@ -9,6 +9,7 @@
     import { DialogState } from '../../../helpers/classes/DialogState.svelte';
     import { cn } from '../../../helpers/utils';
     import ModeToggle from '../ModeToggle.svelte';
+    import { settings } from '../../../helpers/classes/Settings.svelte';
 
     let menuState = new DialogState({ id: 'menu' });
 </script>
@@ -32,7 +33,12 @@
     </a>
 {/snippet}
 
-<header class="fixed top-0 z-50 w-full h-16 flex justify-center bg-background border-b">
+<header
+    class={cn(
+        "fixed top-0 z-50 w-full h-16 flex justify-center bg-background border-b",
+        !settings.prefersReducedTransparency && "backdrop-blur-sm backdrop-saturate-150 bg-background/60",
+    )}
+>
     <div class="container h-full flex items-center justify-between py-2 px-4">
         <Button class="sm:hidden" variant="ghost" size="icon" onclick={() => menuState.toggle()}>
             <EqualIcon class="size-6!"/>
@@ -50,12 +56,24 @@
         </div>
     </div>
 </header>
-<ResponsiveDialog dialogState={menuState} drawerDirection="left" drawerContentProps={{ class: "w-full! max-w-75" }}>
+<ResponsiveDialog
+    dialogState={menuState}
+    drawerDirection="left"
+    drawerContentProps={{
+        class: cn(
+            "w-full! max-w-75",
+            !settings.prefersReducedTransparency && "backdrop-blur-sm backdrop-saturate-150 bg-background/80"
+        )
+    }}
+>
     {#snippet title({ type })}
         <span class:hidden={type === 'drawer'}>Quick links</span>
-        <Button variant="outline" size="icon" class="absolute top-0 left-0 mt-4 ml-4 {type === 'dialog' && 'hidden'}" onclick={() => menuState.close()}>
-            <XIcon class="size-6!"/>
-        </Button>
+        <div class="absolute top-0 left-0 mt-4 ml-4 flex gap-2 items-center" class:hidden={type === 'dialog'}>
+            <Button variant="outline" size="icon" onclick={() => menuState.close()}>
+                <XIcon class="size-6!"/>
+            </Button>
+            <span class="text-base font-bold">Quick links</span>
+        </div>
     {/snippet}
     {#snippet description({ type })}
         <span class:hidden={type === 'drawer'}>Navigate other parts of lrclib.js</span>
@@ -67,12 +85,11 @@
                     variant: "secondary",
                     size: "lg",
                     class: cn(
-                        "justify-start bg-transparent border border-muted h-12 text-sm rounded-lg"
+                        "justify-start bg-transparent border border-muted h-12 text-sm rounded-lg bg-muted/50"
                     )
                 }),
                 showIcons: true
             })}
-            <ModeSwitcher labels={true} class="w-full h-10 {type === 'dialog' && 'hidden'}"/>
         </div>
     {/snippet}
     {#snippet footer({ type })}

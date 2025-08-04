@@ -40,6 +40,13 @@ export class Client implements ClientOptions {
     }
 
     /**
+     * Request a challenge from the API for publishing
+     */
+    public async requestChallenge(): Promise<APIResponse.Post.RequestChallenge> {
+        return this.rest.post(Routes['/api/request-challenge']());
+    }
+
+    /**
      * Search for tracks
      * @param search Search query or options
      * @param cache Whether to cache the results

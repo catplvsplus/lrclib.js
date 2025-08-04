@@ -43,7 +43,7 @@ export class Client implements ClientOptions {
      * Request a challenge from the API for publishing
      */
     public async requestChallenge(): Promise<APIResponse.Post.RequestChallenge> {
-        return this.rest.post(Routes['/api/request-challenge']());
+        return (await this.rest.post(Routes['/api/request-challenge']())).json();
     }
 
     /**
@@ -56,7 +56,15 @@ export class Client implements ClientOptions {
         const query = Utils.isJSONEncodable(search) ? search.toJSON() : search;
         const tracks = await this.rest.get(Routes['/api/search'](
             typeof query === 'string' ? { q: query } : query
-        )).then(t => cache ? this._patchCache(t) : t.map(t => new Track(t)));
+        )).then(async data => {
+            const tracks = await data.json();
+
+            if (cache) {
+                return this._patchCache(tracks);
+            } else {
+                return tracks.map(t => new Track(t, this));
+            }
+        });
 
         return tracks;
     }
@@ -76,7 +84,15 @@ export class Client implements ClientOptions {
             if (track) return track;
         }
 
-        return this.rest.get(Routes['/api/get/{id}']({ id })).then(t => cache ? this._patchCache([t])[0] : new Track(t, this));
+        return this.rest.get(Routes['/api/get/{id}']({ id })).then(async data => {
+            const track = await data.json();
+
+            if (cache) {
+                return this._patchCache([track])[0];
+            } else {
+                return new Track(track, this);
+            }
+        });
     }
 
     /**
@@ -94,7 +110,15 @@ export class Client implements ClientOptions {
             if (track) return track;
         }
 
-        return this.rest.get(Routes['/api/get'](data)).then(t => cache ? this._patchCache([t])[0] : new Track(t, this));
+        return this.rest.get(Routes['/api/get'](data)).then(async data => {
+            const track = await data.json();
+
+            if (cache) {
+                return this._patchCache([track])[0];
+            } else {
+                return new Track(track, this);
+            }
+        });
     }
 
     /**
@@ -107,7 +131,7 @@ export class Client implements ClientOptions {
         if (this.cacheSweeper) clearInterval(this.cacheSweeper);
         if (this.cacheMaxAge === Infinity || this.cacheMaxAge <= 0) return;
 
-        this.cacheSweeper = setInterval(() => this.cache.sweep(t => Date.now() - Track.getCreatedAt(t).getTime() > this.cacheMaxAge), 60000);
+        this.cacheSweeper = setInterval(() => this.cache.sweep(t => Date.now() - Track.getCreatedAt(t).getTime() > this.cacheMaxAge), 60000).unref();
     }
 
     private _patchCache(data: (Track|APIResponse.Get.TrackSignature)[]): Track[] {
@@ -115,7 +139,7 @@ export class Client implements ClientOptions {
             let track = this.cache.get(t.id);
 
             if (!track) {
-                this.cache.set(t.id, track = t instanceof Track ? t : new Track(t));
+                this.cache.set(t.id, track = t instanceof Track ? t : new Track(t, this));
             } else {
                 Track._patch(track, t);
             }

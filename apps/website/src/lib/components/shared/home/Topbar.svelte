@@ -8,8 +8,6 @@
     import ResponsiveDialog from '../ResponsiveDialog.svelte';
     import { DialogState } from '../../../helpers/classes/DialogState.svelte';
     import { cn } from '../../../helpers/utils';
-    import { afterNavigate } from '$app/navigation';
-    import { onMount } from 'svelte';
 
     let menuState = new DialogState({ id: 'menu' });
 </script>
@@ -37,7 +35,7 @@
     <div class="container h-full flex items-center justify-between py-2 px-4">
         <a href={resolve("/(home)")} class="flex items-center gap-1 text-xl font-bold tracking-wide">
             <Logo class="size-7"/>
-            <span>lrclib<span class="text-primary">.js</span></span>
+            <span>Lrclib<span class="text-primary">.js</span></span>
         </a>
         <nav class="links items-center gap-4 text-sm sm:flex hidden font-medium">
             {@render Links()}

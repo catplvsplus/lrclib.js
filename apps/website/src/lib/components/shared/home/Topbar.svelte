@@ -8,6 +8,7 @@
     import ResponsiveDialog from '../ResponsiveDialog.svelte';
     import { DialogState } from '../../../helpers/classes/DialogState.svelte';
     import { cn } from '../../../helpers/utils';
+    import ModeToggle from '../ModeToggle.svelte';
 
     let menuState = new DialogState({ id: 'menu' });
 </script>
@@ -33,6 +34,9 @@
 
 <header class="fixed top-0 z-50 w-full h-16 flex justify-center bg-background border-b">
     <div class="container h-full flex items-center justify-between py-2 px-4">
+        <Button class="sm:hidden" variant="ghost" size="icon" onclick={() => menuState.toggle()}>
+            <EqualIcon class="size-6!"/>
+        </Button>
         <a href={resolve("/(home)")} class="flex items-center gap-1 text-xl font-bold tracking-wide">
             <Logo class="size-7"/>
             <span>Lrclib<span class="text-primary">.js</span></span>
@@ -42,24 +46,22 @@
         </nav>
         <div class="flex items-center gap-2">
             <ModeSwitcher class="hidden sm:flex"/>
-            <Button class="sm:hidden" variant="ghost" size="icon" onclick={() => menuState.toggle()}>
-                <EqualIcon class="size-6!"/>
-            </Button>
+            <ModeToggle class="sm:hidden" variant="outline"/>
         </div>
     </div>
 </header>
-<ResponsiveDialog dialogState={menuState} drawerDirection="right" drawerContentProps={{ class: "w-full! max-w-75" }}>
+<ResponsiveDialog dialogState={menuState} drawerDirection="left" drawerContentProps={{ class: "w-full! max-w-75" }}>
     {#snippet title({ type })}
-        Quick links
-        <Button variant="ghost" size="icon" class="absolute top-0 right-0 mt-4 mr-4 {type === 'dialog' && 'hidden'}" onclick={() => menuState.close()}>
+        <span class:hidden={type === 'drawer'}>Quick links</span>
+        <Button variant="outline" size="icon" class="absolute top-0 left-0 mt-4 ml-4 {type === 'dialog' && 'hidden'}" onclick={() => menuState.close()}>
             <XIcon class="size-6!"/>
         </Button>
     {/snippet}
-    {#snippet description()}
-        Navigate to other parts of lrclib.js
+    {#snippet description({ type })}
+        <span class:hidden={type === 'drawer'}>Navigate other parts of lrclib.js</span>
     {/snippet}
     {#snippet content({ type })}
-        <div class="grid sm:grid-cols-2 gap-2 p-2">
+        <div class="grid sm:grid-cols-2 gap-2 p-{type === 'drawer' ? '4' : '0'}" class:pt-6={type === 'drawer'}>
             {@render Links({
                 className: buttonVariants({
                     variant: "secondary",

@@ -20,8 +20,6 @@ export function removeActiveDialog(id: string, options: { type?: 'push'|'replace
 export function setActiveDialogs(activeDialogs: string[], { type, url }: { type?: 'push'|'replace'; url?: string; } = {}) {
     url ??= '';
 
-    console.log({ activeDialogs, type, url });
-
     switch (type ?? 'push') {
         case 'push':
             pushState(url, { ...page.state, activeDialogs });

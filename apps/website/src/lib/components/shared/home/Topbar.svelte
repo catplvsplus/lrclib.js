@@ -8,10 +8,10 @@
     import ResponsiveDialog from '../ResponsiveDialog.svelte';
     import { DialogState } from '../../../helpers/classes/DialogState.svelte';
     import { cn } from '../../../helpers/utils';
+    import { afterNavigate } from '$app/navigation';
+    import { onMount } from 'svelte';
 
-    let menuState = new DialogState({
-        id: 'menu'
-    });
+    let menuState = new DialogState({ id: 'menu' });
 </script>
 
 {#snippet Links({ className, showIcons }: { className?: string; showIcons?: boolean; } = {})}

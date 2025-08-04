@@ -10,7 +10,6 @@ export class DialogState {
     public isActive: boolean = $derived(this.id ? page.state.activeDialogs?.at(-1) === this.id : false);
 
     constructor(options?: DialogState.Options) {
-        if (options?.open) this.open();
         if (options?.id) this.id = options.id;
         if (options?.mode) this.mode = options.mode;
         if (options?.dialogUrl) this.dialogUrl = options.dialogUrl;
@@ -49,7 +48,6 @@ export class DialogState {
 
 export namespace DialogState {
     export interface Options {
-        open?: boolean;
         id?: string;
         mode?: 'push'|'replace';
         dialogUrl?: string;

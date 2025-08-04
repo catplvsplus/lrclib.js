@@ -3,11 +3,10 @@
     import { Drawer, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
     import { DrawerContent } from '$lib/components/ui/drawer/index.js';
     import { MediaQuery } from 'svelte/reactivity';
-    import { untrack, type Snippet } from 'svelte';
+    import { onMount, untrack, type Snippet } from 'svelte';
     import { DialogState } from '../../helpers/classes/DialogState.svelte';
-    import type { DialogContentProps, DialogRootProps } from 'bits-ui';
+    import type { DialogContentProps } from 'bits-ui';
     import type { DrawerContentProps } from 'vaul-svelte';
-    import { cn } from '../../helpers/utils';
 
     let {
         content,

@@ -1,5 +1,4 @@
 import type { APIPublishTokenData, APIResponse } from '../types/API.js';
-import { createHash } from 'crypto';
 
 export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
     public prefix: string;
@@ -25,8 +24,8 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
         return `${this.prefix}:${this.nonce}`;
     }
 
-    public solve(): APIPublishTokenData {
-        this.nonce = ChallengeSolver.solveChallenge(this);
+    public async solve(): Promise<APIPublishTokenData> {
+        this.nonce = await ChallengeSolver.solveChallenge(this);
 
         return {
             prefix: this.prefix,
@@ -34,14 +33,14 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
         };
     }
 
-    public static solveChallenge(data: APIResponse.Post.RequestChallenge): string {
+    public static async solveChallenge(data: APIResponse.Post.RequestChallenge): Promise<string> {
         const target = this.decodeHex(data.target);
 
         let nonce = 0;
 
         while (true) {
             const input = `${data.prefix}${nonce}`;
-            const hashed = this.sha256(input);
+            const hashed = await this.sha256(input);
 
             if (this.verifyNonce(hashed, target)) break;
 
@@ -69,9 +68,34 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
         return Uint8Array.from(Buffer.from(hex, 'hex'));
     }
 
-    public static sha256(input: string): Uint8Array {
-        const hash = createHash('sha256');
+    public static async sha256(input: string): Promise<Uint8Array> {
+        return this.isNode()
+            ? ChallengeSolver.nodeSHA256(input)
+            : ChallengeSolver.browserSHA256(input);
+    }
+}
+
+export namespace ChallengeSolver {
+    let nodeCrypto: typeof import('node:crypto')|null = null;
+
+    export async function resolveNodeCrypto(): Promise<typeof import('node:crypto')> {
+        return nodeCrypto ??= await import('node:crypto');
+    }
+
+    export async function nodeSHA256(input: string): Promise<Uint8Array> {
+        const crypto = await resolveNodeCrypto();
+        const hash = crypto.createHash('sha256');
         hash.update(input);
         return Uint8Array.from(hash.digest());
+    }
+
+    export async function browserSHA256(input: string): Promise<Uint8Array> {
+        const Uint8 = new TextEncoder().encode(input);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', Uint8);
+        return new Uint8Array(hashBuffer);
+    }
+
+    export function isNode(): boolean {
+       return typeof process !== 'undefined' && !!process.versions && !!process.versions.node;
     }
 }

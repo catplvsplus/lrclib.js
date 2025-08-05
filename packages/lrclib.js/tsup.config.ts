@@ -5,7 +5,7 @@ export default defineConfig({
     entry: ['src/index.ts'],
     external: [],
     noExternal: [],
-    platform: 'neutral',
+    platform: 'browser',
     format: ['esm', 'cjs'],
     skipNodeModulesBundle: true,
     target: 'esnext',

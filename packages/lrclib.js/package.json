@@ -22,8 +22,7 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@discordjs/collection": "^2.1.1",
-    "ky": "^1.7.4"
+    "@discordjs/collection": "^2.1.1"
   },
   "devDependencies": {
     "tsup": "^8.3.6"

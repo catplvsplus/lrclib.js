@@ -65,6 +65,11 @@
             !settings.prefersReducedTransparency && "backdrop-blur-sm backdrop-saturate-150 bg-background/80"
         )
     }}
+    dialogContentProps={{
+        class: cn(
+            !settings.prefersReducedTransparency && "backdrop-blur-sm backdrop-saturate-150 bg-background/80"
+        )
+    }}
 >
     {#snippet title({ type })}
         <span class:hidden={type === 'drawer'}>Quick links</span>

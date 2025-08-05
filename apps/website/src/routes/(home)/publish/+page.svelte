@@ -32,7 +32,6 @@
         },
         onUpdate: async data => {
             saveToDraft();
-            setTainted(true);
 
             draftStatus = 'idle';
             submitStatus = 'Fetching challenge';
@@ -54,8 +53,6 @@
                 });
 
             submitStatus = undefined;
-
-            setTainted(false);
         }
     });
 

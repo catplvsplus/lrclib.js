@@ -73,7 +73,7 @@
     </div>
 {/snippet}
 
-<Tabs bind:value {...props} class={cn("w-full max-w-96 bg-card rounded-xl border-primary/50 dark:border-primary border-2 shadow-primary/20 shadow-lg", props.class)}>
+<Tabs bind:value {...props} class={cn("w-full max-w-96 bg-card rounded-xl border-primary/70 dark:border-primary border-2 shadow-primary/20 shadow-lg", props.class)}>
     <TabsList class="w-full overflow-auto h-fit justify-start bg-transparent rounded-b-none border-b">
         {#each installCommands as { pkgManager, icon }}
             <TabsTrigger value={pkgManager} class="flex items-center gap-2 py-2 data-[state=active]:bg-black/5 shadow-transparent">

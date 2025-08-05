@@ -6,7 +6,7 @@
     import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '../../../lib/components/ui/form';
     import { superForm } from 'sveltekit-superforms';
     import { zodClient } from 'sveltekit-superforms/adapters';
-    import { publishTrackSchema } from '../../../lib/helpers/schema';
+    import { publishTrackSchema, type PublishTrackSchema } from '../../../lib/helpers/schema';
     import { Textarea } from '../../../lib/components/ui/textarea/index';
     import { parseAudioMetadata, parseLRCMetadata, publishTrackDraft } from '../../../lib/helpers/metadata';
     import { toast } from 'svelte-sonner';
@@ -18,6 +18,7 @@
     let { data } = $props();
 
     let draftStatus: 'idle'|'saving'|'saved' = $state(Object.keys(data.form.data).length ? 'saved' : 'idle');
+    let submitStatus: string|undefined = $state();
 
     const form = superForm(data.form, {
         SPA: true,
@@ -29,9 +30,32 @@
             draftStatus = 'saving';
             saveToDraft();
         },
-        onSubmit: async submit => {
-            toast.success('Track uploaded successfully!');
-            publishTrackDraft.current = {};
+        onUpdate: async data => {
+            saveToDraft();
+            setTainted(true);
+
+            draftStatus = 'idle';
+            submitStatus = 'Fetching challenge';
+
+            const challenge = await lrclib.requestChallenge();
+
+            submitStatus = 'Solving challenge';
+            const challengeSolver = new ChallengeSolver(challenge);
+            const token = await challengeSolver.solve();
+
+            submitStatus = 'Publishing';
+            await lrclib.publishTrack(data.form.data as Required<PublishTrackSchema>, token)
+                .then(() => {
+                    toast.success('Track uploaded successfully!');
+                })
+                .catch(error => {
+                    toast.error(error.message);
+                    data.cancel();
+                });
+
+            submitStatus = undefined;
+
+            setTainted(false);
         }
     });
 
@@ -63,19 +87,21 @@
         }
     }
 
+    function setTainted(isTainted: boolean) {
+        form.tainted.set({
+            trackName: isTainted,
+            artistName: isTainted,
+            albumName: isTainted,
+            duration: isTainted,
+            plainLyrics: isTainted,
+        });
+    }
+
     const saveToDraft = useDebounce(
         () => {
             publishTrackDraft.current = $formData;
-            $tainted = {
-                trackName: false,
-                artistName: false,
-                albumName: false,
-                plainLyrics: false,
-                duration: false,
-                syncedLyrics: false
-            };
-
             draftStatus = 'saved';
+            setTainted(false);
         },
         () => 3000
     );
@@ -109,7 +135,7 @@
                     <FormControl>
                         {#snippet children({ props })}
                             <FormLabel>Track Title</FormLabel>
-                            <Input {...props} bind:value={$formData.trackName} placeholder="Some song (ft. some artist)"/>
+                            <Input {...props} bind:value={$formData.trackName} disabled={$submitting} placeholder="Some song (ft. some artist)"/>
                         {/snippet}
                     </FormControl>
                     <FormFieldErrors/>
@@ -118,7 +144,7 @@
                     <FormControl>
                         {#snippet children({ props })}
                             <FormLabel>Artist Name</FormLabel>
-                            <Input {...props} bind:value={$formData.artistName} placeholder="Some artist"/>
+                            <Input {...props} bind:value={$formData.artistName} disabled={$submitting} placeholder="Some artist"/>
                         {/snippet}
                     </FormControl>
                     <FormFieldErrors/>
@@ -127,7 +153,7 @@
                     <FormControl>
                         {#snippet children({ props })}
                             <FormLabel>Album Name</FormLabel>
-                            <Input {...props} bind:value={$formData.albumName} placeholder="Some album"/>
+                            <Input {...props} bind:value={$formData.albumName} disabled={$submitting} placeholder="Some album"/>
                         {/snippet}
                     </FormControl>
                     <FormFieldErrors/>
@@ -136,7 +162,7 @@
                     <FormControl>
                         {#snippet children({ props })}
                             <FormLabel>Duration<span class="text-foreground/50">(in seconds)</span></FormLabel>
-                            <Input {...props} bind:value={$formData.duration} placeholder="120" type="number"/>
+                            <Input {...props} bind:value={$formData.duration} disabled={$submitting} placeholder="120" type="number"/>
                         {/snippet}
                     </FormControl>
                     <FormFieldErrors/>
@@ -146,7 +172,7 @@
                         <FormControl>
                             {#snippet children({ props })}
                                 <FormLabel>Synced Lyrics</FormLabel>
-                                <Textarea {...props} bind:value={$formData.syncedLyrics} placeholder="[00:00.000] Some lyrics" class="min-h-56 max-h-dvh font-mono"/>
+                                <Textarea {...props} bind:value={$formData.syncedLyrics} disabled={$submitting} placeholder="[00:00.000] Some lyrics" class="min-h-56 max-h-dvh font-mono"/>
                             {/snippet}
                         </FormControl>
                         <FormFieldErrors/>
@@ -155,7 +181,7 @@
                         <FormControl>
                             {#snippet children({ props })}
                                 <FormLabel>Plain Lyrics</FormLabel>
-                                <Textarea {...props} bind:value={$formData.plainLyrics} placeholder="Some lyrics" class="min-h-56 max-h-dvh font-mono"/>
+                                <Textarea {...props} bind:value={$formData.plainLyrics} disabled={$submitting} placeholder="Some lyrics" class="min-h-56 max-h-dvh font-mono"/>
                             {/snippet}
                         </FormControl>
                         <FormFieldErrors/>
@@ -163,13 +189,15 @@
                 </div>
                 <div class="flex justify-end items-center gap-2">
                     <Button type="button" class="relative overflow-clip w-36 text-xs opacity-80!" variant="outline" disabled>
-                        {#key draftStatus}
+                        {#key draftStatus || submitStatus}
                             <span
                                 class="absolute flex items-center gap-1"
                                 in:fly={{ y: 30, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
                                 out:fly={{ y: -30, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
                             >
-                                {#if draftStatus === 'saving'}
+                                {#if submitStatus}
+                                    {submitStatus}
+                                {:else if draftStatus === 'saving'}
                                     <LoaderIcon class="animate-spin size-4!"/>
                                     <span>Saving to Draft</span>
                                 {:else if draftStatus === 'saved'}

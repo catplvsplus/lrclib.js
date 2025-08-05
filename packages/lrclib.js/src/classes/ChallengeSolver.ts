@@ -65,7 +65,9 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
     }
 
     public static decodeHex(hex: string): Uint8Array {
-        return Uint8Array.from(Buffer.from(hex, 'hex'));
+        return new Uint8Array(
+            Array.from({ length: hex.length / 2 }, (_, i) => parseInt(hex.slice(i * 2, (i + 1) * 2), 16))
+        );
     }
 
     public static async sha256(input: string): Promise<Uint8Array> {

@@ -13,7 +13,9 @@
         <div class="text-center py-24">
             <h1 class="sm:text-7xl text-5xl font-bold tracking-wide text-foreground/80 text-shadow-current/20 text-shadow-lg">Lrclib<span class="text-primary">.js</span></h1>
             <p class="mt-2 sm:text-base text-sm font-medium text-muted-foreground">A library interacting with <a href={links.lrclib} target="_blank" rel="noopener noreferrer" class="border-b border-transparent hover:border-foreground focus-visible::border-foreground">lrclib.net</a> API</p>
-            <InstallCommand class="mt-20 mx-5 w-[calc(100%-3rem)] inline-block"/>
+            <div class="mt-20 mx-4 w-[calc(100%-2rem)] max-w-md inline-block">
+                <InstallCommand class="border-primary/70 dark:border-primary border-2 shadow-primary/20 shadow-lg"/>
+            </div>
         </div>
     </main>
 </div>

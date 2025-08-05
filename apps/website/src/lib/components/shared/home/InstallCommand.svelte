@@ -10,6 +10,7 @@
     import { copyText } from '../../../helpers/clipboard';
     import { fly } from 'svelte/transition';
     import { settings } from '../../../helpers/classes/Settings.svelte';
+    import { toast } from 'svelte-sonner';
 
     let { ...props }: TabsRootProps = $props();
 
@@ -18,7 +19,8 @@
     let valueContainer: HTMLElement|undefined = $state();
     let copied = $state(false);
 
-    function copyToClipboard() {
+    function copyToClipboard(e: MouseEvent) {
+        e.preventDefault();
         if (copied) return;
 
         copied = copyText({
@@ -27,7 +29,7 @@
             selectRequired: true
         });
 
-        console.log(valueContainer);
+        toast.success('Copied to clipboard!');
 
         if (copied) setTimeout(() => copied = false, 5000);
     }
@@ -35,13 +37,13 @@
 
 {#snippet InstallCommandContainer(data: typeof installCommands[0])}
     <div class="p-1 text-start text-sm flex items-center gap-2 relative">
-        <span class="[&_*]:select-all w-full px-2.5">
+        <a href="/" class="[&_*]:select-all w-full px-2.5" onclick={copyToClipboard}>
             {#if data.pkgManager === currentValue?.pkgManager}
                 <code bind:this={valueContainer}>{data.command}</code>
             {:else}
                 <code>{data.command}</code>
             {/if}
-        </span>
+        </a>
         <Tooltip disableCloseOnTriggerClick>
             <TooltipTrigger>
                 {#snippet child({ props })}
@@ -73,10 +75,10 @@
     </div>
 {/snippet}
 
-<Tabs bind:value {...props} class={cn("w-full max-w-96 bg-card rounded-xl border-primary/70 dark:border-primary border-2 shadow-primary/20 shadow-lg", props.class)}>
-    <TabsList class="w-full overflow-auto h-fit justify-start bg-transparent rounded-b-none border-b">
+<Tabs bind:value {...props} class={cn("bg-card rounded-xl border p-1", props.class)}>
+    <TabsList class="w-full overflow-auto h-fit justify-start bg-transparent rounded-b-none border-b pb-2">
         {#each installCommands as { pkgManager, icon }}
-            <TabsTrigger value={pkgManager} class="flex items-center gap-2 py-2 data-[state=active]:bg-black/5 shadow-transparent">
+            <TabsTrigger value={pkgManager} class="flex items-center gap-2 py-1 data-[state=active]:bg-black/5 shadow-transparent">
                 {#if icon}
                     {@const Icon = icon}
                     <Icon/>

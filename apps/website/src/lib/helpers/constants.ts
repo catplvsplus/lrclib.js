@@ -32,6 +32,6 @@ export const installCommands: (Record<'pkgManager'|'command', string> & { icon?:
     {
         icon: SiDeno,
         pkgManager: 'deno',
-        command: 'deno install lrclib.js'
+        command: 'deno install npm:lrclib.js'
     }
 ];

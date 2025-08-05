@@ -79,37 +79,61 @@ export namespace LRC {
     export interface ActiveLyricsLineData {
         type: LineType.LYRIC;
         line: LyricLine;
+        startMs: number;
+        endMs: number;
     }
 
     export interface ActiveLyricsEnhancedLineData {
         type: LineType.ENHANCED_LYRIC;
         line: EnhancedLyricLine;
-        words: ({ active: boolean; } & EnhancedWord)[];
+        words: ({
+            active: boolean;
+            startMs: number;
+            endMs: number;
+        } & EnhancedWord)[];
+        startMs: number;
+        endMs: number;
     }
 
-    export function getActiveLyrics(lyrics: (ParsedLine|ParsedEnhancedLine)[], duration: number): ActiveLyricsData {
+    export function getActiveLyrics(lyrics: (ParsedLine|ParsedEnhancedLine)[], durationMs: number): ActiveLyricsData {
+        const lyricLines = lyrics.filter(line => line.type === LineType.LYRIC || line.type === LineType.ENHANCED_LYRIC);
         const lines: (ActiveLyricsLineData|ActiveLyricsEnhancedLineData)[] = [];
 
-        lyricsLoop: for (const lyric of lyrics) {
-            let isActive: boolean = false;
+        for (const currentLine of lyricLines) {
+            if (currentLine.startMillisecond > durationMs) continue;
 
-            switch (lyric.type) {
-                case LineType.LYRIC:
-                case LineType.ENHANCED_LYRIC:
-                    isActive = lyric.startMillisecond <= duration;
-                    break;
-                case LineType.INVALID:
-                case LineType.METADATA:
-                    continue lyricsLoop;
+            const currentIndex = lyricLines.findIndex(l => l.lineNumber === currentLine.lineNumber);
+            const nextLine = currentIndex < (lyricLines.length - 1) ? lyricLines.at(currentIndex + 1) : undefined;
+
+            const startMs = currentLine.startMillisecond;
+            const endMs = nextLine?.startMillisecond ?? durationMs;
+            if (durationMs >= endMs) continue;
+
+            if (currentLine.type === LineType.LYRIC) {
+                lines.push({ type: LineType.LYRIC, line: currentLine, startMs, endMs });
+                continue;
             }
 
-            // TODO: Shi
+            const words: ActiveLyricsEnhancedLineData['words'] = currentLine.words.map(word => {
+                const nextWord = currentLine?.words.find(w => w.index === word.index + 1);
+                const wordStartMs = word.startMillisecond;
+                const wordEndMs = nextWord?.startMillisecond ?? endMs;
+
+                return {
+                    ...word,
+                    active: wordStartMs > durationMs && durationMs >= wordEndMs,
+                    startMs: wordStartMs,
+                    endMs: wordEndMs
+                };
+            });
+
+            lines.push({ type: LineType.ENHANCED_LYRIC, line: currentLine, words, startMs, endMs });
         }
 
         return {
             lines,
             startMs: 0,
-            endMs: duration
+            endMs: durationMs
         }
     }
 }

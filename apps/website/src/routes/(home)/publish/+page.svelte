@@ -1,35 +1,84 @@
 <script lang="ts">
     import lrclib, { ChallengeSolver, type APIPublishTokenData, type APIResponse } from 'lrclib.js';
     import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../lib/components/ui/card';
-    import { FileInputIcon } from '@lucide/svelte';
+    import { CheckIcon, FileInputIcon, LoaderIcon, PencilRulerIcon } from '@lucide/svelte';
     import { Input } from '../../../lib/components/ui/input';
     import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '../../../lib/components/ui/form';
     import { superForm } from 'sveltekit-superforms';
     import { zodClient } from 'sveltekit-superforms/adapters';
     import { publishTrackSchema } from '../../../lib/helpers/schema';
     import { Textarea } from '../../../lib/components/ui/textarea/index';
+    import { parseAudioMetadata, parseLRCMetadata, publishTrackDraft } from '../../../lib/helpers/metadata';
+    import { toast } from 'svelte-sonner';
+    import { useDebounce } from 'runed';
+    import { settings } from '../../../lib/helpers/classes/Settings.svelte';
+    import { fly } from 'svelte/transition';
+    import { Button } from '../../../lib/components/ui/button';
 
     let { data } = $props();
 
-    let fileInput: HTMLInputElement|null = $state(null);
+    let draftStatus: 'idle'|'saving'|'saved' = $state(Object.keys(data.form.data).length ? 'saved' : 'idle');
 
-    function importFromFile(event: Event & { currentTarget: HTMLInputElement }) {
+    const form = superForm(data.form, {
+        SPA: true,
+        validators: zodClient(publishTrackSchema),
+        validationMethod: 'oninput',
+        dataType: 'json',
+        taintedMessage: true,
+        onChange: () => {
+            draftStatus = 'saving';
+            saveToDraft();
+        },
+        onSubmit: async submit => {
+            toast.success('Track uploaded successfully!');
+            publishTrackDraft.current = {};
+        }
+    });
+
+    const { form: formData, enhance, allErrors, submitting, tainted } = form;
+
+    async function importFromFile(event: Event & { currentTarget: HTMLInputElement }) {
         const files = event.currentTarget.files;
         if (!files?.length) return;
 
         const file = files[0];
 
-        event.currentTarget.value = "";
-        event.currentTarget.files = null;
+        if (file) {
+            let metadata: Partial<Omit<APIResponse.Get.TrackSignature, 'id'|'instrumental'>>;
+
+            switch (file.name.split('.').pop()) {
+                case 'lrc':
+                    metadata = await parseLRCMetadata(file);
+                    break;
+                default:
+                    metadata = await parseAudioMetadata(file);
+            }
+
+            $formData = {
+                ...$formData,
+                ...metadata,
+                plainLyrics: metadata.plainLyrics ?? $formData.plainLyrics,
+                syncedLyrics: metadata.syncedLyrics ?? $formData.syncedLyrics
+            };
+        }
     }
 
-    const form = superForm(data.form, {
-        validators: zodClient(publishTrackSchema),
-        validationMethod: 'oninput',
-        taintedMessage: true
-    });
+    const saveToDraft = useDebounce(
+        () => {
+            publishTrackDraft.current = $formData;
+            $tainted = {
+                trackName: false,
+                artistName: false,
+                albumName: false,
+                plainLyrics: false,
+                duration: false,
+                syncedLyrics: false
+            };
 
-    const { form: formData, enhance, allErrors, submitting } = form;
+            draftStatus = 'saved';
+        },
+        () => 3000
+    );
 
     $effect(() => {
         form.validateForm({
@@ -50,7 +99,7 @@
             </CardDescription>
         </CardHeader>
         <CardContent>
-            <Input type="file" accept="audio/*,.lrc" bind:ref={fileInput} onchange={importFromFile}/>
+            <Input type="file" accept="audio/*,.lrc" onchange={importFromFile}/>
         </CardContent>
     </Card>
     <Card>
@@ -97,7 +146,7 @@
                         <FormControl>
                             {#snippet children({ props })}
                                 <FormLabel>Synced Lyrics</FormLabel>
-                                <Textarea {...props} bind:value={$formData.syncedLyrics} placeholder="[00:00.000] Some lyrics" class="h-56"/>
+                                <Textarea {...props} bind:value={$formData.syncedLyrics} placeholder="[00:00.000] Some lyrics" class="min-h-56 max-h-dvh font-mono"/>
                             {/snippet}
                         </FormControl>
                         <FormFieldErrors/>
@@ -106,13 +155,41 @@
                         <FormControl>
                             {#snippet children({ props })}
                                 <FormLabel>Plain Lyrics</FormLabel>
-                                <Textarea {...props} bind:value={$formData.plainLyrics} placeholder="Some lyrics" class="h-56"/>
+                                <Textarea {...props} bind:value={$formData.plainLyrics} placeholder="Some lyrics" class="min-h-56 max-h-dvh font-mono"/>
                             {/snippet}
                         </FormControl>
                         <FormFieldErrors/>
                     </FormField>
                 </div>
-                <FormButton type="submit" class="btn btn-primary" disabled={$submitting || !!$allErrors?.length}>Submit</FormButton>
+                <div class="flex justify-end items-center gap-2">
+                    <Button type="button" class="relative overflow-clip w-36 text-xs opacity-80!" variant="outline" disabled>
+                        {#key draftStatus}
+                            <span
+                                class="absolute flex items-center gap-1"
+                                in:fly={{ y: 30, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
+                                out:fly={{ y: -30, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
+                            >
+                                {#if draftStatus === 'saving'}
+                                    <LoaderIcon class="animate-spin size-4!"/>
+                                    <span>Saving to Draft</span>
+                                {:else if draftStatus === 'saved'}
+                                    <CheckIcon class="size-4!"/>
+                                    <span>Saved to Draft</span>
+                                {:else}
+                                    <PencilRulerIcon class="size-4!"/>
+                                    <span>Save to Draft</span>
+                                {/if}
+                            </span>
+                        {/key}
+                    </Button>
+                    <FormButton type="submit" class="btn btn-primary" disabled={$submitting || !!$allErrors?.length}>
+                        {#if $submitting}
+                            <LoaderIcon class="animate-spin"/>
+                        {:else}
+                            Submit
+                        {/if}
+                    </FormButton>
+                </div>
             </form>
         </CardContent>
     </Card>

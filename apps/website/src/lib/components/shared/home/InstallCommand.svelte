@@ -36,8 +36,8 @@
 </script>
 
 {#snippet InstallCommandContainer(data: typeof installCommands[0])}
-    <div class="p-1 text-start text-sm flex items-center gap-2 relative">
-        <a href="/" class="[&_*]:select-all w-full px-2.5" onclick={copyToClipboard}>
+    <div class="p-1 text-start text-sm flex items-center gap-2 relative whitespace-nowrap">
+        <a href="/" class="[&_*]:select-all w-full px-2.5 overflow-auto" onclick={copyToClipboard}>
             {#if data.pkgManager === currentValue?.pkgManager}
                 <code bind:this={valueContainer}>{data.command}</code>
             {:else}
@@ -55,7 +55,7 @@
                                 out:fly={{ y: -30, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
                             >
                                 {#if copied}
-                                    <CheckIcon class="text-green-500"/>
+                                    <CheckIcon class="text-primary"/>
                                 {:else}
                                     <ClipboardIcon/>
                                 {/if}
@@ -66,7 +66,7 @@
             </TooltipTrigger>
             <TooltipContent>
                 {#if copied}
-                    <span class="text-green-500">Copied</span>
+                    <span class="text-primary font-bold">Copied</span>
                 {:else}
                     Copy to clipboard
                 {/if}

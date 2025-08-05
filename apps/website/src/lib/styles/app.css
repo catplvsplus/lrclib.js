@@ -164,12 +164,12 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50 font-sans select-none;
+    @apply border-border outline-ring/50 select-none;
   }
 
   body,
   html {
-    @apply bg-background text-foreground h-full w-full;
+    @apply bg-background text-foreground h-full w-full font-sans;
   	letter-spacing: var(--tracking-normal);
   }
 }

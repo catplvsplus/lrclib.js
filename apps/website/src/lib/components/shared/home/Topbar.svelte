@@ -12,7 +12,10 @@
     import { settings } from '../../../helpers/classes/Settings.svelte';
 
     let menuState = new DialogState({ id: 'menu' });
+    let scrollY = 0;
 </script>
+
+<svelte:window bind:scrollY/>
 
 {#snippet Links({ className, showIcons }: { className?: string; showIcons?: boolean; } = {})}
     <a class={className} href={resolve("/(home)")} onclick={() => menuState.close()}>
@@ -36,7 +39,9 @@
 <header
     class={cn(
         "fixed top-0 z-50 w-full h-16 flex justify-center bg-background border-b",
-        !settings.prefersReducedTransparency && "backdrop-blur-sm backdrop-saturate-150 bg-background/60",
+        !settings.prefersReducedTransparency && "backdrop-blur-sm backdrop-saturate-150 bg-background/80",
+        !settings.prefersReducedMotion && "transition-all duration-300 ease-in-out",
+        scrollY < 100 && "bg-transparent shadow-none border-b-transparent backdrop-blur-none backdrop-saturate-100"
     )}
 >
     <div class="container h-full flex items-center justify-between py-2 px-4">

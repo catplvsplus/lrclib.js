@@ -131,7 +131,7 @@ export class Client implements ClientOptions {
         if (this.cacheSweeper) clearInterval(this.cacheSweeper);
         if (this.cacheMaxAge === Infinity || this.cacheMaxAge <= 0) return;
 
-        this.cacheSweeper = setInterval(() => this.cache.sweep(t => Date.now() - Track.getCreatedAt(t).getTime() > this.cacheMaxAge), 60000).unref();
+        this.cacheSweeper = setInterval(() => this.cache.sweep(t => Date.now() - Track.getCreatedAt(t).getTime() > this.cacheMaxAge), 60000).unref?.();
     }
 
     private _patchCache(data: (Track|APIResponse.Get.TrackSignature)[]): Track[] {

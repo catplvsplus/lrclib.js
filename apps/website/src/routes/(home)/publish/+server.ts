@@ -2,6 +2,7 @@ import { error, json } from '@sveltejs/kit';
 import { REST, Routes, type APIOptions } from 'lrclib.js';
 import { publishTrackSchema } from '../../../lib/helpers/schema.js';
 
+// TODO: I wan't to do it serverless :(
 export async function PUT({ request, fetch }): Promise<Response> {
     const data: APIOptions.Post.Publish = await request.json();
     const token: string = request.headers.get('X-Publish-Token') ?? '';

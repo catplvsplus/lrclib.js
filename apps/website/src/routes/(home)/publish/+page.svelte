@@ -1,7 +1,7 @@
 <script lang="ts">
-    import lrclib, { ChallengeSolver, type APIPublishTokenData, type APIResponse } from 'lrclib.js';
-    import { Card, CardContent } from '$lib/components/ui/card';
-    import { CheckIcon, InfoIcon, LoaderIcon, ClockIcon } from '@lucide/svelte';
+    import lrclib, { ChallengeSolver, LRC, type APIPublishTokenData, type APIResponse } from 'lrclib.js';
+    import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '$lib/components/ui/card';
+    import { CheckIcon, InfoIcon, LoaderIcon, ClockIcon, PenIcon, PenSquareIcon, AlertTriangleIcon, AlertCircleIcon, ArrowLeftRightIcon } from '@lucide/svelte';
     import { Input } from '$lib/components/ui/input';
     import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
     import { superForm } from 'sveltekit-superforms';
@@ -18,6 +18,7 @@
     import { publishNote as publishTrackNote } from '$lib/helpers/constants';
     import ImportMetadata from '$lib/components/shared/publish/ImportMetadata.svelte';
     import FlyInOut from '$lib/components/shared/FlyInOut.svelte';
+    import { Button } from '$lib/components/ui/button';
 
     let { data } = $props();
 
@@ -108,6 +109,12 @@
         () => 3000
     );
 
+    let canImportFromSynced = $derived(!!$formData.syncedLyrics?.trim() && !$formData.plainLyrics?.trim());
+
+    function syncedToPlain() {
+        $formData.plainLyrics = LRC.toPlain(LRC.parse($formData.syncedLyrics ?? '')).trim();
+    }
+
     $effect(() => {
         form.validateForm({
             update: true
@@ -132,8 +139,22 @@
         }}
         disabled={$submitting}
     />
-    <Card>
-        <CardContent>
+    <InfoCard
+        icon={InfoIcon}
+        title="Important"
+        description={publishTrackNote}
+    />
+    <Card class="gap-0">
+        <CardHeader class="pb-4">
+            <CardTitle class="flex items-center gap-1">
+                <PenSquareIcon class="text-primary size-5"/>
+                Track Info
+            </CardTitle>
+            <CardDescription>
+                Enter the track information you want to publish
+            </CardDescription>
+        </CardHeader>
+        <CardContent class="pt-4 border-t">
             <form method="POST" class="grid gap-4" use:enhance>
                 <FormField {form} name="trackName">
                     <FormControl>
@@ -188,13 +209,19 @@
                                 <Textarea {...props} bind:value={$formData.plainLyrics} disabled={$submitting} placeholder="Some lyrics" class="min-h-56 max-h-dvh font-mono"/>
                             {/snippet}
                         </FormControl>
-                        <FormFieldErrors/>
+                        <div class="flex gap-2 sm:justify-between sm:items-center sm:flex-row flex-col">
+                            <FormFieldErrors/>
+                            <Button type="button" size="sm" variant="outline" disabled={$submitting || !canImportFromSynced} onclick={syncedToPlain} class="disabled:hidden! text-sm text-foreground animate-in duration-300 fade-in">
+                                <ArrowLeftRightIcon/>
+                                Convert synced to plain
+                            </Button>
+                        </div>
                     </FormField>
                 </div>
                 <InfoCard
-                    icon={InfoIcon}
-                    title="Important"
-                    description={publishTrackNote}
+                    icon={AlertCircleIcon}
+                    title="Note"
+                    description="Publishing a track requires solving a proof-of-work challenge. This process can take a few minutes, don't close this page till your track is published."
                 />
                 <div class="flex justify-end items-center gap-2">
                     {#if $submitting || draftStatus !== 'idle'}
@@ -237,4 +264,5 @@
             </form>
         </CardContent>
     </Card>
+    <p class="text-center text-xs text-muted-foreground">Inspired by <a class="text-primary" href="https://lrclibup.boidu.dev/" target="_blank">lrclibup.boidu.dev</a></p>
 </div>

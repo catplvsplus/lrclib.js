@@ -5,6 +5,7 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
     private _attempts: number = 0;
     private _solveStartTime: number|null = null;
     private _solveEndTime: number|null = null;
+    private _solveLastUpdate: number|null = null;
 
     public readonly prefix: string;
     public readonly target: string;
@@ -21,6 +22,7 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
     get token(): string { return `${this.prefix}:${this._nonce}`; }
     get solveStartTime(): number|null { return this._solveStartTime; }
     get solveEndTime(): number|null { return this._solveEndTime; }
+    get solveLastUpdate(): number|null { return this._solveLastUpdate; }
     get solved(): boolean { return !!this.solveStartTime && !!this.solveEndTime; }
 
     get data(): APIPublishTokenData {
@@ -42,6 +44,7 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
 
         while (true) {
             this._attempts++;
+            this._solveLastUpdate = Date.now();
             this.onAttempt?.(this);
 
             const input = `${this.prefix}${this._nonce}`;
@@ -52,7 +55,7 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
             this._nonce++;
         }
 
-        this._solveEndTime = Date.now();
+        this._solveEndTime = this._solveLastUpdate;
 
         return this.data;
     }

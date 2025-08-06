@@ -19,8 +19,7 @@
     import ImportMetadata from '$lib/components/shared/publish/ImportMetadata.svelte';
     import FlyInOut from '$lib/components/shared/FlyInOut.svelte';
     import { Button } from '$lib/components/ui/button';
-    import { tr } from 'zod/v4/locales';
-    import { tick } from 'svelte';
+    import { beforeNavigate } from '$app/navigation';
 
     let { data } = $props();
 
@@ -135,6 +134,13 @@
             challenge = undefined;
             token = undefined;
         }
+    });
+
+    beforeNavigate(async navigate => {
+        if (!$submitting || $tainted) return;
+
+        const leave = confirm('You have unsaved changes. Are you sure you want to leave?');
+        if (!leave) navigate.cancel();
     });
 </script>
 
@@ -251,7 +257,7 @@
                                 {#if hashAttempts}
                                     <FlyInOut class={sharedClass}>
                                         {#key hashAttempts}
-                                            <span>{formatDurationString(Date.now() - (hashStartTime ?? Date.now()))} • {formatNumberString(hashAttempts)} hash</span>
+                                            <span>{formatDurationString(Date.now() - (hashStartTime ?? Date.now()))} • {formatNumberString(hashAttempts)} hash attempts</span>
                                         {/key}
                                     </FlyInOut>
                                 {:else}

@@ -5,8 +5,8 @@ export const publishTrackSchema = z.object({
     artistName: z.string().min(1),
     albumName: z.string().min(1),
     duration: z.coerce.number().min(0),
-    plainLyrics: z.string(),
-    syncedLyrics: z.string(),
+    plainLyrics: z.string().default(''),
+    syncedLyrics: z.string().default(''),
 });
 
 export type PublishTrackSchema = z.infer<typeof publishTrackSchema>;

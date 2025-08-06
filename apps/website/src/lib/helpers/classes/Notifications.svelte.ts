@@ -18,8 +18,8 @@ export class Notifications {
         return 'Notification' in window ? await Notification.requestPermission() : 'denied';
     }
 
-    public async send(title: string, options?: NotificationOptions & { toast?: boolean; }) {
-        if ((await this.askPermission()) === 'granted') {
+    public send(title: string, options?: NotificationOptions & { toast?: boolean; }) {
+        if (this.permission === 'granted' && !this.isWindowVisible()) {
             const notification = new Notification(title, {
                 icon: `${resolve('/')}icon-192.png`,
                 ...options
@@ -30,6 +30,11 @@ export class Notifications {
             notification.onclose = () => {
                 this.current = this.current.filter(n => n !== notification);
             }
+
+            notification.onclick = () => {
+                window.focus();
+                notification.close();
+            }
         }
 
         if (options?.toast !== false) toast(title);
@@ -39,6 +44,13 @@ export class Notifications {
         for (const notification of this.current) {
             notification.close();
         }
+    }
+
+    public isWindowVisible(checkFocus: boolean = true): boolean {
+        const visible = typeof document !== 'undefined' && document.visibilityState === 'visible';
+        const focused = typeof document !== 'undefined' && document.hasFocus();
+
+        return visible && (checkFocus ? focused : true);
     }
 }
 

@@ -4,13 +4,13 @@
     import { CheckIcon, InfoIcon, LoaderIcon, ClockIcon, PenIcon, PenSquareIcon, AlertTriangleIcon, AlertCircleIcon, ArrowLeftRightIcon } from '@lucide/svelte';
     import { Input } from '$lib/components/ui/input';
     import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
-    import { superForm } from 'sveltekit-superforms';
+    import { superForm, type TaintOption } from 'sveltekit-superforms';
     import { zodClient } from 'sveltekit-superforms/adapters';
     import { publishTrackSchema } from '$lib/helpers/schema';
     import { Textarea } from '$lib/components/ui/textarea/index';
     import { publishTrackDraft } from '$lib/helpers/metadata';
     import { toast } from 'svelte-sonner';
-    import { useDebounce } from 'runed';
+    import { PressedKeys, useDebounce } from 'runed';
     import { resolve } from '$app/paths';
     import { formatDurationString, formatNumberString } from '$lib/helpers/utils';
     import { notifications } from '$lib/helpers/classes/Notifications.svelte';
@@ -19,6 +19,8 @@
     import ImportMetadata from '$lib/components/shared/publish/ImportMetadata.svelte';
     import FlyInOut from '$lib/components/shared/FlyInOut.svelte';
     import { Button } from '$lib/components/ui/button';
+    import { tr } from 'zod/v4/locales';
+    import { tick } from 'svelte';
 
     let { data } = $props();
 
@@ -39,12 +41,16 @@
             draftStatus = 'saving';
             saveToDraft();
         },
-        onUpdate: async data => {
+        onSubmit: async data => {
             saveToDraft();
 
             if (notifications.permission === 'default') {
-                notifications.askPermission();
-                toast(`Enable notification to get notified when track is published`);
+                toast(`Enable notification to get notified when track is published`, {
+                    action: {
+                        label: 'Enable',
+                        onClick: () => notifications.askPermission()
+                    }
+                });
             }
 
             draftStatus = 'idle';
@@ -69,18 +75,18 @@
                     'Content-Type': 'application/json',
                     'X-Publish-Token': `${challenge.prefix}:${token.nonce}`
                 },
-                body: JSON.stringify({
-                    ...data.form.data,
-                    token
-                })
+                body: JSON.stringify($formData)
             })
             .then(async res => {
                 if (!res.ok) throw new Error((await res.json())?.message ?? 'Failed to publish track');
 
                 notifications.send('Lyrics published!', {
-                    body: `Published track ${data.form.data.trackName}`
+                    body: `Published track ${$formData.trackName}`
                 });
 
+                form.reset();
+
+                publishTrackDraft.current = {};
                 challenge = undefined;
                 token = undefined;
             })
@@ -105,6 +111,7 @@
         () => {
             publishTrackDraft.current = $formData;
             draftStatus = 'saved';
+            untaintForm();
         },
         () => 3000
     );
@@ -113,6 +120,10 @@
 
     function syncedToPlain() {
         $formData.plainLyrics = LRC.toPlain(LRC.parse($formData.syncedLyrics ?? '')).trim();
+    }
+
+    function untaintForm() {
+        formData.update(() => $formData, { taint: 'untaint-form' });
     }
 
     $effect(() => {
@@ -126,6 +137,15 @@
         }
     });
 </script>
+
+<svelte:window
+    onbeforeunload={event => {
+        if (!$submitting || $tainted) return;
+
+        event.preventDefault();
+        event.returnValue = '';
+    }}
+/>
 
 <div class="pt-16 w-full max-w-4xl mx-auto grid gap-5">
     <ImportMetadata

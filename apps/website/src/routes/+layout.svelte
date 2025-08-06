@@ -43,7 +43,11 @@
     <title>Lrclib.js</title>
 </svelte:head>
 
-<svelte:window onfocus={notifications.clear}/>
+<svelte:document
+    on:visibilitychange={() => {
+        if (document.visibilityState === 'visible') notifications.clear();
+    }}
+/>
 
 <TooltipProvider>
     {@render children?.()}

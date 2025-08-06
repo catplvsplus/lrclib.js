@@ -16,11 +16,13 @@
     import { Button } from '../../../lib/components/ui/button';
     import { askNotificationPermission, getNotificationPermission, sendNotification } from '../../../lib/helpers/notification';
     import { resolve } from '$app/paths';
+    import { formatNumberString } from '../../../lib/helpers/utils';
 
     let { data } = $props();
 
     let draftStatus: 'idle'|'saving'|'saved' = $state(Object.keys(data.form.data).length ? 'saved' : 'idle');
     let submitStatus: string|undefined = $state();
+    let hashAttempts: number|undefined = $state();
     let challenge: APIResponse.Post.RequestChallenge|undefined = $state();
     let token: APIPublishTokenData|undefined = $state();
 
@@ -50,7 +52,11 @@
             submitStatus = 'Solving challenge';
             console.log($state.snapshot(challenge));
 
-            token ??= await (new ChallengeSolver(challenge)).solve();
+            const solver = new ChallengeSolver(challenge);
+
+            solver.onAttempt = () => hashAttempts = solver.attempts;
+
+            token ??= await solver.solve();
 
             submitStatus = 'Publishing';
             console.log($state.snapshot(token));
@@ -128,6 +134,11 @@
         form.validateForm({
             update: true
         });
+
+        return () => {
+            challenge = undefined;
+            token = undefined;
+        }
     });
 </script>
 
@@ -206,31 +217,36 @@
                     </FormField>
                 </div>
                 <div class="flex justify-end items-center gap-2">
-                    <Button type="button" class="relative overflow-clip w-36 text-xs opacity-80!" variant="outline" disabled>
-                        {#key draftStatus || submitStatus}
-                            <span
-                                class="absolute flex items-center gap-1"
-                                in:fly={{ y: 30, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
-                                out:fly={{ y: -30, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
-                            >
-                                {#if submitStatus}
-                                    {submitStatus}
-                                {:else if draftStatus === 'saving'}
-                                    <LoaderIcon class="animate-spin size-4!"/>
-                                    <span>Saving to Draft</span>
-                                {:else if draftStatus === 'saved'}
-                                    <CheckIcon class="size-4!"/>
-                                    <span>Saved to Draft</span>
-                                {:else}
-                                    <PencilRulerIcon class="size-4!"/>
-                                    <span>Save to Draft</span>
-                                {/if}
-                            </span>
-                        {/key}
-                    </Button>
+                    {#if !$submitting}
+                        <Button type="button" class="relative overflow-clip w-36 text-xs opacity-80!" variant="outline" disabled>
+                            {#key draftStatus}
+                                <span
+                                    class="absolute flex items-center gap-1"
+                                    in:fly={{ y: 30, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
+                                    out:fly={{ y: -30, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
+                                >
+                                    {#if draftStatus === 'saving'}
+                                        <LoaderIcon class="animate-spin size-4!"/>
+                                        <span>Saving to Draft</span>
+                                    {:else if draftStatus === 'saved'}
+                                        <CheckIcon class="size-4!"/>
+                                        <span>Saved to Draft</span>
+                                    {:else}
+                                        <PencilRulerIcon class="size-4!"/>
+                                        <span>Save to Draft</span>
+                                    {/if}
+                                </span>
+                            {/key}
+                        </Button>
+                    {/if}
                     <FormButton type="submit" class="btn btn-primary" disabled={$submitting || !!$allErrors?.length}>
                         {#if $submitting}
                             <LoaderIcon class="animate-spin"/>
+                            {#if typeof hashAttempts === 'number'}
+                                {formatNumberString(hashAttempts)} attempts
+                            {:else if typeof submitStatus === 'string'}
+                                {submitStatus}
+                            {/if}
                         {:else}
                             Submit
                         {/if}

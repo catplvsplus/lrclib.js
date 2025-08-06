@@ -11,3 +11,15 @@ export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
 export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "children"> : T;
 export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
+
+export function formatNumberString(number: number): string {
+    if (number < 1000) {
+        return number.toLocaleString();
+    } else if (number < 1000000) {
+        return `${(number / 1000).toFixed(1)}K`;
+    } else if (number < 1000000000) {
+        return `${(number / 1000000).toFixed(1)}M`;
+    } else {
+        return `${(number / 1000000000).toFixed(1)}B`;
+    }
+}

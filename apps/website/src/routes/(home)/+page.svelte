@@ -23,6 +23,6 @@
     </div>
 </div>
 <div class="text-center py-10">
-    <h1 class="sm:text-3xl text-2xl font-bold tracking-wide text-foreground/80 text-shadow-current/20 text-shadow-sm">Library Usage</h1>
+    <h1 class="sm:text-3xl text-2xl font-bold tracking-wide text-foreground/80 text-shadow-current/20">Library Usage</h1>
     <LibUsageCode class="mt-5 w-full max-w-4xl mx-auto rounded-xl"/>
 </div>

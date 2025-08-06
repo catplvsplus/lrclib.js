@@ -1,16 +1,15 @@
 <script lang="ts">
     import lrclib, { ChallengeSolver, LRC, type APIPublishTokenData, type APIResponse } from 'lrclib.js';
     import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '$lib/components/ui/card';
-    import { CheckIcon, InfoIcon, LoaderIcon, ClockIcon, PenIcon, PenSquareIcon, AlertTriangleIcon, AlertCircleIcon, ArrowLeftRightIcon } from '@lucide/svelte';
+    import { CheckIcon, InfoIcon, LoaderIcon, ClockIcon, PenSquareIcon, AlertCircleIcon } from '@lucide/svelte';
     import { Input } from '$lib/components/ui/input';
     import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
-    import { superForm, type TaintOption } from 'sveltekit-superforms';
+    import { superForm } from 'sveltekit-superforms';
     import { zodClient } from 'sveltekit-superforms/adapters';
     import { publishTrackSchema } from '$lib/helpers/schema';
-    import { Textarea } from '$lib/components/ui/textarea/index';
     import { publishTrackDraft } from '$lib/helpers/metadata';
     import { toast } from 'svelte-sonner';
-    import { PressedKeys, useDebounce } from 'runed';
+    import { useDebounce } from 'runed';
     import { resolve } from '$app/paths';
     import { formatDurationString, formatNumberString } from '$lib/helpers/utils';
     import { notifications } from '$lib/helpers/classes/Notifications.svelte';
@@ -18,8 +17,8 @@
     import { publishNote as publishTrackNote } from '$lib/helpers/constants';
     import ImportMetadata from '$lib/components/shared/publish/ImportMetadata.svelte';
     import FlyInOut from '$lib/components/shared/FlyInOut.svelte';
-    import { Button } from '$lib/components/ui/button';
     import { beforeNavigate } from '$app/navigation';
+    import LyricsTextareaFields from '../../../lib/components/shared/publish/LyricsTextareaFields.svelte';
 
     let { data } = $props();
 
@@ -114,12 +113,6 @@
         },
         () => 3000
     );
-
-    let canImportFromSynced = $derived(!!$formData.syncedLyrics?.trim() && !$formData.plainLyrics?.trim());
-
-    function syncedToPlain() {
-        $formData.plainLyrics = LRC.toPlain(LRC.parse($formData.syncedLyrics ?? '')).trim();
-    }
 
     function untaintForm() {
         formData.update(() => $formData, { taint: 'untaint-form' });
@@ -218,32 +211,7 @@
                     </FormControl>
                     <FormFieldErrors/>
                 </FormField>
-                <div class="flex md:flex-row flex-col gap-5">
-                    <FormField {form} name="syncedLyrics" class="md:w-1/2">
-                        <FormControl>
-                            {#snippet children({ props })}
-                                <FormLabel>Synced Lyrics</FormLabel>
-                                <Textarea {...props} bind:value={$formData.syncedLyrics} disabled={$submitting} placeholder="[00:00.000] Some lyrics" class="min-h-56 max-h-dvh font-mono"/>
-                            {/snippet}
-                        </FormControl>
-                        <FormFieldErrors/>
-                    </FormField>
-                    <FormField {form} name="plainLyrics" class="md:w-1/2">
-                        <FormControl>
-                            {#snippet children({ props })}
-                                <FormLabel>Plain Lyrics</FormLabel>
-                                <Textarea {...props} bind:value={$formData.plainLyrics} disabled={$submitting} placeholder="Some lyrics" class="min-h-56 max-h-dvh font-mono"/>
-                            {/snippet}
-                        </FormControl>
-                        <div class="flex gap-2 sm:justify-between sm:items-center sm:flex-row flex-col">
-                            <FormFieldErrors/>
-                            <Button type="button" size="sm" variant="outline" disabled={$submitting || !canImportFromSynced} onclick={syncedToPlain} class="disabled:hidden! text-sm text-foreground animate-in duration-300 fade-in">
-                                <ArrowLeftRightIcon/>
-                                Convert synced to plain
-                            </Button>
-                        </div>
-                    </FormField>
-                </div>
+                <LyricsTextareaFields {form}/>
                 <InfoCard
                     icon={AlertCircleIcon}
                     title="Note"

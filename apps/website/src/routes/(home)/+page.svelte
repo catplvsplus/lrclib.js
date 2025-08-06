@@ -3,12 +3,11 @@
     import InstallCommand from '$lib/components/shared/home/InstallCommand.svelte';
     import SearchInput from '$lib/components/shared/home/SearchInput.svelte';
     import LibUsageCode from '$lib/components/shared/home/LibUsageCode.svelte';
-    import { cn } from '$lib/helpers/utils';
     import { Button } from '$lib/components/ui/button';
     import { resolve } from '$app/paths';
 </script>
 
-<div class="text-center py-24">
+<div class="text-center pt-24 pb-18">
     <Button size="sm" variant="outline" href={resolve('/publish')} class="rounded-full font-bold text-foreground/70 mb-2 text-xs">
         <span class="size-1.5 bg-primary ring-primary/30 ring-3 mr-1 rounded-full animate-pulse"></span>
         Publish Lyrics
@@ -22,7 +21,7 @@
         <InstallCommand/>
     </div>
 </div>
-<div class="text-center py-10">
+<div class="text-center pb-10">
     <h1 class="sm:text-3xl text-2xl font-bold tracking-wide text-foreground/80 text-shadow-current/20">Library Usage</h1>
     <LibUsageCode class="mt-5 w-full max-w-4xl mx-auto rounded-xl"/>
 </div>

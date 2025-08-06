@@ -11,6 +11,7 @@
     import { fly } from 'svelte/transition';
     import { settings } from '../../../helpers/classes/Settings.svelte';
     import { toast } from 'svelte-sonner';
+    import FlyInOut from '../FlyInOut.svelte';
 
     let { ...props }: TabsRootProps = $props();
 
@@ -49,17 +50,17 @@
                 {#snippet child({ props })}
                     <Button variant="outline" size="icon" class="relative overflow-clip" {...props} onclick={copyToClipboard}>
                         {#key copied}
-                            <span
+                            <FlyInOut
                                 class="absolute"
-                                in:fly={{ y: 30, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
-                                out:fly={{ y: -30, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
+                                inY={30}
+                                outY={-30}
                             >
                                 {#if copied}
                                     <CheckIcon class="text-primary"/>
                                 {:else}
                                     <ClipboardIcon/>
                                 {/if}
-                            </span>
+                            </FlyInOut>
                         {/key}
                     </Button>
                 {/snippet}

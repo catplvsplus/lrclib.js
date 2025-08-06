@@ -8,6 +8,7 @@
     import { parseAudioMetadata, parseLRCMetadata } from '$lib/helpers/metadata';
     import { fly } from 'svelte/transition';
     import { settings } from '$lib/helpers/classes/Settings.svelte';
+    import FlyInOut from '../FlyInOut.svelte';
 
     let {
         isLoading = $bindable(false),
@@ -53,21 +54,20 @@
 
 <Card bind:ref {...props}>
     <CardHeader>
-        <CardTitle class="h-5">
+        <CardTitle class="h-5 ">
             {#key isLoading}
-                <span
-                    class="flex items-center gap-1 absolute"
-                    in:fly={{ y: 25, opacity: 0, duration: settings.prefersReducedMotion ? 0 : 300 }}
-                    out:fly={{ y:  -25, opacity: 0, duration: settings.prefersReducedMotion ? 0 : 300 }}
-                >
-                    {#if isLoading}
+                {@const sharedClass = "flex items-center gap-1"}
+                {#if isLoading}
+                    <FlyInOut class={sharedClass}>
                         <LoaderIcon class="animate-spin text-primary size-5"/>
                         Importing...
-                    {:else}
+                    </FlyInOut>
+                {:else}
+                    <FlyInOut class={sharedClass}>
                         <FileInputIcon class="text-primary size-5"/>
                         {title ?? 'Import Metadata'}
-                    {/if}
-                </span>
+                    </FlyInOut>
+                {/if}
             {/key}
         </CardTitle>
         <CardDescription>

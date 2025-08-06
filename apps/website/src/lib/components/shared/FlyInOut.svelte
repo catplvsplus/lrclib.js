@@ -29,13 +29,13 @@
             props.class
         )
     }
-    in:fly|global={{
+    in:fly={{
         y: props.inY ?? 25,
         x: props.inX,
         opacity: props.inOpacity ?? 0,
         duration: settings.prefersReducedMotion ? 0 : (props.inDuration ?? 300)
     }}
-    out:fly|global={{
+    out:fly={{
         y: props.outY ?? -25,
         x: props.outX,
         opacity: props.outOpacity ?? 0,

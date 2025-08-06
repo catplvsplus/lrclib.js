@@ -20,6 +20,9 @@
     </div>
     <div class="mt-5 sm:mx-4 sm:w-[calc(100%-2rem)] w-full max-w-md inline-block">
         <InstallCommand/>
-        <LibUsageCode/>
     </div>
+</div>
+<div class="text-center py-10">
+    <h1 class="sm:text-3xl text-2xl font-bold tracking-wide text-foreground/80 text-shadow-current/20 text-shadow-sm">Library Usage</h1>
+    <LibUsageCode class="mt-5 w-full max-w-4xl mx-auto rounded-xl"/>
 </div>

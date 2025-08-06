@@ -198,28 +198,28 @@
                 />
                 <div class="flex justify-end items-center gap-2">
                     {#if $submitting || draftStatus !== 'idle'}
-                        {@const animatedClass = "flex items-center gap-1 w-full sm:justify-end sm:px-4 h-full font-semibold"}
+                        {@const sharedClass = "flex items-center gap-1 w-full sm:justify-end sm:px-4 h-full font-semibold"}
                         <div class="relative w-full h-8 overflow-clip text-end text-xs text-foreground/80 [&_svg]:size-4">
                             {#if $submitting}
                                 {#if hashAttempts}
-                                    <FlyInOut class={animatedClass}>
+                                    <FlyInOut class={sharedClass}>
                                         {#key hashAttempts}
                                             <span>{formatDurationString(Date.now() - (hashStartTime ?? Date.now()))} • {formatNumberString(hashAttempts)} hash</span>
                                         {/key}
                                     </FlyInOut>
                                 {:else}
-                                    <FlyInOut class={animatedClass}>
+                                    <FlyInOut class={sharedClass}>
                                         <ClockIcon/>
                                         <span>{submitStatus}</span>
                                     </FlyInOut>
                                 {/if}
                             {:else if draftStatus === 'saving'}
-                                <FlyInOut class={animatedClass}>
+                                <FlyInOut class={sharedClass}>
                                     <LoaderIcon class="animate-spin"/>
                                     <span>Saving to Draft</span>
                                 </FlyInOut>
                             {:else if draftStatus === 'saved'}
-                                <FlyInOut class={animatedClass}>
+                                <FlyInOut class={sharedClass}>
                                     <CheckIcon/>
                                     <span>Saved to Draft</span>
                                 </FlyInOut>

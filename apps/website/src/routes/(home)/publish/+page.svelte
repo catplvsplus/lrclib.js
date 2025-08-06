@@ -14,6 +14,7 @@
     import { settings } from '../../../lib/helpers/classes/Settings.svelte';
     import { fly } from 'svelte/transition';
     import { Button } from '../../../lib/components/ui/button';
+    import { askNotificationPermission, getNotificationPermission, sendNotification } from '../../../lib/helpers/notification';
 
     let { data } = $props();
 
@@ -33,6 +34,11 @@
         onUpdate: async data => {
             saveToDraft();
 
+            if (getNotificationPermission() === 'default') {
+                askNotificationPermission();
+                toast(`Enable notification to get notified when track is published`);
+            }
+
             draftStatus = 'idle';
             submitStatus = 'Fetching challenge';
 
@@ -46,6 +52,9 @@
             await lrclib.publishTrack(data.form.data as Required<PublishTrackSchema>, token)
                 .then(() => {
                     toast.success('Track uploaded successfully!');
+                    sendNotification('New track uploaded!', {
+                        body: `Published track ${data.form.data.trackName}`
+                    });
                 })
                 .catch(error => {
                     toast.error(error.message);
@@ -84,21 +93,10 @@
         }
     }
 
-    function setTainted(isTainted: boolean) {
-        form.tainted.set({
-            trackName: isTainted,
-            artistName: isTainted,
-            albumName: isTainted,
-            duration: isTainted,
-            plainLyrics: isTainted,
-        });
-    }
-
     const saveToDraft = useDebounce(
         () => {
             publishTrackDraft.current = $formData;
             draftStatus = 'saved';
-            setTainted(false);
         },
         () => 3000
     );

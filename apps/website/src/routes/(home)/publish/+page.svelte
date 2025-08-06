@@ -15,6 +15,7 @@
     import { fly } from 'svelte/transition';
     import { Button } from '../../../lib/components/ui/button';
     import { askNotificationPermission, getNotificationPermission, sendNotification } from '../../../lib/helpers/notification';
+    import { resolve } from '$app/paths';
 
     let { data } = $props();
 
@@ -45,20 +46,23 @@
             const challenge = await lrclib.requestChallenge();
 
             submitStatus = 'Solving challenge';
-            const challengeSolver = new ChallengeSolver(challenge);
-            const token = await challengeSolver.solve();
+            console.log(challenge);
+
+            const token = await (new ChallengeSolver(challenge)).solve();
 
             submitStatus = 'Publishing';
+            console.log(token);
+
             await lrclib.publishTrack(data.form.data as Required<PublishTrackSchema>, token)
-                .then(() => {
-                    toast.success('Track uploaded successfully!');
-                    sendNotification('New track uploaded!', {
-                        body: `Published track ${data.form.data.trackName}`
-                    });
-                })
+                .then(() => sendNotification('New track uploaded!', {
+                    body: `Published track ${data.form.data.trackName}`
+                }))
                 .catch(error => {
-                    toast.error(error.message);
                     data.cancel();
+                    console.error(error);
+                    sendNotification('Failed to publish track', {
+                        body: error.message
+                    });
                 });
 
             submitStatus = undefined;

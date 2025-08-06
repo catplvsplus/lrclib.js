@@ -21,6 +21,8 @@
 
     let draftStatus: 'idle'|'saving'|'saved' = $state(Object.keys(data.form.data).length ? 'saved' : 'idle');
     let submitStatus: string|undefined = $state();
+    let challenge: APIResponse.Post.RequestChallenge|undefined = $state();
+    let token: APIPublishTokenData|undefined = $state();
 
     const form = superForm(data.form, {
         SPA: true,
@@ -43,27 +45,44 @@
             draftStatus = 'idle';
             submitStatus = 'Fetching challenge';
 
-            const challenge = await lrclib.requestChallenge();
+            challenge ??= await lrclib.requestChallenge();
 
             submitStatus = 'Solving challenge';
-            console.log(challenge);
+            console.log($state.snapshot(challenge));
 
-            const token = await (new ChallengeSolver(challenge)).solve();
+            token ??= await (new ChallengeSolver(challenge)).solve();
 
             submitStatus = 'Publishing';
-            console.log(token);
+            console.log($state.snapshot(token));
 
-            await lrclib.publishTrack(data.form.data as Required<PublishTrackSchema>, token)
-                .then(() => sendNotification('New track uploaded!', {
+            await fetch(resolve('/(home)/publish'), {
+                method: 'PUT',
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'X-Publish-Token': `${challenge.prefix}:${token.nonce}`
+                }),
+                body: JSON.stringify({
+                    ...data.form.data,
+                    token
+                })
+            })
+            .then(async res => {
+                if (!res.ok) throw new Error((await res.json())?.message ?? 'Failed to publish track');
+
+                sendNotification('Lyrics published!', {
                     body: `Published track ${data.form.data.trackName}`
-                }))
-                .catch(error => {
-                    data.cancel();
-                    console.error(error);
-                    sendNotification('Failed to publish track', {
-                        body: error.message
-                    });
                 });
+
+                challenge = undefined;
+                token = undefined;
+            })
+            .catch(error => {
+                data.cancel();
+                console.error(error);
+                sendNotification('Failed to publish track', {
+                    body: error.message
+                });
+            });
 
             submitStatus = undefined;
         }

@@ -4,6 +4,7 @@
     import { Toaster } from '$lib/components/ui/sonner/index';
     import { toast } from 'svelte-sonner';
     import { TooltipProvider } from '../lib/components/ui/tooltip';
+    import { notifications } from '../lib/helpers/classes/Notifications.svelte';
 
 	let { children } = $props();
 
@@ -41,6 +42,8 @@
 <svelte:head>
     <title>Lrclib.js</title>
 </svelte:head>
+
+<svelte:window onfocus={notifications.clear}/>
 
 <TooltipProvider>
     {@render children?.()}

@@ -1,28 +1,30 @@
 <script lang="ts">
     import lrclib, { ChallengeSolver, type APIPublishTokenData, type APIResponse } from 'lrclib.js';
-    import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../lib/components/ui/card';
-    import { CheckIcon, FileInputIcon, LoaderIcon, PencilRulerIcon } from '@lucide/svelte';
-    import { Input } from '../../../lib/components/ui/input';
-    import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '../../../lib/components/ui/form';
+    import { Card, CardContent } from '$lib/components/ui/card';
+    import { CheckIcon, InfoIcon, LoaderIcon, ClockIcon } from '@lucide/svelte';
+    import { Input } from '$lib/components/ui/input';
+    import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
     import { superForm } from 'sveltekit-superforms';
     import { zodClient } from 'sveltekit-superforms/adapters';
-    import { publishTrackSchema, type PublishTrackSchema } from '../../../lib/helpers/schema';
-    import { Textarea } from '../../../lib/components/ui/textarea/index';
-    import { parseAudioMetadata, parseLRCMetadata, publishTrackDraft } from '../../../lib/helpers/metadata';
+    import { publishTrackSchema } from '$lib/helpers/schema';
+    import { Textarea } from '$lib/components/ui/textarea/index';
+    import { publishTrackDraft } from '$lib/helpers/metadata';
     import { toast } from 'svelte-sonner';
     import { useDebounce } from 'runed';
-    import { settings } from '../../../lib/helpers/classes/Settings.svelte';
-    import { fly } from 'svelte/transition';
-    import { Button } from '../../../lib/components/ui/button';
-    import { askNotificationPermission, getNotificationPermission, sendNotification } from '../../../lib/helpers/notification';
     import { resolve } from '$app/paths';
-    import { formatNumberString } from '../../../lib/helpers/utils';
+    import { formatDurationString, formatNumberString } from '$lib/helpers/utils';
+    import { notifications } from '$lib/helpers/classes/Notifications.svelte';
+    import InfoCard from '$lib/components/shared/InfoCard.svelte';
+    import { publishNote as publishTrackNote } from '$lib/helpers/constants';
+    import ImportMetadata from '$lib/components/shared/publish/ImportMetadata.svelte';
+    import FlyInOut from '$lib/components/shared/FlyInOut.svelte';
 
     let { data } = $props();
 
     let draftStatus: 'idle'|'saving'|'saved' = $state(Object.keys(data.form.data).length ? 'saved' : 'idle');
     let submitStatus: string|undefined = $state();
     let hashAttempts: number|undefined = $state();
+    let hashStartTime: number|undefined = $state();
     let challenge: APIResponse.Post.RequestChallenge|undefined = $state();
     let token: APIPublishTokenData|undefined = $state();
 
@@ -39,8 +41,8 @@
         onUpdate: async data => {
             saveToDraft();
 
-            if (getNotificationPermission() === 'default') {
-                askNotificationPermission();
+            if (notifications.permission === 'default') {
+                notifications.askPermission();
                 toast(`Enable notification to get notified when track is published`);
             }
 
@@ -50,7 +52,7 @@
             challenge ??= await lrclib.requestChallenge();
 
             submitStatus = 'Solving challenge';
-            console.log($state.snapshot(challenge));
+            hashStartTime = Date.now();
 
             const solver = new ChallengeSolver(challenge);
 
@@ -59,14 +61,13 @@
             token ??= await solver.solve();
 
             submitStatus = 'Publishing';
-            console.log($state.snapshot(token));
 
             await fetch(resolve('/(home)/publish'), {
                 method: 'PUT',
-                headers: new Headers({
+                headers: {
                     'Content-Type': 'application/json',
                     'X-Publish-Token': `${challenge.prefix}:${token.nonce}`
-                }),
+                },
                 body: JSON.stringify({
                     ...data.form.data,
                     token
@@ -75,7 +76,7 @@
             .then(async res => {
                 if (!res.ok) throw new Error((await res.json())?.message ?? 'Failed to publish track');
 
-                sendNotification('Lyrics published!', {
+                notifications.send('Lyrics published!', {
                     body: `Published track ${data.form.data.trackName}`
                 });
 
@@ -85,42 +86,19 @@
             .catch(error => {
                 data.cancel();
                 console.error(error);
-                sendNotification('Failed to publish track', {
+                notifications.send('Failed to publish track', {
                     body: error.message
                 });
+            })
+            .finally(() => {
+                submitStatus = undefined;
+                hashAttempts = undefined;
+                hashStartTime = undefined;
             });
-
-            submitStatus = undefined;
         }
     });
 
     const { form: formData, enhance, allErrors, submitting, tainted } = form;
-
-    async function importFromFile(event: Event & { currentTarget: HTMLInputElement }) {
-        const files = event.currentTarget.files;
-        if (!files?.length) return;
-
-        const file = files[0];
-
-        if (file) {
-            let metadata: Partial<Omit<APIResponse.Get.TrackSignature, 'id'|'instrumental'>>;
-
-            switch (file.name.split('.').pop()) {
-                case 'lrc':
-                    metadata = await parseLRCMetadata(file);
-                    break;
-                default:
-                    metadata = await parseAudioMetadata(file);
-            }
-
-            $formData = {
-                ...$formData,
-                ...metadata,
-                plainLyrics: metadata.plainLyrics ?? $formData.plainLyrics,
-                syncedLyrics: metadata.syncedLyrics ?? $formData.syncedLyrics
-            };
-        }
-    }
 
     const saveToDraft = useDebounce(
         () => {
@@ -143,20 +121,17 @@
 </script>
 
 <div class="pt-16 w-full max-w-4xl mx-auto grid gap-5">
-    <Card>
-        <CardHeader>
-            <CardTitle class="flex items-center gap-1">
-                <FileInputIcon class="text-primary size-5"/>
-                Import Lyrics
-            </CardTitle>
-            <CardDescription>
-                Import lyrics from audio file or .lrc file
-            </CardDescription>
-        </CardHeader>
-        <CardContent>
-            <Input type="file" accept="audio/*,.lrc" onchange={importFromFile}/>
-        </CardContent>
-    </Card>
+    <ImportMetadata
+        setMetadata={metadata => {
+            $formData = {
+                ...$formData,
+                ...metadata,
+                plainLyrics: metadata.plainLyrics ?? $formData.plainLyrics,
+                syncedLyrics: metadata.syncedLyrics ?? $formData.syncedLyrics
+            };
+        }}
+        disabled={$submitting}
+    />
     <Card>
         <CardContent>
             <form method="POST" class="grid gap-4" use:enhance>
@@ -196,8 +171,8 @@
                     </FormControl>
                     <FormFieldErrors/>
                 </FormField>
-                <div class="flex sm:flex-row flex-col gap-5">
-                    <FormField {form} name="syncedLyrics" class="sm:w-1/2">
+                <div class="flex md:flex-row flex-col gap-5">
+                    <FormField {form} name="syncedLyrics" class="md:w-1/2">
                         <FormControl>
                             {#snippet children({ props })}
                                 <FormLabel>Synced Lyrics</FormLabel>
@@ -206,7 +181,7 @@
                         </FormControl>
                         <FormFieldErrors/>
                     </FormField>
-                    <FormField {form} name="plainLyrics" class="sm:w-1/2">
+                    <FormField {form} name="plainLyrics" class="md:w-1/2">
                         <FormControl>
                             {#snippet children({ props })}
                                 <FormLabel>Plain Lyrics</FormLabel>
@@ -216,39 +191,46 @@
                         <FormFieldErrors/>
                     </FormField>
                 </div>
+                <InfoCard
+                    icon={InfoIcon}
+                    title="Important"
+                    description={publishTrackNote}
+                />
                 <div class="flex justify-end items-center gap-2">
-                    {#if !$submitting}
-                        <Button type="button" class="relative overflow-clip w-36 text-xs opacity-80!" variant="outline" disabled>
-                            {#key draftStatus}
-                                <span
-                                    class="absolute flex items-center gap-1"
-                                    in:fly={{ y: 30, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
-                                    out:fly={{ y: -30, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
-                                >
-                                    {#if draftStatus === 'saving'}
-                                        <LoaderIcon class="animate-spin size-4!"/>
-                                        <span>Saving to Draft</span>
-                                    {:else if draftStatus === 'saved'}
-                                        <CheckIcon class="size-4!"/>
-                                        <span>Saved to Draft</span>
-                                    {:else}
-                                        <PencilRulerIcon class="size-4!"/>
-                                        <span>Save to Draft</span>
-                                    {/if}
-                                </span>
-                            {/key}
-                        </Button>
+                    {#if $submitting || draftStatus !== 'idle'}
+                        {@const animatedClass = "flex items-center gap-1 w-full sm:justify-end sm:px-4 h-full font-semibold"}
+                        <div class="relative w-full h-8 overflow-clip text-end text-xs text-foreground/80 [&_svg]:size-4">
+                            {#if $submitting}
+                                {#if hashAttempts}
+                                    <FlyInOut class={animatedClass}>
+                                        {#key hashAttempts}
+                                            <span>{formatDurationString(Date.now() - (hashStartTime ?? Date.now()))} • {formatNumberString(hashAttempts)} hash</span>
+                                        {/key}
+                                    </FlyInOut>
+                                {:else}
+                                    <FlyInOut class={animatedClass}>
+                                        <ClockIcon/>
+                                        <span>{submitStatus}</span>
+                                    </FlyInOut>
+                                {/if}
+                            {:else if draftStatus === 'saving'}
+                                <FlyInOut class={animatedClass}>
+                                    <LoaderIcon class="animate-spin"/>
+                                    <span>Saving to Draft</span>
+                                </FlyInOut>
+                            {:else if draftStatus === 'saved'}
+                                <FlyInOut class={animatedClass}>
+                                    <CheckIcon/>
+                                    <span>Saved to Draft</span>
+                                </FlyInOut>
+                            {/if}
+                        </div>
                     {/if}
                     <FormButton type="submit" class="btn btn-primary" disabled={$submitting || !!$allErrors?.length}>
                         {#if $submitting}
                             <LoaderIcon class="animate-spin"/>
-                            {#if typeof hashAttempts === 'number'}
-                                {formatNumberString(hashAttempts)} attempts
-                            {:else if typeof submitStatus === 'string'}
-                                {submitStatus}
-                            {/if}
                         {:else}
-                            Submit
+                            Publish
                         {/if}
                     </FormButton>
                 </div>

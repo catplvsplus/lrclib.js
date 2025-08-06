@@ -8,6 +8,8 @@ export const links = {
     lrclib: 'https://lrclib.net'
 };
 
+export const publishNote = `Please be mindful, your contributions help build a reliable and comprehensive database by ensuring the accuracy and quality of the lyrics you submit.`;
+
 export const installCommands: (Record<'pkgManager'|'command', string> & { icon?: ComponentType; })[] = [
     {
         icon: SiNpm,

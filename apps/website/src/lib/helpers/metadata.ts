@@ -12,7 +12,7 @@ export async function parseAudioMetadata(file: File): Promise<Partial<Omit<APIRe
     const firstPlain = data.common.lyrics?.find(l => l.contentType === LyricsContentType.lyrics && l.text);
     const firstSynced = data.common.lyrics?.find(l => l.contentType === LyricsContentType.lyrics && l.syncText);
 
-    const syncedLyrics = firstSynced?.syncText.map(l => `[${formatDuration(l.timestamp ?? 0)}] ${l.text}`).join('\n');
+    const syncedLyrics = firstSynced?.syncText.map(l => `[${formatLRCDuration(l.timestamp ?? 0)}] ${l.text}`).join('\n');
 
     return {
         trackName: data.common.title,
@@ -41,7 +41,7 @@ export async function parseLRCMetadata(file: File): Promise<Partial<Omit<APIResp
     };
 }
 
-export function formatDuration(duration: number): string {
+export function formatLRCDuration(duration: number): string {
     const [milliseconds, seconds, minutes] = [
         Math.floor(duration % 1000),
         Math.floor(duration / 1000) % 60,

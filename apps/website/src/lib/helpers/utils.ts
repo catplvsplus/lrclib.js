@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import humanizeDuration from 'humanize-duration';
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -23,3 +24,22 @@ export function formatNumberString(number: number): string {
         return `${(number / 1000000000).toFixed(1)}B`;
     }
 }
+
+export const formatDurationString = humanizeDuration.humanizer({
+    largest: 1,
+    language: "shortEn",
+    maxDecimalPoints: 1,
+    spacer: "",
+    languages: {
+        shortEn: {
+            y: () => "y",
+            mo: () => "mo",
+            w: () => "w",
+            d: () => "d",
+            h: () => "h",
+            m: () => "m",
+            s: () => "s",
+            ms: () => "ms",
+        },
+    },
+});

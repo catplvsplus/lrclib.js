@@ -36,8 +36,8 @@
 
     let largestSize = $derived(Math.max(syncedSize.textareaHeight, plainSize.textareaHeight));
 </script>
-<div class="flex md:flex-row flex-col gap-5">
-    <FormField {form} name="syncedLyrics" class="md:w-1/2">
+<div class="flex lg:flex-row flex-col gap-5">
+    <FormField {form} name="syncedLyrics" class="lg:w-1/2">
         <FormControl>
             {#snippet children({ props })}
                 <FormLabel>Synced Lyrics</FormLabel>
@@ -53,7 +53,7 @@
         </FormControl>
         <FormFieldErrors/>
     </FormField>
-    <FormField {form} name="plainLyrics" class="md:w-1/2">
+    <FormField {form} name="plainLyrics" class="lg:w-1/2">
         <FormControl>
             {#snippet children({ props })}
                 <FormLabel>Plain Lyrics</FormLabel>

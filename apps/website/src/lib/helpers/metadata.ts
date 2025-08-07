@@ -1,10 +1,6 @@
 import type { APIResponse } from 'lrclib.js';
 import { LRC } from 'lrclib.js';
 import { LyricsContentType, parseBlob } from 'music-metadata';
-import { PersistedState } from 'runed';
-import type { PublishTrackSchema } from './schema';
-
-export const publishTrackDraft = new PersistedState<Partial<PublishTrackSchema>>('lrclib-upload-draft', {});
 
 export async function parseAudioMetadata(file: File): Promise<Partial<Omit<APIResponse.Get.TrackSignature, 'id'|'instrumental'>>> {
     const data = await parseBlob(file);

@@ -1,13 +1,12 @@
 <script lang="ts">
-    import lrclib, { ChallengeSolver } from 'lrclib.js';
+    import lrclib from 'lrclib.js';
     import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '$lib/components/ui/card';
-    import { CheckIcon, InfoIcon, LoaderIcon, ClockIcon, PenSquareIcon, AlertCircleIcon, CircleX } from '@lucide/svelte';
+    import { InfoIcon, LoaderIcon, ClockIcon, PenSquareIcon, AlertCircleIcon, CircleX, BadgeCheckIcon } from '@lucide/svelte';
     import { Input } from '$lib/components/ui/input';
     import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
-    import { defaults, superForm } from 'sveltekit-superforms';
-    import { zod4, zod4Client, zodClient } from 'sveltekit-superforms/adapters';
+    import { superForm } from 'sveltekit-superforms';
+    import { zod4Client } from 'sveltekit-superforms/adapters';
     import { publishTrackSchema } from '$lib/helpers/schema';
-    import { publishTrackDraft } from '$lib/helpers/metadata';
     import { toast } from 'svelte-sonner';
     import { useDebounce } from 'runed';
     import { formatDurationString, formatNumberString } from '$lib/helpers/utils';
@@ -18,26 +17,20 @@
     import FlyInOut from '$lib/components/shared/FlyInOut.svelte';
     import { beforeNavigate } from '$app/navigation';
     import LyricsTextareaFields from '$lib/components/shared/publish/LyricsTextareaFields.svelte';
+    import { tokenSolver } from '$lib/helpers/classes/TokenSolver.svelte.js';
+    import { publishDraft } from '../../../lib/helpers/classes/PublishDraft.svelte.js';
 
     let { data } = $props();
 
-    let draftStatus: 'idle'|'saving'|'saved' = $state(Object.keys(data.form.data).length ? 'saved' : 'idle');
     let submitStatus: string|undefined = $state();
-    let hashAttempts: number|undefined = $state();
-    let hashStartTime: number|undefined = $state();
-    let hashSolver: ChallengeSolver|undefined = $state();
 
     const form = superForm(data.form, {
         validators: zod4Client(publishTrackSchema),
         validationMethod: 'auto',
         dataType: 'json',
         taintedMessage: true,
-        onChange: () => {
-            draftStatus = 'saving';
-            saveToDraft();
-        },
+        onChange: () => saveToDraft(),
         onError: err => {
-            resetToken();
             console.error(err.result);
             notifications.send('Failed to publish track', {
                 body: err.result.error.message,
@@ -56,12 +49,22 @@
                 });
             }
 
-            await solveChallenge(data.cancel)
-                .catch(error => {
-                    resetToken();
-                    throw error;
-                });
+            if (tokenSolver.status === 'solving') {
+                submitStatus = 'Solving challenge';
+                await tokenSolver.onSolved;
+            } else {
+                submitStatus = 'Fetching challenge';
 
+                const challenge = await lrclib.requestChallenge();
+
+                submitStatus = 'Solving challenge';
+                await tokenSolver.solve(challenge, () => {
+                    data.cancel();
+                    throw new Error('Challenge solving aborted');
+                });
+            }
+
+            $formData.token = tokenSolver.solver?.token;
             submitStatus = 'Publishing';
         },
         onUpdate: async event => {
@@ -73,75 +76,38 @@
                 return;
             }
 
+            tokenSolver.reset(true);
+
             notifications.send('Lyrics published!', {
                 body: `Published track ${$formData.trackName}`,
                 toastType: 'success'
             });
 
-            form.reset(defaults(zod4(publishTrackSchema)));
-            resetToken();
-
-            publishTrackDraft.current = {};
-            draftStatus = 'idle';
+            publishDraft.set({});
             submitStatus = undefined;
+            $formData = {};
         }
     });
 
     const { form: formData, enhance, allErrors, submitting, tainted, capture, restore } = form;
 
-    const saveToDraft = useDebounce(
-        (notify: boolean = false) => {
-            publishTrackDraft.current = $formData;
-            draftStatus = Object.keys(publishTrackDraft.current).length ? 'saved' : 'idle';
-            untaintForm();
+    async function saveToDraft({ notify, instant }: { notify?: boolean; instant?: boolean } = {}) {
+        if (!instant) {
+            await publishDraft.save($formData);
+        } else {
+            publishDraft.set($formData);
+        }
 
-            if (notify) toast.success('Saved publish track to draft');
-        },
-        () => 3000
-    );
+        if (notify) toast.success('Saved publish track to draft');
+        untaintForm();
+    }
 
     function untaintForm() {
         formData.update(() => $formData, { taint: 'untaint-form' });
     }
 
-    function resetToken() {
-        hashAttempts = undefined;
-        hashStartTime = undefined;
-        hashSolver = undefined;
-        $formData.token = undefined;
-    }
-
-    // TODO: idk WASM stuff so it's very slow unlike https://lrclibup.boidu.dev/ 😭
-    async function solveChallenge(cancel: () => void) {
-        submitStatus = 'Fetching challenge';
-
-        const challenge = await lrclib.requestChallenge();
-
-        submitStatus = 'Solving challenge';
-        hashStartTime = Date.now();
-
-        hashSolver = new ChallengeSolver(challenge, {
-            onAttempt: s => hashAttempts = s.attempts,
-            onAbort: () => cancel()
-        });
-
-        $formData.token = (await hashSolver.solve()).token;
-    }
-
-    function abortChallenge() {
-        hashSolver?.abort();
-        resetToken();
-    }
-
     $effect(() => {
-        form.validateForm({
-            update: true
-        });
-
-        return () => {
-            resetToken();
-            abortChallenge();
-        };
+        form.validateForm({ update: true });
     });
 
     beforeNavigate(async navigate => {
@@ -166,8 +132,7 @@
 
         if (meta && event.key === 's') {
             event.preventDefault();
-            draftStatus = 'saving';
-            saveToDraft(true);
+            saveToDraft({ notify: true, instant: true });
         }
     }}
 />
@@ -243,42 +208,40 @@
                     title="Note"
                     description="Publishing a track requires solving a proof-of-work challenge. This process can take a few minutes, don't close this page till your track is published."
                 />
-                <div class="flex justify-end items-center gap-2">
-                    {#if $submitting || draftStatus !== 'idle'}
-                        {@const sharedClass = "flex items-center gap-1 w-full sm:justify-end sm:px-4 h-full font-semibold"}
-                        <div class="relative w-full h-8 overflow-clip sm:text-end text-xs text-foreground/80 [&_svg]:size-4">
-                            {#if $submitting}
-                                {#if hashAttempts}
-                                    <FlyInOut class={sharedClass}>
-                                        {#key hashAttempts}
-                                            <span>{formatDurationString(Date.now() - (hashStartTime ?? Date.now()))} • {formatNumberString(hashAttempts)} hash attempts</span>
-                                        {/key}
-                                    </FlyInOut>
-                                {:else}
-                                    <FlyInOut class={sharedClass}>
-                                        <ClockIcon/>
-                                        <span>{submitStatus}</span>
-                                    </FlyInOut>
-                                {/if}
-                            {:else if draftStatus === 'saving'}
+                <div class="flex sm:justify-end sm:items-center gap-2 flex-col-reverse sm:flex-row">
+                    {#if $submitting || publishDraft.status || tokenSolver.status === 'solving'}
+                        {@const sharedClass = "flex items-center gap-1 w-full sm:justify-end justify-center sm:px-4 h-full font-semibold"}
+                        <div class="relative w-full h-8 mt-4 sm:mt-0 overflow-clip sm:text-end text-xs text-foreground/60 sm:text-foreground/80 [&_svg]:size-4">
+                            {#if tokenSolver.status === 'solving'}
+                                <FlyInOut class={sharedClass}>
+                                    {#key tokenSolver.attempts}
+                                        <span>{formatDurationString(Date.now() - (tokenSolver.solver?.solveStartTime ?? Date.now()))} • {formatNumberString(tokenSolver.attempts ?? 0)} hash attempts</span>
+                                    {/key}
+                                </FlyInOut>
+                            {:else if $submitting}
+                                <FlyInOut class={sharedClass}>
+                                    <ClockIcon/>
+                                    <span>{submitStatus}</span>
+                                </FlyInOut>
+                            {:else if publishDraft.status === 'saving'}
                                 <FlyInOut class={sharedClass}>
                                     <LoaderIcon class="animate-spin"/>
                                     <span>Saving to Draft</span>
                                 </FlyInOut>
-                            {:else if draftStatus === 'saved'}
+                            {:else if publishDraft.status === 'saved'}
                                 <FlyInOut class={sharedClass}>
-                                    <CheckIcon/>
+                                    <BadgeCheckIcon/>
                                     <span>Saved to Draft</span>
                                 </FlyInOut>
                             {/if}
                         </div>
                     {/if}
-                    {#if $submitting && submitStatus === 'Solving challenge'}
-                        <FormButton type="button" variant="ghost" onclick={abortChallenge}>
+                    {#if tokenSolver.status === 'solving'}
+                        <FormButton type="button" variant="secondary" onclick={tokenSolver.abort}>
                             Cancel
                         </FormButton>
                     {/if}
-                    <FormButton type="submit" disabled={$submitting || !!$allErrors?.length}>
+                    <FormButton type="submit" disabled={$submitting || !!$allErrors?.length || tokenSolver.status === 'solving'}>
                         {#if $submitting}
                             <LoaderIcon class="animate-spin"/>
                         {:else}

@@ -211,7 +211,7 @@
                 <div class="flex sm:justify-end sm:items-center gap-2 flex-col-reverse sm:flex-row">
                     {#if $submitting || publishDraft.status || tokenSolver.status === 'solving'}
                         {@const sharedClass = "flex items-center gap-1 w-full sm:justify-end justify-center sm:px-4 h-full font-semibold"}
-                        <div class="relative w-full h-8 mt-4 sm:mt-0 overflow-clip sm:text-end text-xs text-foreground/60 sm:text-foreground/80 [&_svg]:size-4">
+                        <div class="relative w-full h-8 mt-4 sm:mt-0 overflow-clip sm:text-end text-xs text-foreground/60 [&_svg]:size-4">
                             {#if tokenSolver.status === 'solving'}
                                 <FlyInOut class={sharedClass}>
                                     {#key tokenSolver.attempts}

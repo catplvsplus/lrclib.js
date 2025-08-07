@@ -75,6 +75,6 @@
         </CardDescription>
     </CardHeader>
     <CardContent>
-        <Input type="file" accept="audio/*,.lrc" onchange={importFromFile} disabled={isLoading || disabled}/>
+        <Input type="file" accept="audio/*,.lrc" oninput={importFromFile} disabled={isLoading || disabled}/>
     </CardContent>
 </Card>

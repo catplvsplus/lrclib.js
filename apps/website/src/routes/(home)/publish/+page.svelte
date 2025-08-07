@@ -1,16 +1,15 @@
 <script lang="ts">
     import lrclib, { ChallengeSolver, LRC, type APIPublishTokenData, type APIResponse } from 'lrclib.js';
     import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '$lib/components/ui/card';
-    import { CheckIcon, InfoIcon, LoaderIcon, ClockIcon, PenSquareIcon, AlertCircleIcon } from '@lucide/svelte';
+    import { CheckIcon, InfoIcon, LoaderIcon, ClockIcon, PenSquareIcon, AlertCircleIcon, CircleX } from '@lucide/svelte';
     import { Input } from '$lib/components/ui/input';
     import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
-    import { superForm } from 'sveltekit-superforms';
-    import { zod4Client, zodClient } from 'sveltekit-superforms/adapters';
+    import { defaults, superForm } from 'sveltekit-superforms';
+    import { zod4, zod4Client, zodClient } from 'sveltekit-superforms/adapters';
     import { publishTrackSchema } from '$lib/helpers/schema';
     import { publishTrackDraft } from '$lib/helpers/metadata';
     import { toast } from 'svelte-sonner';
     import { useDebounce } from 'runed';
-    import { resolve } from '$app/paths';
     import { formatDurationString, formatNumberString } from '$lib/helpers/utils';
     import { notifications } from '$lib/helpers/classes/Notifications.svelte';
     import InfoCard from '$lib/components/shared/InfoCard.svelte';
@@ -18,7 +17,7 @@
     import ImportMetadata from '$lib/components/shared/publish/ImportMetadata.svelte';
     import FlyInOut from '$lib/components/shared/FlyInOut.svelte';
     import { beforeNavigate } from '$app/navigation';
-    import LyricsTextareaFields from '../../../lib/components/shared/publish/LyricsTextareaFields.svelte';
+    import LyricsTextareaFields from '$lib/components/shared/publish/LyricsTextareaFields.svelte';
 
     let { data } = $props();
 
@@ -26,13 +25,10 @@
     let submitStatus: string|undefined = $state();
     let hashAttempts: number|undefined = $state();
     let hashStartTime: number|undefined = $state();
-    let challenge: APIResponse.Post.RequestChallenge|undefined = $state();
-    let token: APIPublishTokenData|undefined = $state();
 
     const form = superForm(data.form, {
-        SPA: true,
         validators: zod4Client(publishTrackSchema),
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         dataType: 'json',
         taintedMessage: true,
         onChange: () => {
@@ -40,10 +36,11 @@
             saveToDraft();
         },
         onError: err => {
-            resetChallenge();
+            resetToken();
             console.error(err.result);
             notifications.send('Failed to publish track', {
-                body: err.result.error.message
+                body: err.result.error.message,
+                toastType: 'error'
             });
         },
         onSubmit: async () => {
@@ -58,43 +55,39 @@
                 });
             }
 
-            draftStatus = 'idle';
-            submitStatus = 'Fetching challenge';
-
-            challenge ??= await lrclib.requestChallenge();
-
-            submitStatus = 'Solving challenge';
-            hashStartTime = Date.now();
-
-            const solver = new ChallengeSolver(challenge, {
-                onAttempt: () => hashAttempts = solver.attempts
-            });
-
-            token ??= await solver.solve();
+            await solveChallenge();
 
             submitStatus = 'Publishing';
         },
-        onResult: async event => {
-            if (event.result.type !== 'success') return;
+        onUpdate: async event => {
+            if (event.result.type !== 'success') {
+                notifications.send('Failed to publish track', {
+                    body: event.result.data.message ?? 'Invalid form data',
+                    toastType: 'error'
+                });
+                return;
+            }
 
             notifications.send('Lyrics published!', {
-                body: `Published track ${$formData.trackName}`
+                body: `Published track ${$formData.trackName}`,
+                toastType: 'success'
             });
 
-            form.reset();
-            resetChallenge();
+            form.reset(defaults(zod4(publishTrackSchema)));
+            resetToken();
 
             publishTrackDraft.current = {};
+            draftStatus = 'idle';
             submitStatus = undefined;
         }
     });
 
-    const { form: formData, enhance, allErrors, submitting, tainted } = form;
+    const { form: formData, enhance, allErrors, submitting, tainted, capture, restore } = form;
 
     const saveToDraft = useDebounce(
         (notify: boolean = false) => {
             publishTrackDraft.current = $formData;
-            draftStatus = 'saved';
+            draftStatus = Object.keys(publishTrackDraft.current).length ? 'saved' : 'idle';
             untaintForm();
 
             if (notify) toast.success('Saved publish track to draft');
@@ -106,11 +99,27 @@
         formData.update(() => $formData, { taint: 'untaint-form' });
     }
 
-    function resetChallenge() {
+    function resetToken() {
         hashAttempts = undefined;
         hashStartTime = undefined;
-        challenge = undefined;
-        token = undefined;
+        $formData.token = undefined;
+    }
+
+    async function solveChallenge() {
+        submitStatus = 'Fetching challenge';
+
+        const challenge = await lrclib.requestChallenge();
+
+        submitStatus = 'Solving challenge';
+        hashStartTime = Date.now();
+
+        const solver = new ChallengeSolver(challenge, {
+            onAttempt: () => hashAttempts = solver.attempts
+        });
+
+        await solver.solve();
+
+        $formData.token = solver.token;
     }
 
     $effect(() => {
@@ -118,10 +127,7 @@
             update: true
         });
 
-        return () => {
-            challenge = undefined;
-            token = undefined;
-        }
+        return resetToken;
     });
 
     beforeNavigate(async navigate => {
@@ -130,6 +136,8 @@
         const leave = confirm('You have unsaved changes. Are you sure you want to leave?');
         if (!leave) navigate.cancel();
     });
+
+    export const snapshot = { capture, restore };
 </script>
 
 <svelte:window

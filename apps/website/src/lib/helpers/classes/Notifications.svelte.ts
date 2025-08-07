@@ -1,5 +1,6 @@
 import { resolve } from '$app/paths';
-import { toast } from 'svelte-sonner';
+import type { Component } from 'svelte';
+import { toast, type ExternalToast } from 'svelte-sonner';
 
 export class Notifications {
     public current: Notification[] = $state([]);
@@ -18,7 +19,7 @@ export class Notifications {
         return 'Notification' in window ? await Notification.requestPermission() : 'denied';
     }
 
-    public send(title: string, options?: NotificationOptions & { toast?: boolean; }) {
+    public send(title: string, options?: NotificationOptions & Notifications.ToastOptions) {
         if (this.permission === 'granted' && !this.isWindowVisible()) {
             const notification = new Notification(title, {
                 icon: `${resolve('/')}icon-192.png`,
@@ -37,7 +38,7 @@ export class Notifications {
             }
         }
 
-        if (options?.toast !== false) toast(title);
+        if (options?.toast !== false) this.toast(title, options);
     }
 
     public clear() {
@@ -51,6 +52,36 @@ export class Notifications {
         const focused = typeof document !== 'undefined' && document.hasFocus();
 
         return visible && (checkFocus ? focused : true);
+    }
+
+    private toast(title: string, { toast: options, toastType, body }: NotificationOptions & Notifications.ToastOptions = {}) {
+        options = typeof options === 'boolean' ? {} : options ?? {};
+        options.description = body;
+
+        switch (toastType) {
+            case 'success':
+                toast.success(title, options);
+                break;
+            case 'error':
+                toast.error(title, options);
+                break;
+            case 'warning':
+                toast.warning(title, options);
+                break;
+            case 'info':
+                toast.info(title, options);
+                break;
+            default:
+                toast(title, options);
+                break;
+        }
+    }
+}
+
+export namespace Notifications {
+    export interface ToastOptions {
+        toastType?: 'success'|'error'|'warning'|'info';
+        toast?: boolean|ExternalToast<Component>;
     }
 }
 

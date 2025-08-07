@@ -7,6 +7,8 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
     private _solveEndTime: number|null = null;
     private _solveLastUpdate: number|null = null;
 
+    public abortController: AbortController|null = null;
+
     public readonly prefix: string;
     public readonly target: string;
 
@@ -22,6 +24,7 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
     get solveEndTime(): number|null { return this._solveEndTime; }
     get solveLastUpdate(): number|null { return this._solveLastUpdate; }
     get solved(): boolean { return !!this.solveStartTime && !!this.solveEndTime; }
+    get aborted(): boolean { return !!this.abortController?.signal.aborted; }
 
     get data(): APIPublishTokenData {
         return {
@@ -30,9 +33,10 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
         };
     }
 
-    public async solve(): Promise<APIPublishTokenData> {
-        if (this.solved) return this.data;
+    public async solve(): Promise<this> {
+        if (this.solved) return this;
 
+        this.abortController = new AbortController();
         this._solveStartTime = Date.now();
         this._solveEndTime = null;
         this._attempts = 0;
@@ -41,6 +45,8 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
         const target = ChallengeSolver.decodeHex(this.target);
 
         while (true) {
+            if (this.abortController.signal.aborted) break;
+
             this._attempts++;
             this._solveLastUpdate = Date.now();
             this.options?.onAttempt?.(this);
@@ -55,15 +61,34 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
 
         this._solveEndTime = this._solveLastUpdate;
 
-        return this.data;
+        if (this.abortController.signal.aborted) {
+            this._solveStartTime = null;
+            this._solveEndTime = null;
+            this._solveLastUpdate = null;
+
+            if (this.options?.onAbort) {
+                this.options.onAbort(this);
+            } else {
+                throw new ChallengeSolver.AbortError('Solve aborted');
+            }
+        }
+
+        return this;
+    }
+
+    public abort(): void {
+        if (this.abortController) this.abortController.abort();
     }
 }
 
 export namespace ChallengeSolver {
     let nodeCrypto: typeof import('node:crypto')|null = null;
 
+    export class AbortError extends Error {}
+
     export interface Options {
         onAttempt?: (solver: ChallengeSolver) => void;
+        onAbort?: (solver: ChallengeSolver) => void;
     }
 
     export async function resolveNodeCrypto(): Promise<typeof import('node:crypto')> {

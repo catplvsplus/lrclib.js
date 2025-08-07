@@ -25,6 +25,7 @@
     let submitStatus: string|undefined = $state();
     let hashAttempts: number|undefined = $state();
     let hashStartTime: number|undefined = $state();
+    let hashSolver: ChallengeSolver|undefined = $state();
 
     const form = superForm(data.form, {
         validators: zod4Client(publishTrackSchema),
@@ -43,7 +44,7 @@
                 toastType: 'error'
             });
         },
-        onSubmit: async () => {
+        onSubmit: async data => {
             saveToDraft();
 
             if (notifications.permission === 'default') {
@@ -55,7 +56,11 @@
                 });
             }
 
-            await solveChallenge();
+            await solveChallenge()
+                .catch(error => {
+                    resetToken();
+                    throw error;
+                });
 
             submitStatus = 'Publishing';
         },
@@ -102,6 +107,7 @@
     function resetToken() {
         hashAttempts = undefined;
         hashStartTime = undefined;
+        hashSolver = undefined;
         $formData.token = undefined;
     }
 
@@ -113,13 +119,16 @@
         submitStatus = 'Solving challenge';
         hashStartTime = Date.now();
 
-        const solver = new ChallengeSolver(challenge, {
-            onAttempt: () => hashAttempts = solver.attempts
+        hashSolver = new ChallengeSolver(challenge, {
+            onAttempt: s => hashAttempts = s.attempts
         });
 
-        await solver.solve();
+        $formData.token = (await hashSolver.solve()).token;
+    }
 
-        $formData.token = solver.token;
+    function abortChallenge() {
+        hashSolver?.abort();
+        resetToken();
     }
 
     $effect(() => {
@@ -127,7 +136,10 @@
             update: true
         });
 
-        return resetToken;
+        return () => {
+            resetToken();
+            abortChallenge();
+        };
     });
 
     beforeNavigate(async navigate => {
@@ -259,7 +271,12 @@
                             {/if}
                         </div>
                     {/if}
-                    <FormButton type="submit" class="btn btn-primary" disabled={$submitting || !!$allErrors?.length}>
+                    {#if $submitting && submitStatus === 'Solving challenge'}
+                        <FormButton type="button" variant="ghost" onclick={abortChallenge}>
+                            Cancel
+                        </FormButton>
+                    {/if}
+                    <FormButton type="submit" disabled={$submitting || !!$allErrors?.length}>
                         {#if $submitting}
                             <LoaderIcon class="animate-spin"/>
                         {:else}

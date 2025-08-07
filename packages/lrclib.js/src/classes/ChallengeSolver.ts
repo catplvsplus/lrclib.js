@@ -10,9 +10,7 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
     public readonly prefix: string;
     public readonly target: string;
 
-    public onAttempt?: (solver: ChallengeSolver) => void;
-
-    constructor(data: APIResponse.Post.RequestChallenge) {
+    constructor(data: APIResponse.Post.RequestChallenge, public readonly options?: ChallengeSolver.Options) {
         this.prefix = data.prefix;
         this.target = data.target;
     }
@@ -45,7 +43,7 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
         while (true) {
             this._attempts++;
             this._solveLastUpdate = Date.now();
-            this.onAttempt?.(this);
+            this.options?.onAttempt?.(this);
 
             const input = `${this.prefix}${this._nonce}`;
             const hashed = await ChallengeSolver.sha256(input);
@@ -63,6 +61,10 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
 
 export namespace ChallengeSolver {
     let nodeCrypto: typeof import('node:crypto')|null = null;
+
+    export interface Options {
+        onAttempt?: (solver: ChallengeSolver) => void;
+    }
 
     export async function resolveNodeCrypto(): Promise<typeof import('node:crypto')> {
         return nodeCrypto ??= await import('node:crypto');

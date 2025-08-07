@@ -39,7 +39,14 @@
             draftStatus = 'saving';
             saveToDraft();
         },
-        onSubmit: async data => {
+        onError: err => {
+            resetChallenge();
+            console.error(err.result);
+            notifications.send('Failed to publish track', {
+                body: err.result.error.message
+            });
+        },
+        onSubmit: async () => {
             saveToDraft();
 
             if (notifications.permission === 'default') {
@@ -59,63 +66,51 @@
             submitStatus = 'Solving challenge';
             hashStartTime = Date.now();
 
-            const solver = new ChallengeSolver(challenge);
-
-            solver.onAttempt = () => hashAttempts = solver.attempts;
+            const solver = new ChallengeSolver(challenge, {
+                onAttempt: () => hashAttempts = solver.attempts
+            });
 
             token ??= await solver.solve();
 
             submitStatus = 'Publishing';
+        },
+        onResult: async event => {
+            if (event.result.type !== 'success') return;
 
-            await fetch(resolve('/(home)/publish'), {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Publish-Token': `${challenge.prefix}:${token.nonce}`
-                },
-                body: JSON.stringify($formData)
-            })
-            .then(async res => {
-                if (!res.ok) throw new Error((await res.json())?.message ?? 'Failed to publish track');
-
-                notifications.send('Lyrics published!', {
-                    body: `Published track ${$formData.trackName}`
-                });
-
-                form.reset();
-
-                publishTrackDraft.current = {};
-                challenge = undefined;
-                token = undefined;
-            })
-            .catch(error => {
-                data.cancel();
-                console.error(error);
-                notifications.send('Failed to publish track', {
-                    body: error.message
-                });
-            })
-            .finally(() => {
-                submitStatus = undefined;
-                hashAttempts = undefined;
-                hashStartTime = undefined;
+            notifications.send('Lyrics published!', {
+                body: `Published track ${$formData.trackName}`
             });
+
+            form.reset();
+            resetChallenge();
+
+            publishTrackDraft.current = {};
+            submitStatus = undefined;
         }
     });
 
     const { form: formData, enhance, allErrors, submitting, tainted } = form;
 
     const saveToDraft = useDebounce(
-        () => {
+        (notify: boolean = false) => {
             publishTrackDraft.current = $formData;
             draftStatus = 'saved';
             untaintForm();
+
+            if (notify) toast.success('Saved publish track to draft');
         },
         () => 3000
     );
 
     function untaintForm() {
         formData.update(() => $formData, { taint: 'untaint-form' });
+    }
+
+    function resetChallenge() {
+        hashAttempts = undefined;
+        hashStartTime = undefined;
+        challenge = undefined;
+        token = undefined;
     }
 
     $effect(() => {
@@ -143,6 +138,15 @@
 
         event.preventDefault();
         event.returnValue = '';
+    }}
+    onkeydown={event => {
+        const meta = event.metaKey || event.ctrlKey;
+
+        if (meta && event.key === 's') {
+            event.preventDefault();
+            draftStatus = 'saving';
+            saveToDraft(true);
+        }
     }}
 />
 

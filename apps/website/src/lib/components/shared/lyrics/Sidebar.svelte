@@ -3,8 +3,9 @@
     import { cn } from '$lib/helpers/utils';
     import { page } from '$app/state';
     import { Button, type ButtonProps } from '../../ui/button';
-    import { CirclePlus, DownloadIcon, HeartIcon, MenuIcon, PencilRulerIcon, SearchIcon } from '@lucide/svelte';
+    import { CirclePlus, LibraryIcon, SearchIcon, ComponentIcon } from '@lucide/svelte';
     import { MediaQuery } from 'svelte/reactivity';
+    import { settings } from '../../../helpers/classes/Settings.svelte';
 
     let scrollY = $state(0);
     let pathname = $derived(page.url.pathname);
@@ -14,22 +15,26 @@
 <svelte:window bind:scrollY/>
 
 {#snippet SidebarContent({ hideTitle, ...props }: ButtonProps & { hideTitle?: boolean; } = {})}
-    <Button {...props} href={resolve('/(main)/lyrics')}>
-        <SearchIcon/>
-        <span class:hidden={hideTitle}>Search</span>
-    </Button>
-    <Button {...props} href={resolve('/(main)/likes')}>
-        <HeartIcon/>
-        <span class:hidden={hideTitle}>Likes</span>
-    </Button>
-    <Button {...props} href={resolve('/(main)/saves')}>
-        <DownloadIcon/>
-        <span class:hidden={hideTitle}>Saves</span>
-    </Button>
-    <Button {...props} href={resolve('/(main)/publish')}>
-        <CirclePlus/>
-        <span class:hidden={hideTitle}>Publish</span>
-    </Button>
+    {#snippet SidebarButton(path: typeof pathname, href: string, icon: typeof ComponentIcon, title: string)}
+        {@const isActive = pathname === path}
+        {@const Icon = icon}
+        <Button {...props} {href} data-active={isActive ? 'true' : undefined}>
+            <Icon/>
+            <span class:hidden={hideTitle}>{title}</span>
+            <div
+                class={cn(
+                    "sm:hidden absolute -bottom-1 rounded-full left-1/2 -translate-x-1/2 h-0.5 ",
+                    !settings.prefersReducedMotion && "transition-all duration-300",
+                    isActive
+                        ? "w-9 bg-primary"
+                        : "w-4 bg-transparent"
+                )}
+            ></div>
+        </Button>
+    {/snippet}
+    {@render SidebarButton('/search', resolve('/(main)/search'), SearchIcon, 'Search')}
+    {@render SidebarButton('/publish', resolve('/(main)/publish'), CirclePlus, 'Publish')}
+    {@render SidebarButton('/library', resolve('/(main)/library'), LibraryIcon, 'Library')}
 {/snippet}
 
 <div class="w-0 sm:w-56 shrink-0"></div>
@@ -51,10 +56,16 @@
     >
         {@render SidebarContent({
             class: cn(
-                '[&_svg]:text-primary [&_svg]:size-5! font-semibold',
+                '[&_svg]:text-primary [&_svg]:size-5! font-semibold relative hover:bg-black/5',
                 smallScreen.current
-                    ? 'flex-col items-center w-full shrink h-fit [&_svg]:size-6! text-xs gap-1 text-foreground/80'
-                    : 'w-full justify-start [&_svg]:mr-1 text-base text-foreground/80'
+                    ? [
+                        'flex-col items-center w-full shrink h-fit [&_svg]:size-6! text-xs gap-1 text-foreground/80 hover:bg-transparent',
+                        'data-[active]:text-primary',
+                    ]
+                    : [
+                        'w-full justify-start [&_svg]:mr-1 text-base text-foreground/80',
+                        'dark:data-[active]:bg-muted/60 dark:data-[active]:text-foreground data-[active]:bg-primary/10 data-[active]:text-primary',
+                    ]
             ),
             variant: 'ghost',
         })}

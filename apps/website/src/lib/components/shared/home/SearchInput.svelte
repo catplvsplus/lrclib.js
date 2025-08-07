@@ -27,7 +27,7 @@
     onSubmit ??= (event: SubmitEvent) => {
         event.preventDefault();
 
-        goto(`${resolve('/lyrics')}?q=${encodeURIComponent(value)}`);
+        goto(`${resolve('/search')}?q=${encodeURIComponent(value)}`);
     };
 </script>
 

@@ -111,6 +111,7 @@
         $formData.token = undefined;
     }
 
+    // TODO: idk WASM stuff so it's very slow unlike https://lrclibup.boidu.dev/ 😭
     async function solveChallenge() {
         submitStatus = 'Fetching challenge';
 

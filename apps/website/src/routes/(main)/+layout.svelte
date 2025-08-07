@@ -1,6 +1,6 @@
 <script lang="ts">
-    import Sidebar from '@/components/shared/lyrics/Sidebar.svelte';
-    import Topbar from '@/components/shared/home/Topbar.svelte';
+    import Sidebar from '@/components/shared/main/Sidebar.svelte';
+    import Topbar from '@/components/shared/Topbar.svelte';
     import { cn } from '$lib/helpers/utils';
 
     let { children } = $props();

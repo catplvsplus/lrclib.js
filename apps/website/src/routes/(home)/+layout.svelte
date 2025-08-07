@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Topbar from "@/components/shared/home/Topbar.svelte";
+    import Topbar from "@/components/shared/Topbar.svelte";
     import { cn } from '$lib/helpers/utils';
 
     let { children } = $props();

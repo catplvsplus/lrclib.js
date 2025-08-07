@@ -1,14 +1,14 @@
 <script lang="ts">
     import { resolve } from "$app/paths";
     import { EqualIcon, FileIcon, GitBranchIcon, HouseIcon, UsersIcon, XIcon } from '@lucide/svelte';
-    import Logo from '../../svg/logo.svelte';
+    import Logo from '../svg/logo.svelte';
     import { Button, buttonVariants } from '$lib/components/ui/button';
-    import ModeSwitcher from '../ModeSwitcher.svelte';
+    import ModeSwitcher from './ModeSwitcher.svelte';
     import { links } from '$lib/helpers/constants';
-    import ResponsiveDialog from '../ResponsiveDialog.svelte';
+    import ResponsiveDialog from './ResponsiveDialog.svelte';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import { cn } from '$lib/helpers/utils';
-    import ModeToggle from '../ModeToggle.svelte';
+    import ModeToggle from './ModeToggle.svelte';
     import { settings } from '$lib/helpers/classes/Settings.svelte';
 
     let menuState = new DialogState({ id: 'menu' });

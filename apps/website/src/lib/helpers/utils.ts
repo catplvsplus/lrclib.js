@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import humanizeDuration from 'humanize-duration';
+import type { APIOptions } from 'lrclib.js';
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -43,3 +44,7 @@ export const formatDurationString = humanizeDuration.humanizer({
         },
     },
 });
+
+export function stringifyQuery(query: APIOptions.Get.Search): string {
+    return 'q' in query ? query.q : `${query.track_name} by ${query.artist_name}`;
+}

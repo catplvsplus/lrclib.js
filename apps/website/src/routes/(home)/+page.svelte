@@ -5,7 +5,14 @@
     import LibUsageCode from '$lib/components/shared/home/LibUsageCode.svelte';
     import { Button } from '$lib/components/ui/button';
     import { resolve } from '$app/paths';
+    import { MetaTags } from 'svelte-meta-tags';
 </script>
+
+<svelte:head>
+    <title>Lrclib.js</title>
+</svelte:head>
+
+<MetaTags title="Lrclib.js" description="A library interacting with lrclib.net API"/>
 
 <div class="text-center pt-24 pb-18">
     <Button size="sm" variant="outline" href={resolve('/publish')} class="rounded-full font-bold text-foreground/70 mb-2 text-xs">

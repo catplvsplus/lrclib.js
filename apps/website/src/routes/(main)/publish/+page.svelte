@@ -19,6 +19,7 @@
     import LyricsTextareaFields from '$lib/components/shared/publish/LyricsTextareaFields.svelte';
     import { tokenSolver } from '$lib/helpers/classes/TokenSolver.svelte.js';
     import { publishDraft } from '../../../lib/helpers/classes/PublishDraft.svelte.js';
+    import { MetaTags } from 'svelte-meta-tags';
 
     let { data } = $props();
 
@@ -136,6 +137,12 @@
         }
     }}
 />
+
+<svelte:head>
+    <title>Lrclib.js | Publish</title>
+</svelte:head>
+
+<MetaTags title="Lrclib.js | Publish" description="Publish lyrics to Lrclib.js"/>
 
 <div class="sm:pt-0 pt-16 w-full max-w-4xl mx-auto grid gap-5">
     <ImportMetadata

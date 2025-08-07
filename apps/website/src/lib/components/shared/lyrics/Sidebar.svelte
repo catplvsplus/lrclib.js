@@ -59,7 +59,7 @@
                 '[&_svg]:text-primary [&_svg]:size-5! font-semibold relative hover:bg-black/5',
                 smallScreen.current
                     ? [
-                        'flex-col items-center w-full shrink h-fit [&_svg]:size-6! text-xs gap-1 text-foreground/80 hover:bg-transparent',
+                        'flex-col items-center w-full shrink h-fit [&_svg]:size-6! text-xs gap-1 text-foreground/70 hover:bg-transparent',
                         'data-[active]:text-primary',
                     ]
                     : [

@@ -56,7 +56,7 @@
                 });
             }
 
-            await solveChallenge()
+            await solveChallenge(data.cancel)
                 .catch(error => {
                     resetToken();
                     throw error;
@@ -112,7 +112,7 @@
     }
 
     // TODO: idk WASM stuff so it's very slow unlike https://lrclibup.boidu.dev/ 😭
-    async function solveChallenge() {
+    async function solveChallenge(cancel: () => void) {
         submitStatus = 'Fetching challenge';
 
         const challenge = await lrclib.requestChallenge();
@@ -121,7 +121,8 @@
         hashStartTime = Date.now();
 
         hashSolver = new ChallengeSolver(challenge, {
-            onAttempt: s => hashAttempts = s.attempts
+            onAttempt: s => hashAttempts = s.attempts,
+            onAbort: () => cancel()
         });
 
         $formData.token = (await hashSolver.solve()).token;
@@ -245,7 +246,7 @@
                 <div class="flex justify-end items-center gap-2">
                     {#if $submitting || draftStatus !== 'idle'}
                         {@const sharedClass = "flex items-center gap-1 w-full sm:justify-end sm:px-4 h-full font-semibold"}
-                        <div class="relative w-full h-8 overflow-clip text-end text-xs text-foreground/80 [&_svg]:size-4">
+                        <div class="relative w-full h-8 overflow-clip sm:text-end text-xs text-foreground/80 [&_svg]:size-4">
                             {#if $submitting}
                                 {#if hashAttempts}
                                     <FlyInOut class={sharedClass}>

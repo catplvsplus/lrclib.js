@@ -89,13 +89,13 @@
         <span class:hidden={type === 'drawer'}>Navigate other parts of lrclib.js</span>
     {/snippet}
     {#snippet content({ type })}
-        <div class="grid sm:grid-cols-2 gap-2 p-{type === 'drawer' ? '4' : '0'}" class:pt-6={type === 'drawer'}>
+        <div class="grid sm:grid-cols-2 gap-2 p-{type === 'drawer' ? '4' : '0'}" class:pt-8={type === 'drawer'}>
             {@render Links({
                 className: buttonVariants({
                     variant: "secondary",
                     size: "lg",
                     class: cn(
-                        "justify-start bg-transparent border border-muted h-12 text-sm rounded-lg bg-muted/50"
+                        "justify-start [&_svg]:size-5! [&_svg]:mr-2 p-2! bg-transparent font-bold",
                     )
                 }),
                 showIcons: true

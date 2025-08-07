@@ -95,7 +95,7 @@
                     variant: "secondary",
                     size: "lg",
                     class: cn(
-                        "justify-start [&_svg]:size-5! [&_svg]:mr-2 p-2! bg-transparent font-bold",
+                        "justify-start [&_svg]:size-5! [&_svg]:mr-2 p-2! bg-transparent font-bold shadow-none",
                     )
                 }),
                 showIcons: true

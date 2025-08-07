@@ -5,7 +5,7 @@
     import { Input } from '$lib/components/ui/input';
     import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
     import { superForm } from 'sveltekit-superforms';
-    import { zodClient } from 'sveltekit-superforms/adapters';
+    import { zod4Client, zodClient } from 'sveltekit-superforms/adapters';
     import { publishTrackSchema } from '$lib/helpers/schema';
     import { publishTrackDraft } from '$lib/helpers/metadata';
     import { toast } from 'svelte-sonner';
@@ -31,7 +31,7 @@
 
     const form = superForm(data.form, {
         SPA: true,
-        validators: zodClient(publishTrackSchema),
+        validators: zod4Client(publishTrackSchema),
         validationMethod: 'oninput',
         dataType: 'json',
         taintedMessage: true,

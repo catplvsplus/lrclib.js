@@ -30,6 +30,7 @@ export class TokenSolver {
             },
             onAbort: () => {
                 this.status = 'aborted';
+                this.solver = null;
                 onAbort?.();
             }
         });
@@ -54,10 +55,9 @@ export class TokenSolver {
     }
 
     public async abort(): Promise<void> {
-        this.solver?.abort();
         this.status = 'aborted';
         this.attempts = null;
-        this.solver = null;
+        this.solver?.abort();
     }
 }
 

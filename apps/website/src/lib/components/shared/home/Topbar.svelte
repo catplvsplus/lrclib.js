@@ -2,17 +2,17 @@
     import { resolve } from "$app/paths";
     import { EqualIcon, FileIcon, GitBranchIcon, HouseIcon, UsersIcon, XIcon } from '@lucide/svelte';
     import Logo from '../../svg/logo.svelte';
-    import { Button, buttonVariants } from '../../ui/button';
+    import { Button, buttonVariants } from '$lib/components/ui/button';
     import ModeSwitcher from '../ModeSwitcher.svelte';
-    import { links } from '../../../helpers/constants';
+    import { links } from '$lib/helpers/constants';
     import ResponsiveDialog from '../ResponsiveDialog.svelte';
-    import { DialogState } from '../../../helpers/classes/DialogState.svelte';
-    import { cn } from '../../../helpers/utils';
+    import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
+    import { cn } from '$lib/helpers/utils';
     import ModeToggle from '../ModeToggle.svelte';
-    import { settings } from '../../../helpers/classes/Settings.svelte';
+    import { settings } from '$lib/helpers/classes/Settings.svelte';
 
     let menuState = new DialogState({ id: 'menu' });
-    let scrollY = 0;
+    let scrollY = $state(0);
 </script>
 
 <svelte:window bind:scrollY/>
@@ -26,13 +26,13 @@
         <FileIcon class={!showIcons ? 'hidden' : ''}/>
         Docs
     </a>
-    <a class={className} href={links.github} target="_blank" onclick={() => menuState.close()}>
-        <GitBranchIcon class={!showIcons ? 'hidden' : ''}/>
-        Contribute
-    </a>
     <a class={className} href={links.contact} target="_blank" onclick={() => menuState.close()}>
         <UsersIcon class={!showIcons ? 'hidden' : ''}/>
         Contact
+    </a>
+    <a class={className} href={links.github} target="_blank" onclick={() => menuState.close()}>
+        <GitBranchIcon class={!showIcons ? 'hidden' : ''}/>
+        Contribute
     </a>
 {/snippet}
 
@@ -41,7 +41,7 @@
         "fixed top-0 z-50 w-full h-16 flex justify-center bg-background border-b",
         !settings.prefersReducedTransparency && "backdrop-blur-sm backdrop-saturate-150 bg-background/80",
         !settings.prefersReducedMotion && "transition-all duration-300 ease-in-out",
-        scrollY < 100 && "bg-transparent shadow-none border-b-transparent backdrop-blur-none backdrop-saturate-100"
+        scrollY < 50 && "bg-transparent shadow-none border-b-transparent backdrop-blur-none backdrop-saturate-100"
     )}
 >
     <div class="container h-full flex items-center justify-between py-2 px-4">

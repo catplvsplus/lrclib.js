@@ -12,21 +12,23 @@
         ref = $bindable(null),
         type,
         containerClass,
+        onSubmit,
         ...props
     }: {
         ref?: HTMLInputElement|null;
         type?: Exclude<HTMLInputTypeAttribute, "file">;
         files?: undefined;
         containerClass?: ClassValue;
+        onSubmit?: (event: SubmitEvent) => void;
     } & Omit<HTMLInputAttributes, 'type'> = $props();
 
     let value = $state('');
 
-    function onSubmit(event: SubmitEvent) {
+    onSubmit ??= (event: SubmitEvent) => {
         event.preventDefault();
 
         goto(`${resolve('/lyrics')}?q=${encodeURIComponent(value)}`);
-    }
+    };
 </script>
 
 <form onsubmit={onSubmit} class={cn("relative", containerClass)}>

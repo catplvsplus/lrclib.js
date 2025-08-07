@@ -106,7 +106,12 @@ export class Client implements ClientOptions {
         data = Utils.isJSONEncodable(data) ? data.toJSON() : data;
 
         if (cache) {
-            const track = this.cache.find(t => data.track_name === t.trackName && data.artist_name === t.artistName && data.album_name === t.albumName && (!data.duration || data.duration === t.duration));
+            const track = this.cache.find(t =>
+                data.track_name === t.trackName
+                && data.artist_name === t.artistName
+                && data.album_name === t.albumName
+                && (!data.duration || data.duration === t.duration)
+            );
             if (track) return track;
         }
 

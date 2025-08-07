@@ -1,4 +1,3 @@
-import { error } from '@sveltejs/kit';
 import lrclib, { type APIOptions } from 'lrclib.js';
 
 export async function load({ url, fetch }) {
@@ -7,20 +6,18 @@ export async function load({ url, fetch }) {
     const artist_name = url.searchParams.get('artist_name') ?? undefined;
     const album_name = url.searchParams.get('album_name') ?? undefined;
 
-    let options: APIOptions.Get.Search|null = null;
+    let query: APIOptions.Get.Search|null = null;
 
     if (track_name) {
-        options = { track_name, artist_name, album_name };
+        query = { track_name, artist_name, album_name };
     } else if (q) {
-        options = { q };
-    } else {
-        return error(400, { message: 'Missing search parameters' });
+        query = { q };
     }
 
     lrclib.rest.fetch = fetch;
 
     return (async () => ({
-        options,
-        data: await lrclib.search(options)
+        query,
+        tracks: query ? await lrclib.search(query) : null
     }))();
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import lrclib, { ChallengeSolver, LRC, type APIPublishTokenData, type APIResponse } from 'lrclib.js';
+    import lrclib, { ChallengeSolver } from 'lrclib.js';
     import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '$lib/components/ui/card';
     import { CheckIcon, InfoIcon, LoaderIcon, ClockIcon, PenSquareIcon, AlertCircleIcon, CircleX } from '@lucide/svelte';
     import { Input } from '$lib/components/ui/input';

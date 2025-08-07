@@ -3,7 +3,7 @@ import type { PublishTrackSchema } from '../schema';
 
 export class PublishDraf {
     public draft = new PersistedState<Partial<PublishTrackSchema>>('lrclib-upload-draft', {});
-    public status: PublishDraft.Status|null = $state(null);
+    public status: PublishDraft.Status|null = $derived(!this.isEmpty ? 'saved' : null);
     public debounceWait = $state(1000);
 
     get isEmpty() {

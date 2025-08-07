@@ -37,7 +37,7 @@
 </script>
 
 <ModeWatcher/>
-<Toaster/>
+<Toaster richColors/>
 
 <svelte:head>
     <title>Lrclib.js</title>

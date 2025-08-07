@@ -26,7 +26,7 @@
                     "sm:hidden absolute -bottom-1 rounded-full left-1/2 -translate-x-1/2 h-0.5 ",
                     !settings.prefersReducedMotion && "transition-all duration-300",
                     isActive
-                        ? "w-9 bg-primary"
+                        ? "w-1/5 bg-primary"
                         : "w-4 bg-transparent"
                 )}
             ></div>

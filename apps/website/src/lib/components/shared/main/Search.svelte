@@ -6,7 +6,6 @@
     import type { APIOptions } from 'lrclib.js';
     import SearchInput from '../home/SearchInput.svelte';
     import { Input } from '@/components/ui/input';
-    import { stringifyQuery } from '$lib/helpers/utils';
     import { Label } from '@/components/ui/label';
     import { slide } from 'svelte/transition';
     import { onMount } from 'svelte';

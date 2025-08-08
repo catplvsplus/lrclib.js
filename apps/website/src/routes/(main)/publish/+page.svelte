@@ -161,7 +161,7 @@
 
 <MetaTags title="Lrclib.js | Publish" description="Publish lyrics to Lrclib.js"/>
 
-<div class="sm:pt-0 pt-16 w-full max-w-4xl mx-auto grid gap-5">
+<div class="sm:pt-0 pt-16 w-full mx-auto grid gap-5">
     <ImportMetadata
         setMetadata={metadata => {
             $formData = {

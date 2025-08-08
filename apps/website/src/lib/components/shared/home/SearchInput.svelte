@@ -1,15 +1,16 @@
 <script lang="ts">
     import type { HTMLInputAttributes, HTMLInputTypeAttribute } from "svelte/elements";
     import { Input } from "@/components/ui/input";
-    import { Button } from '../../ui/button';
+    import { Button } from '@/components/ui/button';
     import { SearchIcon } from '@lucide/svelte';
-    import { cn } from '../../../helpers/utils';
+    import { cn } from '$lib/helpers/utils';
     import type { ClassValue } from 'clsx';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
 
     let {
         ref = $bindable(null),
+        value = $bindable(),
         type,
         containerClass,
         onSubmit,
@@ -21,8 +22,6 @@
         containerClass?: ClassValue;
         onSubmit?: (event: SubmitEvent) => void;
     } & Omit<HTMLInputAttributes, 'type'> = $props();
-
-    let value = $state('');
 
     onSubmit ??= (event: SubmitEvent) => {
         event.preventDefault();

@@ -1,6 +1,9 @@
-import lrclib, { type APIOptions } from 'lrclib.js';
+import { type APIOptions } from 'lrclib.js';
 
-export async function load({ url, fetch }) {
+export const prerender = true;
+export const ssr = false;
+
+export async function load({ url }) {
     const q = url.searchParams.get('q') ?? undefined;
     const track_name = url.searchParams.get('track_name') ?? undefined;
     const artist_name = url.searchParams.get('artist_name') ?? undefined;
@@ -14,10 +17,5 @@ export async function load({ url, fetch }) {
         query = { q };
     }
 
-    lrclib.rest.fetch = fetch;
-
-    return (async () => ({
-        query,
-        tracks: query ? await lrclib.search(query) : null
-    }))();
+    return { query };
 }

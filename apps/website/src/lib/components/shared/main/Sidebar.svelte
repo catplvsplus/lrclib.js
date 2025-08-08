@@ -15,7 +15,7 @@
     {#snippet SidebarButton(path: typeof pathname, href: string, icon: typeof ComponentIcon, title: string)}
         {@const isActive = pathname === path}
         {@const Icon = icon}
-        <Button {...props} {href} data-active={isActive ? 'true' : undefined}>
+        <Button {...props} {href} data-active={isActive ? 'true' : undefined} class={cn(isActive && 'pointer-events-none', props.class)}>
             <Icon/>
             <span class:hidden={hideTitle}>{title}</span>
             <div

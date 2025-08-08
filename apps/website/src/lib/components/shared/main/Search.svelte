@@ -5,15 +5,15 @@
     import { searchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
     import type { APIOptions } from 'lrclib.js';
     import SearchInput from '../home/SearchInput.svelte';
-    import { Input } from '../../ui/input';
-    import { stringifyQuery } from '../../../helpers/utils';
-    import { Label } from '../../ui/label';
+    import { Input } from '@/components/ui/input';
+    import { stringifyQuery } from '$lib/helpers/utils';
+    import { Label } from '@/components/ui/label';
     import { slide } from 'svelte/transition';
     import { onMount } from 'svelte';
-    import { Button } from '../../ui/button';
+    import { Button } from '@/components/ui/button';
     import ImportMetadata from '../publish/ImportMetadata.svelte';
-    import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../../ui/card';
-    import { settings } from '../../../helpers/classes/Settings.svelte';
+    import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+    import { settings } from '$lib/helpers/classes/Settings.svelte';
 
     let {
         queries,
@@ -28,25 +28,16 @@
     } = $props();
 
     function search() {
-        if (!query) return;
-        searchEngine.search(query);
+        searchEngine.search(query ?? { q: '' });
     }
 
     function fixURLQueries() {
-        let queryString = query ? stringifyQuery(query) : '';
-
-        if (isAdvanced) {
-            helper.update({ track_name: queryString });
-            helper.remove('q');
-        } else {
-            helper.update({ q: queryString });
-            helper.remove('track_name', 'artist_name', 'album_name');
-        }
+        searchEngine.fixURLQueries({
+            query: query ?? { q: '' },
+            helper,
+            isAdvanced
+        });
     }
-
-    onMount(() => {
-        fixURLQueries();
-    });
 </script>
 
 <div class="grid gap-2 h-fit">

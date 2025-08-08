@@ -2,6 +2,7 @@ import lrclib, { type APIOptions, type Track } from 'lrclib.js';
 import { useDebounce } from 'runed';
 import { createUseQueryParams } from 'svelte-query-params';
 import z from 'zod';
+import { stringifyQuery } from '../utils';
 
 export class SearchEngine {
     public tracks: Track[] = $state([]);
@@ -46,10 +47,28 @@ export class SearchEngine {
         this.tracks = [];
         this.status = null;
     }
+
+    public fixURLQueries(options: SearchEngine.FixURLQueriesOptions) {
+        let queryString = stringifyQuery(options.query);
+
+        if (options.isAdvanced) {
+            options.helper.update({ track_name: queryString });
+            options.helper.remove('q');
+        } else {
+            options.helper.update({ q: queryString });
+            options.helper.remove('track_name', 'artist_name', 'album_name');
+        }
+    }
 }
 
 export namespace SearchEngine {
     export type Status = 'searching';
+
+    export interface FixURLQueriesOptions {
+        query: APIOptions.Get.Search;
+        helper: ReturnType<SearchEngine['useQueryParams']>[1];
+        isAdvanced: boolean;
+    }
 }
 
 export const searchEngine = new SearchEngine();

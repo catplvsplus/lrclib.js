@@ -7,6 +7,8 @@
     import { page } from '$app/state';
     import Search from '$lib/components/shared/main/Search.svelte';
     import { PersistedState } from 'runed';
+    import type { Snapshot } from './$types.js';
+    import type { APIOptions } from 'lrclib.js';
 
     let { data } = $props();
 
@@ -18,6 +20,8 @@
 
     onMount(() => {
         if (data.query) searchEngine.search(data.query);
+
+        return () => searchEngine.clear();
     });
 </script>
 

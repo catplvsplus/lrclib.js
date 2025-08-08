@@ -46,7 +46,9 @@ export const formatDurationString = humanizeDuration.humanizer({
 });
 
 export function stringifyQuery(query: APIOptions.Get.Search): string {
-    return 'q' in query ? query.q : `${query.track_name} by ${query.artist_name}`;
+    return 'q' in query
+        ? query.q
+        : `${query.track_name}${query.artist_name ? ` by ${query.artist_name}` : ''}`;
 }
 
 export function parseQuery(query: Partial<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): APIOptions.Get.Search|null {

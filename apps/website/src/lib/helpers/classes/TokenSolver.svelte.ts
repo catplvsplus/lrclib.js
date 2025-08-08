@@ -1,45 +1,58 @@
 import { ChallengeSolver, type APIResponse } from 'lrclib.js';
 
 export class TokenSolver {
-    private _onSolved: (() => void)[] = [];
+    private _onSolved: ((err?: Error) => void)[] = [];
 
     public attempts: number|null = $state(null);
     public solver: ChallengeSolver|null = $state(null);
     public status: TokenSolver.State|null = $state(null);
+
+    public onAbort: (() => void)|null = $state(null);
 
     public constructor() {
         this.solve = this.solve.bind(this);
         this.abort = this.abort.bind(this);
     }
 
-    get onSolved(): Promise<boolean> {
+    get onSolved(): Promise<ChallengeSolver> {
         return new Promise((resolve, reject) => {
             if (this.status !== 'solving') return reject(new Error('Token solver is not solving'));
 
-            this._onSolved.push(() => resolve(true));
+            this._onSolved.push((err) => err ? reject(err) : resolve(this.solver!));
         });
     }
 
-    public async solve(challenge: APIResponse.Post.RequestChallenge, onAbort?: () => void): Promise<ChallengeSolver> {
-        if (this.solver) throw new ChallengeSolver.AbortError();
+    public async solve(challenge: APIResponse.Post.RequestChallenge): Promise<ChallengeSolver> {
+        if (this.status === 'solving') throw new Error('Token solver is already solving');
 
         this.solver = new ChallengeSolver(challenge, {
             onAttempt: () => {
                 this.attempts = this.solver?.attempts ?? null;
                 this.status = 'solving';
-            },
-            onAbort: () => {
-                this.status = 'aborted';
-                this.solver = null;
-                onAbort?.();
             }
         });
 
-        await this.solver.solve();
+        this.solver.abortController?.signal.addEventListener('abort', () => {
+            this.status = 'aborted';
+            this.attempts = null;
 
-        this.status = 'solved';
-        this._onSolved.forEach(solve => solve());
-        this._onSolved = [];
+            this.onAbort?.();
+        });;
+
+        await this.solver.solve()
+            .then(() => {
+                this.status = 'solved';
+                this._onSolved.forEach(solve => solve());
+                this._onSolved = [];
+            })
+            .catch(err => {
+                this.abort();
+
+                this._onSolved.forEach(solve => solve(err));
+                this._onSolved = [];
+
+                throw err;
+            });
 
         return this.solver;
     }
@@ -57,7 +70,10 @@ export class TokenSolver {
     public async abort(): Promise<void> {
         this.status = 'aborted';
         this.attempts = null;
-        this.solver?.abort();
+
+        if (this.solver && !this.solver.aborted) {
+            this.solver?.abort();
+        }
     }
 }
 

@@ -50,19 +50,22 @@
                 });
             }
 
+            tokenSolver.onAbort = () => {
+                data.cancel();
+                throw new Error('Challenge solving aborted');
+            }
+
             if (tokenSolver.status === 'solving') {
                 submitStatus = 'Solving challenge';
-                await tokenSolver.onSolved;
+
+                await tokenSolver.onSolved.catch(tokenSolver.onAbort);
             } else {
                 submitStatus = 'Fetching challenge';
 
                 const challenge = await lrclib.requestChallenge();
 
                 submitStatus = 'Solving challenge';
-                await tokenSolver.solve(challenge, () => {
-                    data.cancel();
-                    throw new Error('Challenge solving aborted');
-                });
+                await tokenSolver.solve(challenge).catch(tokenSolver.onAbort);
             }
 
             $formData.token = tokenSolver.solver?.token;
@@ -219,11 +222,16 @@
                     {#if $submitting || publishDraft.status || tokenSolver.status === 'solving'}
                         {@const sharedClass = "flex items-center gap-1 w-full sm:justify-end justify-center sm:px-4 h-full font-semibold"}
                         <div class="relative w-full h-8 mt-4 sm:mt-0 overflow-clip sm:text-end text-xs text-foreground/60 [&_svg]:size-4">
-                            {#if tokenSolver.status === 'solving'}
+                            {#if tokenSolver.status === 'solving' && $submitting}
                                 <FlyInOut class={sharedClass}>
                                     {#key tokenSolver.attempts}
                                         <span>{formatDurationString(Date.now() - (tokenSolver.solver?.solveStartTime ?? Date.now()))} • {formatNumberString(tokenSolver.attempts ?? 0)} hash attempts</span>
                                     {/key}
+                                </FlyInOut>
+                            {:else if tokenSolver.status === 'solved' && !$submitting}
+                                <FlyInOut class={sharedClass}>
+                                    <BadgeCheckIcon/>
+                                    <span>Track is ready to publish</span>
                                 </FlyInOut>
                             {:else if $submitting}
                                 <FlyInOut class={sharedClass}>
@@ -243,12 +251,12 @@
                             {/if}
                         </div>
                     {/if}
-                    {#if tokenSolver.status === 'solving'}
+                    {#if tokenSolver.status === 'solving' && $submitting}
                         <FormButton type="button" variant="secondary" onclick={tokenSolver.abort}>
                             Cancel
                         </FormButton>
                     {/if}
-                    <FormButton type="submit" disabled={$submitting || !!$allErrors?.length || tokenSolver.status === 'solving'}>
+                    <FormButton type="submit" disabled={$submitting || !!$allErrors?.length}>
                         {#if $submitting}
                             <LoaderIcon class="animate-spin"/>
                         {:else}

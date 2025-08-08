@@ -66,11 +66,7 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
             this._solveEndTime = null;
             this._solveLastUpdate = null;
 
-            if (this.options?.onAbort) {
-                this.options.onAbort(this);
-            } else {
-                throw new ChallengeSolver.AbortError('Solve aborted');
-            }
+            throw new ChallengeSolver.AbortError('Solve aborted');
         }
 
         return this;
@@ -88,7 +84,6 @@ export namespace ChallengeSolver {
 
     export interface Options {
         onAttempt?: (solver: ChallengeSolver) => void;
-        onAbort?: (solver: ChallengeSolver) => void;
     }
 
     export async function resolveNodeCrypto(): Promise<typeof import('node:crypto')> {

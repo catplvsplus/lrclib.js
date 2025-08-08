@@ -5,14 +5,11 @@
     import { Button, type ButtonProps } from '../../ui/button';
     import { CirclePlus, LibraryIcon, SearchIcon, ComponentIcon } from '@lucide/svelte';
     import { MediaQuery } from 'svelte/reactivity';
-    import { settings } from '../../../helpers/classes/Settings.svelte';
+    import { settings } from '$lib/helpers/classes/Settings.svelte';
 
-    let scrollY = $state(0);
     let pathname = $derived(page.url.pathname);
     let smallScreen = new MediaQuery('(max-width: 639px)');
 </script>
-
-<svelte:window bind:scrollY/>
 
 {#snippet SidebarContent({ hideTitle, ...props }: ButtonProps & { hideTitle?: boolean; } = {})}
     {#snippet SidebarButton(path: typeof pathname, href: string, icon: typeof ComponentIcon, title: string)}
@@ -37,21 +34,19 @@
     {@render SidebarButton('/library', resolve('/(main)/library'), LibraryIcon, 'Library')}
 {/snippet}
 
-<div class="w-0 sm:w-56 shrink-0"></div>
+<div class="w-0 sm:w-56 md:w-64 lg:w-72 shrink-0"></div>
 <div
     class={cn(
         "fixed shrink-0 z-50",
-        smallScreen.current
-            ? "bottom-0 left-0 w-full bg-background/80 backdrop-blur-sm border-t"
-            : "top-16 left-auto w-56 h-[calc(100%-4rem)]",
+        "bottom-0 left-0 w-full bg-background/80 backdrop-blur-sm backdrop-saturate-150 border-t",
+        "sm:top-16 sm:left-auto sm:w-56 md:w-64 lg:w-72 sm:h-[calc(100%-4rem)] sm:bg-transparent sm:backdrop-blur-0 sm:backdrop-saturate-100 sm:border-0",
     )}
 >
     <div
         class={cn(
-            "relative w-full h-full flex",
-            smallScreen.current
-                ? "flex gap-2 justify-around p-1 items-center"
-                : "pt-8 pr-4 border-r border-transparent flex-col gap-2"
+            "relative w-full h-full flex gap-2",
+            "justify-around p-1 items-center",
+            "sm:pt-8 sm:pr-4 sm:border-r sm:border-transparent sm:flex-col sm:justify-normal"
         )}
     >
         {@render SidebarContent({

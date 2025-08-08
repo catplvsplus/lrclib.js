@@ -1,12 +1,14 @@
 <script lang="ts">
     import { Card, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card/index.js';
-    import { cn, parseQuery, stringifyQuery } from '$lib/helpers/utils.js';
+    import { cn, isQueryEmpty, parseQuery, stringifyQuery } from '$lib/helpers/utils.js';
     import { MetaTags } from 'svelte-meta-tags';
     import { searchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
     import { onMount } from 'svelte';
     import { page } from '$app/state';
     import Search from '$lib/components/shared/main/Search.svelte';
     import { PersistedState } from 'runed';
+    import { HeartCrackIcon, SearchIcon } from '@lucide/svelte';
+    import { Skeleton } from '../../../lib/components/ui/skeleton/index.js';
 
     let { data } = $props();
 
@@ -14,6 +16,7 @@
 
     let query = $derived(parseQuery(queries));
     let queryString = $derived(query ? stringifyQuery(query) : '');
+    let isEmptyQuery = $derived(isQueryEmpty(query ?? {}));
     let isAdvancedSearch = new PersistedState('lrclib-advanced-search', false);
 
     onMount(() => {
@@ -51,21 +54,54 @@
     >
         <Search {queries} {query} helper={queryHelper} bind:isAdvanced={isAdvancedSearch.current}/>
     </div>
-    <div
-        class={cn(
-            "grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 h-fit",
-            isAdvancedSearch.current
-                ? "xl:col-span-2"
-                : "xl:grid-cols-3 xl:col-span-3"
-        )}
-    >
-        {#each searchEngine.tracks ?? [] as track}
-            <Card>
-                <CardHeader>
-                    <CardTitle>{track.trackName}</CardTitle>
-                    <CardDescription>{track.artistName} - {track.albumName}</CardDescription>
-                </CardHeader>
-            </Card>
-        {/each}
-    </div>
+    {#if searchEngine.tracks.length || searchEngine.status === 'searching'}
+        <div
+            class={cn(
+                "grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 h-fit",
+                isAdvancedSearch.current
+                    ? "xl:col-span-2"
+                    : "xl:grid-cols-3 xl:col-span-3"
+            )}
+        >
+            {#if searchEngine.status === 'searching'}
+                {#each { length: 20 } as _}
+                    <Skeleton class="h-25 rounded-lg"/>
+                {/each}
+            {:else}
+                {#each searchEngine.tracks ?? [] as track}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{track.trackName}</CardTitle>
+                            <CardDescription>{track.artistName} - {track.albumName}</CardDescription>
+                        </CardHeader>
+                    </Card>
+                {/each}
+            {/if}
+        </div>
+    {:else}
+        <div
+            class={cn(
+                "flex justify-center items-center",
+                isAdvancedSearch.current
+                    ? "xl:col-span-2"
+                    : "xl:col-span-3 min-h-96"
+            )}
+        >
+            <div class="grid gap-2 text-muted-foreground">
+                {#if !isEmptyQuery && !searchEngine.tracks.length}
+                    <HeartCrackIcon class="size-20 mx-auto"/>
+                    <div class="text-center">
+                        <h4 class="font-bold text-lg">No results found</h4>
+                        <p class="text-sm opacity-70">Try searching for another keyword</p>
+                    </div>
+                {:else}
+                    <SearchIcon class="size-20 mx-auto"/>
+                    <div class="text-center">
+                        <h4 class="font-bold text-lg">Search for lyrics</h4>
+                        <p class="text-sm opacity-70">Start typing to search lyrics</p>
+                    </div>
+                {/if}
+            </div>
+        </div>
+    {/if}
 </div>

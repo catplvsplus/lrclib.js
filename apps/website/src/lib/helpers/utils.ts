@@ -52,12 +52,23 @@ export function stringifyQuery(query: APIOptions.Get.Search): string {
 }
 
 export function parseQuery(query: Partial<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): APIOptions.Get.Search|null {
-    if ('q' in query && query.q) return { q: query.q };
     if ('track_name' in query && query.track_name) return {
         track_name: query.track_name,
         artist_name: query.artist_name,
         album_name: query.album_name
-    };
+    }
+
+    if ('q' in query && query.q) return { q: query.q };
 
     return null;
+}
+
+export function isQueryEmpty(query: Partial<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): boolean {
+    if ('track_name' in query) {
+        return !query.track_name && !query.artist_name && !query.album_name;
+    }
+
+    if ('q' in query) return !query.q;
+
+    return true;
 }

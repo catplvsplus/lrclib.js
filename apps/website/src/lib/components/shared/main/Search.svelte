@@ -38,6 +38,10 @@
             isAdvanced
         });
     }
+
+    onMount(() => {
+        if (query) fixURLQueries();
+    })
 </script>
 
 <div class="grid gap-2 h-fit">

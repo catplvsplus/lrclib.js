@@ -51,7 +51,7 @@
     </div>
     <div
         class={cn(
-            "grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-2",
+            "grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 h-fit",
             isAdvancedSearch.current
                 ? "xl:col-span-2"
                 : "xl:grid-cols-3 xl:col-span-3"

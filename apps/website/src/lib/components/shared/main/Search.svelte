@@ -13,6 +13,7 @@
     import { Button } from '../../ui/button';
     import ImportMetadata from '../publish/ImportMetadata.svelte';
     import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../../ui/card';
+    import { settings } from '../../../helpers/classes/Settings.svelte';
 
     let {
         queries,
@@ -48,10 +49,10 @@
     });
 </script>
 
-<div class="grid gap-2">
+<div class="grid gap-2 h-fit">
     <div>
         {#key isAdvanced}
-            <div transition:slide>
+            <div transition:slide={{ duration: settings.prefersReducedMotion ? 0 : 300 }}>
                 {#if isAdvanced}
                     <form
                         class="grid gap-3"

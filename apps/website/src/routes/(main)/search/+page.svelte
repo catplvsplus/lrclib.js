@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Card, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card/index.js';
-    import { parseQuery, stringifyQuery } from '$lib/helpers/utils.js';
+    import { cn, parseQuery, stringifyQuery } from '$lib/helpers/utils.js';
     import { MetaTags } from 'svelte-meta-tags';
     import { searchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
     import { onMount } from 'svelte';
@@ -33,11 +33,30 @@
     }
 />
 
-<div class="sm:pt-0 pt-16 w-full mx-auto grid gap-5">
-    <div class="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+<div
+    class={cn(
+        "sm:pt-0 pt-16 w-full mx-auto grid gap-5 transition-all duration-300",
+        isAdvancedSearch.current ? "xl:grid-cols-3" : "xl:grid-cols-2"
+    )}
+>
+    <div
+        class={cn(
+            "grid gap-4 grid-cols-1",
+            isAdvancedSearch.current
+                ? "xl:col-span-1"
+                : "xl:col-span-3 xl:grid-cols-3"
+        )}
+    >
         <Search {queries} {query} helper={queryHelper} bind:isAdvanced={isAdvancedSearch.current}/>
     </div>
-    <div class="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+    <div
+        class={cn(
+            "grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-2",
+            isAdvancedSearch.current
+                ? "xl:col-span-2"
+                : "xl:grid-cols-3 xl:col-span-3"
+        )}
+    >
         {#each searchEngine.tracks ?? [] as track}
             <Card>
                 <CardHeader>

@@ -112,6 +112,20 @@
 
     $effect(() => {
         form.validateForm({ update: true });
+
+        return () => {
+            if (tokenSolver.status !== 'solving') return;
+
+            toast.warning('Publish token challenge is solving in the background', {
+                action: {
+                    label: 'Abort',
+                    onClick: async () => {
+                        await tokenSolver.abort();
+                        toast.success('Challenge solving aborted');
+                    }
+                }
+            });
+        }
     });
 
     beforeNavigate(async navigate => {

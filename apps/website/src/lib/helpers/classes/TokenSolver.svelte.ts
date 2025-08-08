@@ -1,5 +1,6 @@
 import { ChallengeSolver, type APIResponse } from 'lrclib.js';
 
+// TODO: Use faster method for solving proof-of-work challenge like https://lrclibup.boidu.dev/
 export class TokenSolver {
     private _onSolved: ((err?: Error) => void)[] = [];
 

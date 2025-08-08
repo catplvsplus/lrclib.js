@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "$app/state";
     import FlyInOut from '../FlyInOut.svelte';
-    import { ChartNoAxesGanttIcon, ListMusicIcon, LoaderIcon, TextCursorInputIcon } from '@lucide/svelte';
+    import { ChartNoAxesGanttIcon, ListMusicIcon, LoaderIcon, SearchIcon, TextCursorInputIcon, TextIcon } from '@lucide/svelte';
     import { searchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
     import type { APIOptions } from 'lrclib.js';
     import SearchInput from '../home/SearchInput.svelte';
@@ -10,6 +10,9 @@
     import { Label } from '../../ui/label';
     import { slide } from 'svelte/transition';
     import { onMount } from 'svelte';
+    import { Button } from '../../ui/button';
+    import ImportMetadata from '../publish/ImportMetadata.svelte';
+    import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../../ui/card';
 
     let {
         queries,
@@ -48,27 +51,56 @@
 <div class="grid gap-2">
     <div>
         {#key isAdvanced}
-            <form
-                class="grid gap-3"
-                transition:slide
-                onsubmit={event => {
-                    event.preventDefault();
-                    search();
-                }}
-            >
+            <div transition:slide>
                 {#if isAdvanced}
-                    <div class="grid gap-1">
-                        <Label for="track_name" class="text-sm text-foreground/80 font-semibold">Track name</Label>
-                        <Input id="track_name" bind:value={queries.track_name} placeholder="Title of the song (ft. some artist)" oninput={() => search()}/>
-                    </div>
-                    <div class="grid gap-1">
-                        <Label for="artist_name" class="text-sm text-foreground/80 font-semibold">Artist name</Label>
-                        <Input id="artist_name" bind:value={queries.artist_name} placeholder="Some artist" oninput={() => search()}/>
-                    </div>
-                    <div class="grid gap-1">
-                        <Label for="album_name" class="text-sm text-foreground/80 font-semibold">Album name</Label>
-                        <Input id="album_name" bind:value={queries.album_name} placeholder="Some album" oninput={() => search()}/>
-                    </div>
+                    <form
+                        class="grid gap-3"
+                        onsubmit={event => {
+                            event.preventDefault();
+                            search();
+                        }}
+                    >
+                        <ImportMetadata
+                            disabled={searchEngine.status === 'searching'}
+                            setMetadata={metadata => {
+                                queries.track_name = metadata.trackName ?? '';
+                                queries.artist_name = metadata.artistName ?? '';
+                                queries.album_name = metadata.albumName ?? '';
+                                search();
+                            }}
+                        />
+                        <Card>
+                            <CardHeader>
+                                <CardTitle class="flex items-center gap-1">
+                                    <TextIcon class="text-primary size-5"/>
+                                    Advanced Search
+                                </CardTitle>
+                                <CardDescription>
+                                    Enter the track information you want to search
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent class="grid gap-3">
+                                <div class="grid gap-0.5">
+                                    <Label for="track_name" class="text-sm text-foreground/70 font-semibold">Track name</Label>
+                                    <Input id="track_name" bind:value={queries.track_name} placeholder="Some song (ft. some artist)" oninput={() => search()}/>
+                                </div>
+                                <div class="grid gap-0.5">
+                                    <Label for="artist_name" class="text-sm text-foreground/70 font-semibold">Artist name</Label>
+                                    <Input id="artist_name" bind:value={queries.artist_name} placeholder="Some artist" oninput={() => search()}/>
+                                </div>
+                                <div class="grid gap-0.5">
+                                    <Label for="album_name" class="text-sm text-foreground/70 font-semibold">Album name</Label>
+                                    <Input id="album_name" bind:value={queries.album_name} placeholder="Some album" oninput={() => search()}/>
+                                </div>
+                            </CardContent>
+                            <CardFooter class="flex sm:justify-end">
+                                <Button class="w-full sm:w-auto" type="submit" disabled={searchEngine.status === 'searching' || !query}>
+                                    <SearchIcon/>
+                                    <span class="hidden sm:inline">Search</span>
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    </form>
                 {:else}
                     <SearchInput
                         bind:value={queries.q}
@@ -80,7 +112,7 @@
                         }}
                     />
                 {/if}
-            </form>
+            </div>
         {/key}
     </div>
     <div class="flex justify-between text-xs text-muted-foreground">

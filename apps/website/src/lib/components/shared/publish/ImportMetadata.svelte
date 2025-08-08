@@ -6,8 +6,6 @@
     import type { HTMLAttributes } from 'svelte/elements';
     import type { WithElementRef } from '$lib/helpers/utils';
     import { parseAudioMetadata, parseLRCMetadata } from '$lib/helpers/metadata';
-    import { fly } from 'svelte/transition';
-    import { settings } from '$lib/helpers/classes/Settings.svelte';
     import FlyInOut from '../FlyInOut.svelte';
 
     let {

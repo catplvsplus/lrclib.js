@@ -155,11 +155,7 @@
     }}
 />
 
-<svelte:head>
-    <title>Lrclib.js | Publish</title>
-</svelte:head>
-
-<MetaTags title="Lrclib.js | Publish" description="Publish lyrics to Lrclib.js"/>
+<MetaTags title="Publish" titleTemplate="Lrclib.js | %s" description="Publish lyrics to Lrclib.js"/>
 
 <div class="sm:pt-0 pt-16 w-full mx-auto grid gap-5">
     <ImportMetadata

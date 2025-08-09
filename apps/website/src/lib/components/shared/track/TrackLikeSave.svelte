@@ -5,6 +5,7 @@
     import { ArrowDownToLineIcon, BookmarkIcon, CheckLineIcon, DownloadIcon, HeartIcon, HeartMinusIcon } from '@lucide/svelte';
     import FlyInOut from '../FlyInOut.svelte';
     import { cn } from '../../../helpers/utils';
+    import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/tooltip';
 
     let {
         track
@@ -32,51 +33,67 @@
     }
 </script>
 
-<Button
-    variant="secondary"
-    onclick={toggleLike}
-    class={cn(
-        "relative overflow-clip text-sm font-bold text-muted-foreground bg-muted/90",
-        isLiked && "text-primary bg-primary/10 hover:bg-primary/15",
-    )}
->
-    {#if isLiked}
-        <FlyInOut class="flex items-center gap-1" inY={30} outY={-30}>
-            <HeartIcon class="size-5!" fill="currentColor"/>
-            <span>Liked</span>
-        </FlyInOut>
-    {:else}
-        <FlyInOut class="flex items-center gap-1" inY={30} outY={-30}>
-            <HeartIcon class="size-5!"/>
-            <span>Like</span>
-        </FlyInOut>
-    {/if}
-    <div class="flex items-center gap-1 opacity-0">
-        <HeartIcon class="size-5!"/>
-        <span>{isLiked ? 'Liked' : 'Like'}</span>
-    </div>
-</Button>
-<Button
-    variant="secondary"
-    onclick={toggleSave}
-    class={cn(
-        "relative overflow-clip text-sm font-bold text-muted-foreground bg-muted/90",
-        isSaved && "text-orange-500 bg-orange-500/10 hover:bg-orange-500/15 dark:text-orange-400 dark:bg-orange-400/10 dark:hover:bg-orange-400/15",
-    )}
->
-    {#if isSaved}
-        <FlyInOut class="flex items-center gap-1" inY={30} outY={-30}>
-            <BookmarkIcon class="size-5!" fill="currentColor"/>
-            <span>Saved</span>
-        </FlyInOut>
-    {:else}
-        <FlyInOut class="flex items-center gap-1" inY={30} outY={-30}>
-            <BookmarkIcon class="size-5!"/>
-            <span>Save</span>
-        </FlyInOut>
-    {/if}
-    <div class="flex items-center gap-1 opacity-0">
-        <ArrowDownToLineIcon class="size-5!"/>
-        <span>{isSaved ? 'Saved' : 'Save'}</span>
-    </div>
-</Button>
+<Tooltip disableCloseOnTriggerClick>
+    <TooltipTrigger>
+        {#snippet child({ props })}
+            <Button
+                {...props}
+                variant="secondary"
+                onclick={toggleLike}
+                class={cn(
+                    "relative overflow-clip text-sm font-bold text-muted-foreground bg-muted/90",
+                    isLiked && "text-primary bg-primary/10 hover:bg-primary/15",
+                )}
+            >
+                {#if isLiked}
+                    <FlyInOut class="flex items-center gap-1" inY={30} outY={-30}>
+                        <HeartIcon class="size-5!" fill="currentColor"/>
+                        <span>Liked</span>
+                    </FlyInOut>
+                {:else}
+                    <FlyInOut class="flex items-center gap-1" inY={30} outY={-30}>
+                        <HeartIcon class="size-5!"/>
+                        <span>Like</span>
+                    </FlyInOut>
+                {/if}
+                <div class="flex items-center gap-1 opacity-0">
+                    <HeartIcon class="size-5!"/>
+                    <span>{isLiked ? 'Liked' : 'Like'}</span>
+                </div>
+            </Button>
+        {/snippet}
+    </TooltipTrigger>
+    <TooltipContent>{isLiked ? 'Remove from like' : 'Add to likes'}</TooltipContent>
+</Tooltip>
+<Tooltip disableCloseOnTriggerClick>
+    <TooltipTrigger>
+        {#snippet child({ props })}
+            <Button
+                {...props}
+                variant="secondary"
+                onclick={toggleSave}
+                class={cn(
+                    "relative overflow-clip text-sm font-bold text-muted-foreground bg-muted/90",
+                    isSaved && "text-orange-500 bg-orange-500/10 hover:bg-orange-500/15 dark:text-orange-400 dark:bg-orange-400/10 dark:hover:bg-orange-400/15",
+                )}
+            >
+                {#if isSaved}
+                    <FlyInOut class="flex items-center gap-1" inY={30} outY={-30}>
+                        <BookmarkIcon class="size-5!" fill="currentColor"/>
+                        <span>Saved</span>
+                    </FlyInOut>
+                {:else}
+                    <FlyInOut class="flex items-center gap-1" inY={30} outY={-30}>
+                        <BookmarkIcon class="size-5!"/>
+                        <span>Save</span>
+                    </FlyInOut>
+                {/if}
+                <div class="flex items-center gap-1 opacity-0">
+                    <ArrowDownToLineIcon class="size-5!"/>
+                    <span>{isSaved ? 'Saved' : 'Save'}</span>
+                </div>
+            </Button>
+        {/snippet}
+    </TooltipTrigger>
+    <TooltipContent>{isSaved ? 'Remove from saves' : 'Add to saves'}</TooltipContent>
+</Tooltip>

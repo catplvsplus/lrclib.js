@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { Card, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card/index.js';
     import { cn, isQueryEmpty, parseQuery, stringifyQuery } from '$lib/helpers/utils.js';
     import { MetaTags } from 'svelte-meta-tags';
     import { searchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
@@ -8,7 +7,8 @@
     import Search from '$lib/components/shared/main/Search.svelte';
     import { PersistedState } from 'runed';
     import { HeartCrackIcon, SearchIcon } from '@lucide/svelte';
-    import { Skeleton } from '../../../lib/components/ui/skeleton/index.js';
+    import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+    import TrackCard from '@/components/shared/track/TrackCard.svelte';
 
     let { data } = $props();
 
@@ -69,12 +69,7 @@
                 {/each}
             {:else}
                 {#each searchEngine.tracks ?? [] as track}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{track.trackName}</CardTitle>
-                            <CardDescription>{track.artistName} - {track.albumName}</CardDescription>
-                        </CardHeader>
-                    </Card>
+                    <TrackCard {track}/>
                 {/each}
             {/if}
         </div>

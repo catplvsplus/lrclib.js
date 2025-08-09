@@ -59,3 +59,5 @@ export class SavedLyrics {
         return this;
     }
 }
+
+export const savedLyrics = new SavedLyrics();

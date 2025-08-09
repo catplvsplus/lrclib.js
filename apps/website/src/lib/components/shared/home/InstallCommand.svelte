@@ -30,9 +30,12 @@
             selectRequired: true
         });
 
-        toast.success('Copied to clipboard!');
-
-        if (copied) setTimeout(() => copied = false, 5000);
+        if (copied) {
+            toast.success('Copied to clipboard!');
+            setTimeout(() => copied = false, 5000);
+        } else {
+            toast.error('Failed to copy to clipboard');
+        }
     }
 </script>
 

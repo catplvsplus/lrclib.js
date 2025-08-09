@@ -14,7 +14,7 @@
 <Card class="gap-3">
     <CardHeader>
         <CardTitle>
-            <a href={resolve('/(main)/track/[id]', { id: String(track.id) })}>
+            <a href={resolve('/(main)/track/[id]', { id: String(track.id) })} class="hover:underline">
                 {track.trackName}
             </a>
         </CardTitle>

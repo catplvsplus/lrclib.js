@@ -22,7 +22,10 @@
     onMount(() => {
         if (data.query) searchEngine.search(data.query);
 
-        return () => searchEngine.clear();
+        return () => {
+            queryHelper.unsubscribe();
+            searchEngine.clear();
+        };
     });
 </script>
 

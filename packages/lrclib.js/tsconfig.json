@@ -1,9 +1,10 @@
 {
-    "extends": "@reciple/utils/tsconfig.json",
-    "compilerOptions": {
-        "verbatimModuleSyntax": null,
-        "rootDir": "src",
-        "outDir": "dist",
-        "declaration": true
-    }
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": null,
+    "rootDir": "src",
+    "outDir": "dist",
+    "declaration": true
+  }
 }

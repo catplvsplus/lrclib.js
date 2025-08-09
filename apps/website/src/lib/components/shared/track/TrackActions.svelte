@@ -1,17 +1,21 @@
 <script lang="ts">
     import type { APIResponse } from 'lrclib.js';
     import { savedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
-    import { Button } from '@/components/ui/button';
-    import { ArrowDownToLineIcon, BookmarkIcon, CheckLineIcon, DownloadIcon, HeartIcon, HeartMinusIcon } from '@lucide/svelte';
+    import { Button, type ButtonProps } from '@/components/ui/button';
+    import { ArrowDownToLineIcon, BookmarkIcon, HeartIcon } from '@lucide/svelte';
     import FlyInOut from '../FlyInOut.svelte';
-    import { cn } from '../../../helpers/utils';
-    import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/tooltip';
+    import { cn } from '$lib/helpers/utils';
+    import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+    import type { ClassValue } from 'svelte/elements';
 
     let {
-        track
+        track,
+        labelClass,
+        ...buttonProps
     }: {
         track: APIResponse.Get.TrackSignature;
-    } = $props();
+        labelClass?: ClassValue;
+    } & ButtonProps = $props();
 
     let isSaved = $derived(savedLyrics.isSaved(track));
     let isLiked = $derived(savedLyrics.isLiked(track));
@@ -38,62 +42,66 @@
         {#snippet child({ props })}
             <Button
                 {...props}
+                {...buttonProps}
                 variant="secondary"
                 onclick={toggleLike}
                 class={cn(
-                    "relative overflow-clip text-sm font-bold text-muted-foreground bg-muted/90",
+                    "relative overflow-clip",
+                    buttonProps.class,
                     isLiked && "text-primary bg-primary/10 hover:bg-primary/15",
                 )}
             >
                 {#if isLiked}
                     <FlyInOut class="flex items-center gap-1" inY={30} outY={-30}>
                         <HeartIcon class="size-5!" fill="currentColor"/>
-                        <span>Liked</span>
+                        <span class={labelClass}>Liked</span>
                     </FlyInOut>
                 {:else}
                     <FlyInOut class="flex items-center gap-1" inY={30} outY={-30}>
                         <HeartIcon class="size-5!"/>
-                        <span>Like</span>
+                        <span class={labelClass}>Like</span>
                     </FlyInOut>
                 {/if}
                 <div class="flex items-center gap-1 opacity-0">
                     <HeartIcon class="size-5!"/>
-                    <span>{isLiked ? 'Liked' : 'Like'}</span>
+                    <span class={labelClass}>{isLiked ? 'Liked' : 'Like'}</span>
                 </div>
             </Button>
         {/snippet}
     </TooltipTrigger>
-    <TooltipContent>{isLiked ? 'Remove from like' : 'Add to likes'}</TooltipContent>
+    <TooltipContent class={labelClass}>{isLiked ? 'Remove from like' : 'Add to likes'}</TooltipContent>
 </Tooltip>
 <Tooltip disableCloseOnTriggerClick>
     <TooltipTrigger>
         {#snippet child({ props })}
             <Button
                 {...props}
+                {...buttonProps}
                 variant="secondary"
                 onclick={toggleSave}
                 class={cn(
-                    "relative overflow-clip text-sm font-bold text-muted-foreground bg-muted/90",
+                    "relative overflow-clip",
+                    buttonProps.class,
                     isSaved && "text-orange-500 bg-orange-500/10 hover:bg-orange-500/15 dark:text-orange-400 dark:bg-orange-400/10 dark:hover:bg-orange-400/15",
                 )}
             >
                 {#if isSaved}
                     <FlyInOut class="flex items-center gap-1" inY={30} outY={-30}>
                         <BookmarkIcon class="size-5!" fill="currentColor"/>
-                        <span>Saved</span>
+                        <span class={labelClass}>Saved</span>
                     </FlyInOut>
                 {:else}
                     <FlyInOut class="flex items-center gap-1" inY={30} outY={-30}>
                         <BookmarkIcon class="size-5!"/>
-                        <span>Save</span>
+                        <span class={labelClass}>Save</span>
                     </FlyInOut>
                 {/if}
                 <div class="flex items-center gap-1 opacity-0">
                     <ArrowDownToLineIcon class="size-5!"/>
-                    <span>{isSaved ? 'Saved' : 'Save'}</span>
+                    <span class={labelClass}>{isSaved ? 'Saved' : 'Save'}</span>
                 </div>
             </Button>
         {/snippet}
     </TooltipTrigger>
-    <TooltipContent>{isSaved ? 'Remove from saves' : 'Add to saves'}</TooltipContent>
+    <TooltipContent>{isSaved ? 'Remove from saves' : 'Save track offline'}</TooltipContent>
 </Tooltip>

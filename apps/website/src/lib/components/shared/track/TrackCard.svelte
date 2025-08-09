@@ -1,20 +1,13 @@
 <script lang="ts">
     import type { APIResponse } from 'lrclib.js';
     import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card/index.js';
-    import TrackLikeSave from './TrackLikeSave.svelte';
+    import TrackLikeSave from './TrackActions.svelte';
     import { resolve } from '$app/paths';
-    import type { Snippet } from 'svelte';
 
     let {
-        track,
-        header,
-        content,
-        footer
+        track
     }: {
         track: APIResponse.Get.TrackSignature;
-        header?: Snippet;
-        content?: Snippet;
-        footer?: Snippet;
     } = $props();
 </script>
 
@@ -26,11 +19,9 @@
             </a>
         </CardTitle>
         <CardDescription>{track.artistName} • {track.albumName}</CardDescription>
-        {@render header?.()}
     </CardHeader>
-    <CardContent class="h-full p-0 m-0">{@render content?.()}</CardContent>
-    <CardFooter class="flex gap-2">
-        <TrackLikeSave {track}/>
-        {@render footer?.()}
+    <CardContent class="h-full p-0 m-0"></CardContent>
+    <CardFooter class="grid grid-cols-2 gap-2 flex-col">
+        <TrackLikeSave {track} class="text-sm font-bold text-muted-foreground bg-muted/90"/>
     </CardFooter>
 </Card>

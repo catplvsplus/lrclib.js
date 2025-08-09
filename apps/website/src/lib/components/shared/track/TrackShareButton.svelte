@@ -21,8 +21,7 @@
     } & ButtonProps = $props();
 
     let dialogState = new DialogState({
-        id: `track-share-${track.id}`,
-        mode: 'push'
+        id: `track-share-${track.id}`
     });
 
     let shareData: ShareData = $derived({

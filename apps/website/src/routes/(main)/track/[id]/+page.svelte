@@ -2,10 +2,11 @@
     import { savedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
     import { MetaTags } from 'svelte-meta-tags';
     import { Card, CardHeader, CardTitle, CardDescription, CardFooter, CardAction } from '../../../../lib/components/ui/card';
-    import { MusicIcon } from '@lucide/svelte';
+    import { Music2Icon, MusicIcon, PlayIcon } from '@lucide/svelte';
     import TrackActions from '$lib/components/shared/track/TrackActions.svelte';
     import TrackShareButton from '$lib/components/shared/track/TrackShareButton.svelte';
     import TrackDownloadButton from '../../../../lib/components/shared/track/TrackDownloadButton.svelte';
+    import { Button } from '../../../../lib/components/ui/button';
 
     let { data } = $props();
 
@@ -33,16 +34,19 @@
                 <TrackShareButton track={data.track} class="text-muted-foreground bg-muted/90"/>
             </CardAction>
         </CardHeader>
-        <CardFooter class="min-[400px]:grid sm:flex gap-2 grid-cols-3">
+        <CardFooter class="grid lg:flex gap-2 grid-cols-4">
             <TrackActions
                 track={data.track}
-                class="text-sm font-bold text-muted-foreground bg-muted/90 min-[400px]:w-full sm:w-fit w-10"
-                labelClass="hidden min-[400px]:inline"
+                class="text-sm font-bold text-muted-foreground bg-muted/90 w-full col-span-2 md:col-span-1 lg:w-fit"
             />
+            <Button variant="secondary" class="text-sm font-bold text-muted-foreground bg-muted/90 w-full col-span-3 md:col-span-1 lg:w-fit">
+                <PlayIcon/>
+                <span>Preview</span>
+            </Button>
             <TrackDownloadButton
                 track={data.track}
-                class="text-sm font-bold text-muted-foreground bg-muted/90 min-[400px]:w-full sm:w-fit w-10"
-                labelClass="hidden min-[400px]:inline"
+                class="text-sm font-bold text-muted-foreground bg-muted/90 w-full col-span-1 md:col-span-1 lg:w-fit"
+                labelClass="hidden md:inline"
             />
         </CardFooter>
     </Card>

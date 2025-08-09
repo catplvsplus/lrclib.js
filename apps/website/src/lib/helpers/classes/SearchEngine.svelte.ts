@@ -51,6 +51,8 @@ export class SearchEngine {
     public fixURLQueries(options: SearchEngine.FixURLQueriesOptions) {
         let queryString = stringifyQuery(options.query);
 
+        if (!queryString) return;
+
         if (options.isAdvanced) {
             options.helper.update({ track_name: queryString });
             options.helper.remove('q');

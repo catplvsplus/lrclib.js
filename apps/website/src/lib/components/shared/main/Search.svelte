@@ -27,6 +27,7 @@
     } = $props();
 
     function search() {
+        fixURLQueries();
         searchEngine.search(query ?? { q: '' });
     }
 
@@ -140,7 +141,7 @@
             onclick={event => {
                 event.preventDefault();
                 isAdvanced = !isAdvanced;
-                fixURLQueries();
+                search();
             }}
         >
             Use {isAdvanced ? 'basic' : 'advanced'} search

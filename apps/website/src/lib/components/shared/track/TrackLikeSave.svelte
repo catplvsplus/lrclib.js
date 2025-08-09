@@ -36,7 +36,7 @@
     variant="secondary"
     onclick={toggleLike}
     class={cn(
-        "relative overflow-clip text-sm font-bold",
+        "relative overflow-clip text-sm font-bold text-muted-foreground bg-muted/90",
         isLiked && "text-primary bg-primary/10 hover:bg-primary/15",
     )}
 >
@@ -60,7 +60,7 @@
     variant="secondary"
     onclick={toggleSave}
     class={cn(
-        "relative overflow-clip text-sm font-bold",
+        "relative overflow-clip text-sm font-bold text-muted-foreground bg-muted/90",
         isSaved && "text-orange-500 bg-orange-500/10 hover:bg-orange-500/15 dark:text-orange-400 dark:bg-orange-400/10 dark:hover:bg-orange-400/15",
     )}
 >

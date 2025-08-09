@@ -4,20 +4,23 @@
     import type { APIResponse } from 'lrclib.js';
     import { resolve } from '$app/paths';
     import { cn } from '$lib/helpers/utils';
-    import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/tooltip';
+    import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
     import ResponsiveDialog from '../ResponsiveDialog.svelte';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
-    import { Input } from '../../ui/input';
-    import { copyText } from '../../../helpers/clipboard';
+    import { Input } from '@/components/ui/input';
+    import { copyText } from '$lib/helpers/clipboard';
     import { toast } from 'svelte-sonner';
     import FlyInOut from '../FlyInOut.svelte';
     import { SiBluesky, SiFacebook, SiReddit, SiTelegram, SiWhatsapp, SiX } from '@icons-pack/svelte-simple-icons';
+    import type { ClassValue } from 'svelte/elements';
 
     let {
         track,
+        labelClass,
         ...buttonProps
     }: {
         track: APIResponse.Get.TrackSignature;
+        labelClass?: ClassValue;
     } & ButtonProps = $props();
 
     let dialogState = new DialogState({
@@ -66,19 +69,17 @@
         {#snippet child({ props })}
             <Button
                 variant="secondary"
-                size="icon"
                 {...props}
                 {...buttonProps}
                 onclick={share}
                 class={cn("text-sm font-bold text-muted-foreground bg-muted/90", buttonProps.class)}
             >
-                <Share2Icon/>
+                <Share2Icon class="size-5"/>
+                <span class={labelClass}>Share</span>
             </Button>
         {/snippet}
     </TooltipTrigger>
-    <TooltipContent>
-        Share
-    </TooltipContent>
+    <TooltipContent>Share track</TooltipContent>
 </Tooltip>
 
 <ResponsiveDialog {dialogState}>

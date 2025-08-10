@@ -83,7 +83,6 @@
                             <TrackErrorCard id={track}/>
                         {/if}
                     {/each}
-                    <TrackErrorCard id={43434}/>
                 {/if}
             {/if}
         </div>

@@ -1,8 +1,8 @@
 <script lang="ts">
     import { page } from "$app/state";
     import FlyInOut from '../FlyInOut.svelte';
-    import { ChartNoAxesGanttIcon, ListMusicIcon, LoaderIcon, SearchIcon, TextCursorInputIcon, TextIcon } from '@lucide/svelte';
-    import { searchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
+    import { AlbumIcon, ChartNoAxesGanttIcon, ListMusicIcon, LoaderIcon, SearchIcon, SquareLibraryIcon, TextCursorInputIcon, TextIcon } from '@lucide/svelte';
+    import { SearchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
     import SearchInput from '../home/SearchInput.svelte';
     import { Input } from '@/components/ui/input';
     import { Label } from '@/components/ui/label';
@@ -12,16 +12,19 @@
     import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
     import { settings } from '$lib/helpers/classes/Settings.svelte';
     import type { queryParameters } from 'sveltekit-search-params';
-    import { isTrackSignatureSearch, parseQuery, stringifyQuery } from '$lib/helpers/utils';
+    import { isQueryEmpty, isTrackSignatureSearch, parseQuery, stringifyQuery } from '$lib/helpers/utils';
     import type { APIOptions } from 'lrclib.js';
-    import { onMount } from 'svelte';
+    import { OfflineSearchEngine } from '$lib/helpers/classes/OfflineSearchEngine.svelte';
+    import { savedLyrics } from '../../../helpers/classes/SavedLyrics.svelte';
 
     let {
         queryParams,
-        isAdvanced = $bindable(false)
+        isAdvanced = $bindable(false),
+        searchEngine
     }: {
         queryParams: ReturnType<typeof queryParameters<{ q: true; track_name: true; artist_name: true; album_name: true; }>>;
         isAdvanced?: boolean;
+        searchEngine: SearchEngine|OfflineSearchEngine;
     } = $props();
 
     let query = $derived(parseQuery($queryParams));
@@ -176,15 +179,20 @@
                     <ListMusicIcon class="size-4"/>
                     <span>Showing {searchEngine.tracks.length} results</span>
                 </FlyInOut>
-            {:else if query !== null}
+            {:else if query && !isQueryEmpty(query)}
                 <FlyInOut class="flex items-center gap-1">
                     <ChartNoAxesGanttIcon class="size-4"/>
                     <span>No results found</span>
                 </FlyInOut>
-            {:else}
+            {:else if searchEngine instanceof SearchEngine}
                 <FlyInOut class="flex items-center gap-1">
                     <TextCursorInputIcon class="size-4"/>
                     <span>Type to search</span>
+                </FlyInOut>
+            {:else if searchEngine instanceof OfflineSearchEngine}
+                <FlyInOut class="flex items-center gap-1">
+                    <AlbumIcon class="size-4"/>
+                    <span>Showing {savedLyrics.size} tracks</span>
                 </FlyInOut>
             {/if}
         </p>

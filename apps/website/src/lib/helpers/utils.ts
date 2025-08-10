@@ -46,19 +46,19 @@ export const formatDurationString = humanizeDuration.humanizer({
 });
 
 export function stringifyQuery(query: APIOptions.Get.Search): string {
-    return 'q' in query
-        ? query.q
-        : `${query.track_name}${query.artist_name ? ` ${query.artist_name}` : ''}`;
+    return 'track_name' in query
+        ? `${query.track_name}${query.artist_name ? ` ${query.artist_name}` : ''}`
+        : query.q ?? '';
 }
 
 export function parseQuery(query: PartialNull<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): APIOptions.Get.Search|null {
-    if ('track_name' in query && query.track_name) return {
+    if ('track_name' in query && query.track_name !== undefined && query.track_name !== null) return {
         track_name: query.track_name,
         artist_name: query.artist_name ?? undefined,
         album_name: query.album_name ?? undefined
     }
 
-    if ('q' in query && query.q) return { q: query.q };
+    if ('q' in query && query.q !== undefined && query.q !== null) return { q: query.q };
 
     return null;
 }

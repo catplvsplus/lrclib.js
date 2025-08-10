@@ -1,16 +1,16 @@
-import lrclib, { type APIOptions, type Track } from 'lrclib.js';
+import { type APIOptions, type Track } from 'lrclib.js';
 import { useDebounce } from 'runed';
+import { savedLyrics } from './SavedLyrics.svelte';
 
-
-export class SearchEngine {
+export class OfflineSearchEngine {
     public tracks: Track[] = $state([]);
-    public status: SearchEngine.Status|null = $state(null);
+    public status: OfflineSearchEngine.Status|null = $state(null);
     public debounceWait = $state(1000);
 
     private _search = useDebounce(
         (query: APIOptions.Get.Search) => {
-            return lrclib
-                .search(query)
+            return savedLyrics
+                .search(query, true)
                 .then(tracks => {
                     this.tracks = tracks;
                     this.status = null;
@@ -43,8 +43,8 @@ export class SearchEngine {
     }
 }
 
-export namespace SearchEngine {
+export namespace OfflineSearchEngine {
     export type Status = 'searching';
 }
 
-export const searchEngine = new SearchEngine();
+export const offlineSearchEngine = new OfflineSearchEngine();

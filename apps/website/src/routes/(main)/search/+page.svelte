@@ -2,14 +2,13 @@
     import { cn, isQueryEmpty, parseQuery, stringifyQuery, isTrackSignatureSearch } from '$lib/helpers/utils.js';
     import { MetaTags } from 'svelte-meta-tags';
     import { searchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
-    import { onDestroy, onMount, tick, untrack } from 'svelte';
-    import { page } from '$app/state';
+    import { onMount, untrack } from 'svelte';
     import Search from '$lib/components/shared/main/Search.svelte';
     import { PersistedState } from 'runed';
     import { HeartCrackIcon, SearchIcon } from '@lucide/svelte';
-    import { Skeleton } from '$lib/components/ui/skeleton/index.js';
     import TrackCard from '@/components/shared/track/TrackCard.svelte';
-    import { queryParameters, queryParam } from 'sveltekit-search-params';
+    import { queryParameters } from 'sveltekit-search-params';
+    import TracksSkeleton from '$lib/components/shared/track/TracksSkeleton.svelte';
 
     const queryParams = queryParameters({
         q: true,
@@ -32,7 +31,7 @@
 </script>
 
 <MetaTags
-    title={queryString}
+    title={queryString || 'lyrics'}
     titleTemplate="Lrclib.js | Search %s"
     description={queryString
         ? `Lrclib search results for ${queryString}`
@@ -42,19 +41,19 @@
 
 <div
     class={cn(
-        "sm:pt-0 pt-16 w-full mx-auto grid gap-5 transition-all duration-300",
+        "w-full mx-auto grid gap-5 transition-all duration-300",
         isAdvancedSearch.current ? "xl:grid-cols-3" : "xl:grid-cols-2"
     )}
 >
     <div
         class={cn(
-            "grid gap-4 grid-cols-1",
+            "grid gap-4 grid-cols-1 top-0",
             isAdvancedSearch.current
                 ? "xl:col-span-1"
                 : "xl:col-span-3 xl:grid-cols-3"
         )}
     >
-        <Search {queryParams} bind:isAdvanced={isAdvancedSearch.current}/>
+        <Search {queryParams} searchEngine={searchEngine} bind:isAdvanced={isAdvancedSearch.current}/>
     </div>
     {#if searchEngine.tracks.length || searchEngine.status === 'searching'}
         <div
@@ -66,9 +65,7 @@
             )}
         >
             {#if searchEngine.status === 'searching'}
-                {#each { length: 20 } as _}
-                    <Skeleton class="h-25 rounded-lg"/>
-                {/each}
+                <TracksSkeleton count={20}/>
             {:else}
                 {#each searchEngine.tracks ?? [] as track}
                     <TrackCard {track}/>

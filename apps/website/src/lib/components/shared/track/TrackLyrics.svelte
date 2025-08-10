@@ -5,11 +5,12 @@
     import { PersistedState } from 'runed';
     import { Textarea } from '../../ui/textarea';
     import { Button } from '../../ui/button';
-    import { Check, Clipboard } from '@lucide/svelte';
+    import { Check, Clipboard, DrumIcon } from '@lucide/svelte';
     import { copyText } from '../../../helpers/clipboard';
     import { toast } from 'svelte-sonner';
     import FlyInOut from '../FlyInOut.svelte';
     import { cn } from '../../../helpers/utils';
+    import { tr } from 'zod/locales';
 
     let {
         track
@@ -70,6 +71,7 @@
                 "h-10 px-4! text-sm font-semibold rounded-lg bg-muted/90 hover:bg-black/5 dark:hover:bg-secondary/80 text-foreground relative overflow-clip",
                 copied && "bg-primary/5! text-primary"
             )}
+            disabled={track.instrumental}
             onclick={copyToClipboard}
         >
             {#if copied}
@@ -89,26 +91,38 @@
             </div>
         </Button>
     </div>
-    <TabsContent value="synced-lyrics">
-        <Textarea
-            value={track.syncedLyrics}
-            bind:ref={
-                () => preferredTab.current === 'synced-lyrics' ? valueContainer : null,
-                ref => preferredTab.current === 'synced-lyrics' ? valueContainer = ref : null
-            }
-            readonly
-            class="text-base font-mono p-5 pt-2 rounded-none resize-none shadow-none border-0 bg-transparent!"
-        />
-    </TabsContent>
-    <TabsContent value="plain-lyrics">
-        <Textarea
-            value={track.plainLyrics}
-            bind:ref={
-                () => preferredTab.current === 'plain-lyrics' ? valueContainer : null,
-                ref => preferredTab.current === 'plain-lyrics' ? valueContainer = ref : null
-            }
-            readonly
-            class="text-base font-mono p-5 pt-2 rounded-none resize-none shadow-none border-0 bg-transparent!"
-        />
-    </TabsContent>
+    {#if !track.instrumental}
+        <TabsContent value="synced-lyrics">
+            <Textarea
+                value={track.syncedLyrics}
+                bind:ref={
+                    () => preferredTab.current === 'synced-lyrics' ? valueContainer : null,
+                    ref => preferredTab.current === 'synced-lyrics' ? valueContainer = ref : null
+                }
+                readonly
+                class="text-base font-mono p-5 pt-2 rounded-t-none resize-none shadow-none border-0 bg-transparent!"
+            />
+        </TabsContent>
+        <TabsContent value="plain-lyrics">
+            <Textarea
+                value={track.plainLyrics}
+                bind:ref={
+                    () => preferredTab.current === 'plain-lyrics' ? valueContainer : null,
+                    ref => preferredTab.current === 'plain-lyrics' ? valueContainer = ref : null
+                }
+                readonly
+                class="text-base font-mono p-5 pt-2 rounded-t-none resize-none shadow-none border-0 bg-transparent!"
+            />
+        </TabsContent>
+    {:else}
+        <div class="py-10 flex items-center justify-center">
+            <div class="grid gap-2 text-muted-foreground">
+                <DrumIcon class="size-20 mx-auto"/>
+                <div class="text-center">
+                    <h4 class="font-bold text-lg">Lyrics unavailable</h4>
+                    <p class="text-sm opacity-70">This track is an instrumental</p>
+                </div>
+            </div>
+        </div>
+    {/if}
 </Tabs>

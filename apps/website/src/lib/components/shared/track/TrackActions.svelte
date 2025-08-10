@@ -103,5 +103,5 @@
             </Button>
         {/snippet}
     </TooltipTrigger>
-    <TooltipContent>{isSaved ? 'Remove from saves' : 'Save track offline'}</TooltipContent>
+    <TooltipContent>{isSaved ? 'Remove from saves' : 'Save offline'}</TooltipContent>
 </Tooltip>

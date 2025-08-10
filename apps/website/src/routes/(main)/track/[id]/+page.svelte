@@ -6,7 +6,8 @@
     import TrackShareButton from '$lib/components/shared/track/TrackShareButton.svelte';
     import TrackDownloadButton from '$lib/components/shared/track/TrackDownloadButton.svelte';
     import TrackLyrics from '@/components/shared/track/TrackLyrics.svelte';
-    import TrackPreviewButton from '../../../../lib/components/shared/track/TrackPreviewButton.svelte';
+    import TrackPreviewButton from '$lib/components/shared/track/TrackPreviewButton.svelte';
+    import TrackLabels from '$lib/components/shared/track/TrackLabels.svelte';
 
     let { data } = $props();
 
@@ -32,6 +33,7 @@
             <CardAction>
                 <TrackShareButton track={data.track} class="text-sm font-bold bg-muted/90" labelClass="hidden md:inline"/>
             </CardAction>
+            <TrackLabels track={data.track}/>
         </CardHeader>
         <CardFooter class="grid lg:flex gap-2 grid-cols-4 border-t">
             <TrackActions

@@ -3,6 +3,7 @@
     import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card/index.js';
     import TrackLikeSave from './TrackActions.svelte';
     import { resolve } from '$app/paths';
+    import TrackLabels from './TrackLabels.svelte';
 
     let {
         track
@@ -19,6 +20,7 @@
             </a>
         </CardTitle>
         <CardDescription>{track.artistName} • {track.albumName}</CardDescription>
+        <TrackLabels {track}/>
     </CardHeader>
     <CardContent class="h-full p-0 m-0"></CardContent>
     <CardFooter class="grid grid-cols-2 gap-2 flex-col">

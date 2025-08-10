@@ -5,7 +5,9 @@ export class SavedLyrics {
     public liked = new PersistedState<number[]>('lrclib-offline-lyrics-liked', []);
     public saved = new PersistedState<APIResponse.Get.TrackSignature[]>('lrclib-offline-lyrics-saved', []);
     public savedLiked = $derived(this.saved.current.filter(t => this.liked.current.includes(t.id)));
-    public size = $derived(this.liked.current.length + this.saved.current.length);
+    public library: (Track|number)[] = $state([]);
+    public size = $derived(this.library.length ?? 0);
+    public status: SavedLyrics.Status|null = $state(null);
 
     public like(track: number|APIResponse.Get.TrackSignature): this {
         const id = typeof track === 'number' ? track : track.id;
@@ -97,8 +99,20 @@ export class SavedLyrics {
     public async fetchLibrary(options?: SavedLyrics.FetchLibraryOptions): Promise<(Track|number)[]> {
         const liked = options?.liked !== false ? this.liked.current.map(id => this.fetch(id).catch(() => id)) : [];
         const saved = options?.saved !== false ? this.saved.current.map(t => this.fetch(t.id)) : [];
+        const tracks: Map<number, Track|number> = new Map();
 
-        return Promise.all([...liked, ...saved]);
+        for (const track of await Promise.all([...liked, ...saved])) {
+            const id = typeof track === 'number' ? track : track.id;
+            if (!tracks.has(id)) tracks.set(id, track);
+
+            const existing = tracks.get(id);
+            if (typeof existing === 'number' && track instanceof Track) {
+                tracks.set(id, track);
+            }
+        }
+
+        return this.library = Array.from(tracks.values())
+            .sort((a, b) => a instanceof Track && b instanceof Track ? a.trackName.localeCompare(b.trackName) : 0);
     }
 
     public clear(): this {
@@ -109,6 +123,8 @@ export class SavedLyrics {
 }
 
 export namespace SavedLyrics {
+    export type Status = 'loading';
+    
     export interface FetchLibraryOptions {
         liked?: boolean;
         saved?: boolean;

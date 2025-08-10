@@ -15,11 +15,15 @@
 <Card class="gap-3">
     <CardHeader>
         <CardTitle>
-            <a href={resolve('/(main)/track/[id]', { id: String(track.id) })} class="hover:underline">
+            <a href={resolve('/(main)/track/[id]', { id: String(track.id) })}>
                 {track.trackName}
             </a>
         </CardTitle>
-        <CardDescription>{track.artistName} • {track.albumName}</CardDescription>
+        <CardDescription>
+            <a href={resolve('/(main)/track/[id]', { id: String(track.id) })}>
+                {track.artistName} • {track.albumName}
+            </a>
+        </CardDescription>
         <TrackLabels {track}/>
     </CardHeader>
     <CardContent class="h-full p-0 m-0"></CardContent>

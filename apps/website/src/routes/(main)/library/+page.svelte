@@ -8,9 +8,8 @@
     import TrackCard from '@/components/shared/track/TrackCard.svelte';
     import { queryParameters } from 'sveltekit-search-params';
     import { offlineSearchEngine } from '$lib/helpers/classes/OfflineSearchEngine.svelte';
-    import { searchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
     import TracksSkeleton from '$lib/components/shared/track/TracksSkeleton.svelte';
-    import { savedLyrics } from '../../../lib/helpers/classes/SavedLyrics.svelte';
+    import { savedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
 
     const queryParams = queryParameters({
         q: true,
@@ -30,6 +29,10 @@
         const isTrackSignatureQuery = untrack(() => isTrackSignatureSearch(query ?? {}));
         if (isTrackSignatureQuery !== null) isAdvancedSearch.current = isTrackSignatureQuery;
     });
+
+    $effect(() => {
+        if (isEmptyQuery) savedLyrics.fetchLibrary();
+    })
 </script>
 
 <MetaTags
@@ -69,17 +72,17 @@
                     <TrackCard {track}/>
                 {/each}
             {:else if isEmptyQuery}
-                {#await savedLyrics.fetchLibrary()}
+                {#if savedLyrics.status === 'loading'}
                     <TracksSkeleton count={20}/>
-                {:then tracks}
-                    {#each tracks as track}
+                {:else}
+                    {#each savedLyrics.library as track}
                         {#if typeof track !== 'number'}
                             <TrackCard {track}/>
                         {:else}
                             <div>Track {track} not found</div>
                         {/if}
                     {/each}
-                {/await}
+                {/if}
             {/if}
         </div>
     {:else}

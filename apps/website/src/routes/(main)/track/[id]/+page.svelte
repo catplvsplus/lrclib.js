@@ -2,11 +2,9 @@
     import { savedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
     import { MetaTags } from 'svelte-meta-tags';
     import { Card, CardHeader, CardTitle, CardDescription, CardFooter, CardAction } from '../../../../lib/components/ui/card';
-    import { MusicIcon, PlayIcon } from '@lucide/svelte';
     import TrackActions from '$lib/components/shared/track/TrackActions.svelte';
     import TrackShareButton from '$lib/components/shared/track/TrackShareButton.svelte';
     import TrackDownloadButton from '$lib/components/shared/track/TrackDownloadButton.svelte';
-    import { Button } from '@/components/ui/button';
     import TrackLyrics from '@/components/shared/track/TrackLyrics.svelte';
     import TrackPreviewButton from '../../../../lib/components/shared/track/TrackPreviewButton.svelte';
 

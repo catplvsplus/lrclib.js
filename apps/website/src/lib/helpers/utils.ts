@@ -51,11 +51,11 @@ export function stringifyQuery(query: APIOptions.Get.Search): string {
         : `${query.track_name}${query.artist_name ? ` by ${query.artist_name}` : ''}`;
 }
 
-export function parseQuery(query: Partial<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): APIOptions.Get.Search|null {
+export function parseQuery(query: PartialNull<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): APIOptions.Get.Search|null {
     if ('track_name' in query && query.track_name) return {
         track_name: query.track_name,
-        artist_name: query.artist_name,
-        album_name: query.album_name
+        artist_name: query.artist_name ?? undefined,
+        album_name: query.album_name ?? undefined
     }
 
     if ('q' in query && query.q) return { q: query.q };
@@ -72,3 +72,13 @@ export function isQueryEmpty(query: Partial<APIOptions.Get.SearchQuery & APIOpti
 
     return true;
 }
+
+export function isTrackSignatureSearch(query: Partial<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): boolean|null {
+    if ('track_name' in query) return true;
+    if ('q' in query) return false;
+    return null;
+}
+
+export type PartialNull<T> = {
+    [P in keyof T]?: T[P] | null;
+};

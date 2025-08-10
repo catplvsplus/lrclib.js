@@ -3,44 +3,48 @@
     import FlyInOut from '../FlyInOut.svelte';
     import { ChartNoAxesGanttIcon, ListMusicIcon, LoaderIcon, SearchIcon, TextCursorInputIcon, TextIcon } from '@lucide/svelte';
     import { searchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
-    import type { APIOptions } from 'lrclib.js';
     import SearchInput from '../home/SearchInput.svelte';
     import { Input } from '@/components/ui/input';
     import { Label } from '@/components/ui/label';
     import { slide } from 'svelte/transition';
-    import { onMount } from 'svelte';
     import { Button } from '@/components/ui/button';
     import ImportMetadata from '../publish/ImportMetadata.svelte';
     import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
     import { settings } from '$lib/helpers/classes/Settings.svelte';
+    import type { queryParameters } from 'sveltekit-search-params';
+    import { isTrackSignatureSearch, parseQuery, stringifyQuery } from '$lib/helpers/utils';
+    import type { APIOptions } from 'lrclib.js';
+    import { onMount } from 'svelte';
 
     let {
-        queries,
-        helper,
-        query,
+        queryParams,
         isAdvanced = $bindable(false)
     }: {
-        queries: ReturnType<typeof searchEngine['useQueryParams']>[0];
-        helper: ReturnType<typeof searchEngine['useQueryParams']>[1];
-        query: APIOptions.Get.Search|null;
+        queryParams: ReturnType<typeof queryParameters<{ q: true; track_name: true; artist_name: true; album_name: true; }>>;
         isAdvanced?: boolean;
     } = $props();
 
-    function search() {
-        searchEngine.search(query ?? { q: '' });
+    let query = $derived(parseQuery($queryParams));
+    let queryString = $derived(query ? stringifyQuery(query) : '');
+
+    function search(options?: typeof query) {
+        searchEngine.search(options ?? query);
     }
 
-    function fixURLQueries() {
-        searchEngine.fixURLQueries({
-            query: query ?? { q: '' },
-            helper,
-            isAdvanced
+    function fixURLQueryParams(query: APIOptions.Get.Search|null) {
+        const isTrackSignatureQuery = query && isTrackSignatureSearch(query);
+
+        queryParams.set({
+            q: !isAdvanced && isTrackSignatureQuery
+                ? queryString
+                : null,
+            track_name: isAdvanced && !isTrackSignatureQuery
+                ? queryString
+                : null,
+            album_name: null,
+            artist_name: null
         });
     }
-
-    onMount(() => {
-        if (query) fixURLQueries();
-    })
 </script>
 
 <div class="grid gap-2 h-fit">
@@ -57,11 +61,13 @@
                     >
                         <ImportMetadata
                             disabled={searchEngine.status === 'searching'}
-                            setMetadata={metadata => {
-                                queries.track_name = metadata.trackName ?? '';
-                                queries.artist_name = metadata.artistName ?? '';
-                                queries.album_name = metadata.albumName ?? '';
-                                search();
+                            setMetadata={async metadata => {
+                                search(parseQuery($queryParams = {
+                                    q: null,
+                                    track_name: metadata.trackName ?? null,
+                                    artist_name: metadata.artistName ?? null,
+                                    album_name: metadata.albumName ?? null
+                                }));
                             }}
                         />
                         <Card>
@@ -77,15 +83,51 @@
                             <CardContent class="grid gap-3">
                                 <div class="grid gap-0.5">
                                     <Label for="track_name" class="text-sm text-foreground/70 font-semibold">Track name</Label>
-                                    <Input id="track_name" bind:value={queries.track_name} placeholder="Some song (ft. some artist)" oninput={() => search()}/>
+                                    <Input
+                                        id="track_name"
+                                        bind:value={
+                                            () => $queryParams.track_name,
+                                            v => {
+                                                search(parseQuery({
+                                                    ...$queryParams,
+                                                    track_name: v || null
+                                                }))
+                                            }
+                                        }
+                                        placeholder="Some song (ft. some artist)"
+                                    />
                                 </div>
                                 <div class="grid gap-0.5">
                                     <Label for="artist_name" class="text-sm text-foreground/70 font-semibold">Artist name</Label>
-                                    <Input id="artist_name" bind:value={queries.artist_name} placeholder="Some artist" oninput={() => search()}/>
+                                    <Input
+                                        id="artist_name"
+                                        bind:value={
+                                            () => $queryParams.artist_name,
+                                            v => {
+                                                search(parseQuery({
+                                                    ...$queryParams,
+                                                    artist_name: v || null
+                                                }))
+                                            }
+                                        }
+                                        placeholder="Some artist"
+                                    />
                                 </div>
                                 <div class="grid gap-0.5">
                                     <Label for="album_name" class="text-sm text-foreground/70 font-semibold">Album name</Label>
-                                    <Input id="album_name" bind:value={queries.album_name} placeholder="Some album" oninput={() => search()}/>
+                                    <Input
+                                        id="album_name"
+                                        bind:value={
+                                            () => $queryParams.album_name,
+                                            v => {
+                                                search(parseQuery({
+                                                    ...$queryParams,
+                                                    album_name: v || null
+                                                }))
+                                            }
+                                        }
+                                        placeholder="Some album"
+                                    />
                                 </div>
                             </CardContent>
                             <CardFooter class="flex sm:justify-end">
@@ -98,9 +140,18 @@
                     </form>
                 {:else}
                     <SearchInput
-                        bind:value={queries.q}
+                        bind:value={
+                            () => queryString,
+                            v => {
+                                search(parseQuery($queryParams = {
+                                    q: v,
+                                    track_name: null,
+                                    artist_name: null,
+                                    album_name: null
+                                }))
+                            }
+                        }
                         placeholder="Search..."
-                        oninput={() => search()}
                         onSubmit={event => {
                             event.preventDefault();
                             search();
@@ -140,8 +191,8 @@
             onclick={event => {
                 event.preventDefault();
                 isAdvanced = !isAdvanced;
+                fixURLQueryParams(query);
                 search();
-                fixURLQueries();
             }}
         >
             Use {isAdvanced ? 'basic' : 'advanced'} search

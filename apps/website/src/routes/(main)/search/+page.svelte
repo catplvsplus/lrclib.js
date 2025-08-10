@@ -1,40 +1,39 @@
 <script lang="ts">
-    import { cn, isQueryEmpty, parseQuery, stringifyQuery } from '$lib/helpers/utils.js';
+    import { cn, isQueryEmpty, parseQuery, stringifyQuery, isTrackSignatureSearch } from '$lib/helpers/utils.js';
     import { MetaTags } from 'svelte-meta-tags';
     import { searchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount, tick, untrack } from 'svelte';
     import { page } from '$app/state';
     import Search from '$lib/components/shared/main/Search.svelte';
     import { PersistedState } from 'runed';
     import { HeartCrackIcon, SearchIcon } from '@lucide/svelte';
     import { Skeleton } from '$lib/components/ui/skeleton/index.js';
     import TrackCard from '@/components/shared/track/TrackCard.svelte';
+    import { queryParameters, queryParam } from 'sveltekit-search-params';
 
-    let { data } = $props();
+    const queryParams = queryParameters({
+        q: true,
+        track_name: true,
+        artist_name: true,
+        album_name: true
+    });
 
-    const [queries, queryHelper] = searchEngine.useQueryParams(page.url);
-
-    let query = $derived(parseQuery(queries));
+    let query = $derived(parseQuery($queryParams));
     let queryString = $derived(query ? stringifyQuery(query) : '');
     let isEmptyQuery = $derived(isQueryEmpty(query ?? {}));
     let isAdvancedSearch = new PersistedState('lrclib-advanced-search', false);
 
-    onMount(() => {
-        if (data.query) searchEngine.search(data.query);
+    onMount(async () => {
+        if (query) searchEngine.search(query);
 
-        return () => {
-            queryHelper.unsubscribe();
-            searchEngine.clear();
-        };
+        const isTrackSignatureQuery = untrack(() => isTrackSignatureSearch(query ?? {}));
+        if (isTrackSignatureQuery !== null) isAdvancedSearch.current = isTrackSignatureQuery;
     });
 </script>
 
-<svelte:head>
-    <title>Lrclib.js | Search {queryString}</title>
-</svelte:head>
-
 <MetaTags
-    title="Lrclib.js | Search {queryString}"
+    title={queryString}
+    titleTemplate="Lrclib.js | Search %s"
     description={queryString
         ? `Lrclib search results for ${queryString}`
         : `Search Lrclib for lyrics`
@@ -55,7 +54,7 @@
                 : "xl:col-span-3 xl:grid-cols-3"
         )}
     >
-        <Search {queries} {query} helper={queryHelper} bind:isAdvanced={isAdvancedSearch.current}/>
+        <Search {queryParams} bind:isAdvanced={isAdvancedSearch.current}/>
     </div>
     {#if searchEngine.tracks.length || searchEngine.status === 'searching'}
         <div
@@ -82,7 +81,7 @@
                 "flex justify-center items-center",
                 isAdvancedSearch.current
                     ? "xl:col-span-2"
-                    : "xl:col-span-3 min-h-96"
+                    : "xl:col-span-3 min-h-[500px]"
             )}
         >
             <div class="grid gap-2 text-muted-foreground">

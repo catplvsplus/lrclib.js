@@ -31,10 +31,16 @@
         searchEngine.search(options ?? query);
     }
 
-    function fixURLQueryParams(query: APIOptions.Get.Search|null) {
+    function setSearchMode(newMode: boolean) {
+        isAdvanced = newMode;
+
+        search(fixURLQueryParams(query, newMode));
+    }
+
+    function fixURLQueryParams(query: APIOptions.Get.Search|null, isAdvanced: boolean) {
         const isTrackSignatureQuery = query && isTrackSignatureSearch(query);
 
-        queryParams.set({
+        const newData = {
             q: !isAdvanced && isTrackSignatureQuery
                 ? queryString
                 : null,
@@ -43,7 +49,10 @@
                 : null,
             album_name: null,
             artist_name: null
-        });
+        };
+
+        queryParams.set(newData);
+        return parseQuery(newData);
     }
 </script>
 
@@ -87,12 +96,10 @@
                                         id="track_name"
                                         bind:value={
                                             () => $queryParams.track_name,
-                                            v => {
-                                                search(parseQuery({
-                                                    ...$queryParams,
-                                                    track_name: v || null
-                                                }))
-                                            }
+                                            v => search(parseQuery($queryParams = {
+                                                ...$queryParams,
+                                                track_name: v
+                                            }))
                                         }
                                         placeholder="Some song (ft. some artist)"
                                     />
@@ -103,12 +110,10 @@
                                         id="artist_name"
                                         bind:value={
                                             () => $queryParams.artist_name,
-                                            v => {
-                                                search(parseQuery({
-                                                    ...$queryParams,
-                                                    artist_name: v || null
-                                                }))
-                                            }
+                                            v => search(parseQuery($queryParams = {
+                                                ...$queryParams,
+                                                artist_name: v
+                                            }))
                                         }
                                         placeholder="Some artist"
                                     />
@@ -119,12 +124,10 @@
                                         id="album_name"
                                         bind:value={
                                             () => $queryParams.album_name,
-                                            v => {
-                                                search(parseQuery({
-                                                    ...$queryParams,
-                                                    album_name: v || null
-                                                }))
-                                            }
+                                            v => search(parseQuery($queryParams = {
+                                                ...$queryParams,
+                                                album_name: v
+                                            }))
                                         }
                                         placeholder="Some album"
                                     />
@@ -190,9 +193,7 @@
             class="shrink-0"
             onclick={event => {
                 event.preventDefault();
-                isAdvanced = !isAdvanced;
-                fixURLQueryParams(query);
-                search();
+                setSearchMode(!isAdvanced);
             }}
         >
             Use {isAdvanced ? 'basic' : 'advanced'} search

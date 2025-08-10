@@ -37,7 +37,7 @@
     }
 </script>
 
-<Tooltip disableCloseOnTriggerClick>
+<Tooltip>
     <TooltipTrigger>
         {#snippet child({ props })}
             <Button
@@ -71,7 +71,7 @@
     </TooltipTrigger>
     <TooltipContent class={labelClass}>{isLiked ? 'Remove from like' : 'Add to likes'}</TooltipContent>
 </Tooltip>
-<Tooltip disableCloseOnTriggerClick>
+<Tooltip>
     <TooltipTrigger>
         {#snippet child({ props })}
             <Button

@@ -1,14 +1,12 @@
 <script lang="ts">
     import type { APIResponse } from 'lrclib.js';
-    import type { ButtonProps } from '../../ui/button';
+    import type { ButtonProps } from '@/components/ui/button';
     import type { ClassValue } from 'svelte/elements';
     import { Tooltip, TooltipContent, TooltipTrigger } from '$lib/components/ui/tooltip';
     import Button from '$lib/components/ui/button/button.svelte';
     import { ArrowDownToLineIcon, ListMusicIcon, TextIcon } from '@lucide/svelte';
-    import { DialogState } from '../../../helpers/classes/DialogState.svelte';
+    import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import ResponsiveDialog from '../ResponsiveDialog.svelte';
-    import { tr } from 'zod/locales';
-    import { toast } from 'svelte-sonner';
 
     let {
         track,

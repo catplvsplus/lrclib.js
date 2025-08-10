@@ -10,6 +10,7 @@
     import { offlineSearchEngine } from '$lib/helpers/classes/OfflineSearchEngine.svelte';
     import { searchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
     import TracksSkeleton from '$lib/components/shared/track/TracksSkeleton.svelte';
+    import { savedLyrics } from '../../../lib/helpers/classes/SavedLyrics.svelte';
 
     const queryParams = queryParameters({
         q: true,
@@ -52,7 +53,7 @@
     >
         <Search {queryParams} searchEngine={offlineSearchEngine} bind:isAdvanced={isAdvancedSearch.current}/>
     </div>
-    {#if offlineSearchEngine.tracks.length || searchEngine || offlineSearchEngine.status === 'searching'}
+    {#if offlineSearchEngine.tracks.length || savedLyrics.size || offlineSearchEngine.status === 'searching'}
         <div
             class={cn(
                 "grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 h-fit",
@@ -63,10 +64,22 @@
         >
             {#if offlineSearchEngine.status === 'searching'}
                 <TracksSkeleton count={20}/>
-            {:else}
+            {:else if offlineSearchEngine.tracks.length}
                 {#each offlineSearchEngine.tracks ?? [] as track}
                     <TrackCard {track}/>
                 {/each}
+            {:else if isEmptyQuery}
+                {#await savedLyrics.fetchLibrary()}
+                    <TracksSkeleton count={20}/>
+                {:then tracks}
+                    {#each tracks as track}
+                        {#if typeof track !== 'number'}
+                            <TrackCard {track}/>
+                        {:else}
+                            <div>Track {track} not found</div>
+                        {/if}
+                    {/each}
+                {/await}
             {/if}
         </div>
     {:else}

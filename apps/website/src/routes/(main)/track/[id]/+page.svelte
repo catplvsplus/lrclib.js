@@ -7,7 +7,8 @@
     import TrackShareButton from '$lib/components/shared/track/TrackShareButton.svelte';
     import TrackDownloadButton from '$lib/components/shared/track/TrackDownloadButton.svelte';
     import { Button } from '@/components/ui/button';
-    import TrackLyricsPreview from '$lib/components/shared/track/TrackLyricsPreview.svelte';
+    import TrackLyrics from '@/components/shared/track/TrackLyrics.svelte';
+    import TrackPreviewButton from '../../../../lib/components/shared/track/TrackPreviewButton.svelte';
 
     let { data } = $props();
 
@@ -39,10 +40,10 @@
                 track={data.track}
                 class="text-sm font-bold bg-muted/90 w-full col-span-2 md:col-span-1 lg:w-fit"
             />
-            <Button variant="secondary" class="text-sm font-bold bg-muted/90 w-full col-span-3 md:col-span-1 lg:w-fit">
-                <PlayIcon/>
-                <span>Preview</span>
-            </Button>
+            <TrackPreviewButton
+                track={data.track}
+                class="text-sm font-bold bg-muted/90 w-full col-span-3 md:col-span-1 lg:w-fit"
+            />
             <TrackDownloadButton
                 track={data.track}
                 class="text-sm font-bold bg-muted/90 w-full col-span-1 md:col-span-1 lg:w-fit"
@@ -50,5 +51,5 @@
             />
         </CardFooter>
     </Card>
-    <TrackLyricsPreview track={data.track}/>
+    <TrackLyrics track={data.track}/>
 </div>

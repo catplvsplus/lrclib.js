@@ -10,6 +10,7 @@
     import { offlineSearchEngine } from '$lib/helpers/classes/OfflineSearchEngine.svelte';
     import TracksSkeleton from '$lib/components/shared/track/TracksSkeleton.svelte';
     import { savedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
+    import TrackErrorCard from '$lib/components/shared/track/TrackErrorCard.svelte';
 
     const queryParams = queryParameters({
         q: true,
@@ -79,9 +80,10 @@
                         {#if typeof track !== 'number'}
                             <TrackCard {track}/>
                         {:else}
-                            <div>Track {track} not found</div>
+                            <TrackErrorCard id={track}/>
                         {/if}
                     {/each}
+                    <TrackErrorCard id={43434}/>
                 {/if}
             {/if}
         </div>

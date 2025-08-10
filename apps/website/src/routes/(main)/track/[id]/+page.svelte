@@ -31,7 +31,7 @@
                 {data.track.artistName} • {data.track.albumName}
             </CardDescription>
             <CardAction>
-                <TrackShareButton track={data.track} class="text-muted-foreground bg-muted/90" labelClass="hidden md:inline"/>
+                <TrackShareButton track={data.track} class="text-sm font-bold bg-muted/90" labelClass="hidden md:inline"/>
             </CardAction>
         </CardHeader>
         <CardFooter class="grid lg:flex gap-2 grid-cols-4 border-t">

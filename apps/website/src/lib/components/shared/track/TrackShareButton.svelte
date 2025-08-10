@@ -72,7 +72,7 @@
                 {...props}
                 {...buttonProps}
                 onclick={share}
-                class={cn("text-sm font-bold text-muted-foreground bg-muted/90", buttonProps.class)}
+                class={buttonProps.class}
             >
                 <Share2Icon class="size-5"/>
                 <span class={labelClass}>Share</span>

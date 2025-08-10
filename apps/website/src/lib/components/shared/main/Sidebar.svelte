@@ -51,7 +51,7 @@
     >
         {@render SidebarContent({
             class: cn(
-                '[&_svg]:size-5! font-semibold relative hover:bg-black/5',
+                'sm:[&_svg]:text-primary [&_svg]:size-5! font-semibold relative hover:bg-black/5',
                 smallScreen.current
                     ? [
                         'flex-col items-center w-full shrink h-fit [&_svg]:size-6! text-xs gap-1 text-foreground/70 hover:bg-transparent',

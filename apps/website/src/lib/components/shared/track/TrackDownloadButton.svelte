@@ -4,7 +4,7 @@
     import type { ClassValue } from 'svelte/elements';
     import { Tooltip, TooltipContent, TooltipTrigger } from '$lib/components/ui/tooltip';
     import Button from '$lib/components/ui/button/button.svelte';
-    import { ArrowDownToLineIcon, ListMusicIcon, TextIcon } from '@lucide/svelte';
+    import { ArrowDownToLineIcon, ListMusicIcon, MicVocalIcon, TextIcon } from '@lucide/svelte';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import ResponsiveDialog from '../ResponsiveDialog.svelte';
 
@@ -59,11 +59,11 @@
     {#snippet content({ type })}
         <div class="grid gap-2 min-[400px]:grid-cols-2 py-2" class:px-4={type === 'drawer'}>
             <Button variant="outline" class="h-12 min-[400px]:justify-center justify-start" disabled={!track.syncedLyrics} onclick={() => download(true)}>
-                <ListMusicIcon class="size-5"/>
+                <MicVocalIcon class="size-5"/>
                 <span class="font-bold">Synced lyrics</span>
             </Button>
             <Button variant="outline" class="h-12 min-[400px]:justify-center justify-start" disabled={!track.plainLyrics} onclick={() => download(false)}>
-                <TextIcon class="size-5"/>
+                <ListMusicIcon class="size-5"/>
                 <span class="font-bold">Plain lyrics</span>
             </Button>
         </div>

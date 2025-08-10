@@ -23,8 +23,8 @@
                     "sm:hidden absolute -bottom-1 rounded-full left-1/2 -translate-x-1/2 h-0.5 ",
                     !settings.prefersReducedMotion && "transition-all duration-300",
                     isActive
-                        ? "w-1/5 bg-primary"
-                        : "w-4 bg-transparent"
+                        ? "w-1/6 bg-primary"
+                        : "w-0 bg-transparent"
                 )}
             ></div>
         </Button>
@@ -51,7 +51,7 @@
     >
         {@render SidebarContent({
             class: cn(
-                '[&_svg]:text-primary [&_svg]:size-5! font-semibold relative hover:bg-black/5',
+                '[&_svg]:size-5! font-semibold relative hover:bg-black/5',
                 smallScreen.current
                     ? [
                         'flex-col items-center w-full shrink h-fit [&_svg]:size-6! text-xs gap-1 text-foreground/70 hover:bg-transparent',

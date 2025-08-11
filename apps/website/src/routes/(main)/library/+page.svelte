@@ -9,8 +9,9 @@
     import { queryParameters } from 'sveltekit-search-params';
     import { offlineSearchEngine } from '$lib/helpers/classes/OfflineSearchEngine.svelte';
     import TracksSkeleton from '$lib/components/shared/track/TracksSkeleton.svelte';
-    import { savedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
+    import { savedLyrics, type SavedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
     import TrackErrorCard from '$lib/components/shared/track/TrackErrorCard.svelte';
+    import LibraryFilter from '$lib/components/shared/main/LibraryFilter.svelte';
 
     const queryParams = queryParameters({
         q: true,
@@ -22,6 +23,7 @@
     let query = $derived(parseQuery($queryParams));
     let queryString = $derived(query ? stringifyQuery(query) : '');
     let isEmptyQuery = $derived(isQueryEmpty(query ?? {}));
+    let filter: (keyof SavedLyrics.FetchLibraryOptions)[] = $state([]);
     let isAdvancedSearch = new PersistedState('lrclib-advanced-search', false);
 
     onMount(async () => {
@@ -32,8 +34,17 @@
     });
 
     $effect(() => {
-        if (isEmptyQuery) savedLyrics.fetchLibrary();
-    })
+        if (isEmptyQuery) {
+            const options: SavedLyrics.FetchLibraryOptions = filter.length
+                ? filter.reduce(
+                    (acc, key) => ({ ...acc, [key]: true }),
+                    { liked: false, saved: false }
+                )
+                : {};
+
+            savedLyrics.fetchLibrary(options);
+        }
+    });
 </script>
 
 <MetaTags
@@ -56,6 +67,7 @@
         )}
     >
         <Search {queryParams} searchEngine={offlineSearchEngine} bind:isAdvanced={isAdvancedSearch.current}/>
+        <LibraryFilter bind:filter/>
     </div>
     {#if offlineSearchEngine.tracks.length || savedLyrics.size || offlineSearchEngine.status === 'searching'}
         <div

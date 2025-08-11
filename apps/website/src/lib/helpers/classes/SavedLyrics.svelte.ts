@@ -97,6 +97,8 @@ export class SavedLyrics {
     }
 
     public async fetchLibrary(options?: SavedLyrics.FetchLibraryOptions): Promise<(Track|number)[]> {
+        this.status = 'loading';
+
         const liked = options?.liked !== false ? this.liked.current.map(id => this.fetch(id).catch(() => id)) : [];
         const saved = options?.saved !== false ? this.saved.current.map(t => this.fetch(t.id)) : [];
         const tracks: Map<number, Track|number> = new Map();
@@ -111,6 +113,8 @@ export class SavedLyrics {
             }
         }
 
+        this.status = null;
+
         return this.library = Array.from(tracks.values())
             .sort((a, b) => a instanceof Track && b instanceof Track ? a.trackName.localeCompare(b.trackName) : 0);
     }
@@ -124,7 +128,6 @@ export class SavedLyrics {
 
 export namespace SavedLyrics {
     export type Status = 'loading';
-    
     export interface FetchLibraryOptions {
         liked?: boolean;
         saved?: boolean;

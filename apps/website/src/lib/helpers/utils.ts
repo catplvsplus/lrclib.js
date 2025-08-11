@@ -65,10 +65,10 @@ export function parseQuery(query: PartialNull<APIOptions.Get.SearchQuery & APIOp
 
 export function isQueryEmpty(query: Partial<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): boolean {
     if ('track_name' in query) {
-        return !query.track_name && !query.artist_name && !query.album_name;
+        return !query.track_name?.trim() && !query.artist_name?.trim() && !query.album_name?.trim();
     }
 
-    if ('q' in query) return !query.q;
+    if ('q' in query) return !query.q?.trim();
 
     return true;
 }

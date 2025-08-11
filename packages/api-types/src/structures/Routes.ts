@@ -1,11 +1,10 @@
 import type { APIOptions, APIResponse } from '../types/API.js';
-import { Utils } from './Utils.js';
 
 export class Routes {
     private constructor() {}
 
     public static [`/api/get`](options: APIOptions.Get.TrackSignatureOptions): `/api/get` {
-        return `/api/get${Utils.recordToQueries(options)}` as `/api/get`;
+        return `/api/get?${Routes.parseURLSearchParams(options)}` as `/api/get`;
     }
 
     public static [`/api/get/{id}`](options: APIOptions.Get.TrackById): `/api/get/{id}` {
@@ -13,7 +12,7 @@ export class Routes {
     }
 
     public static [`/api/search`](options: APIOptions.Get.Search): `/api/search` {
-        return `/api/search${Utils.recordToQueries(options)}` as `/api/search`;
+        return `/api/search${Routes.parseURLSearchParams(options)}` as `/api/search`;
     }
 
     public static [`/api/publish`](): `/api/publish` {
@@ -22,6 +21,18 @@ export class Routes {
 
     public static [`/api/request-challenge`](): `/api/request-challenge` {
         return `/api/request-challenge`;
+    }
+
+    private static parseURLSearchParams(data: Record<string, any>): URLSearchParams {
+        const searchParams = new URLSearchParams();
+
+        for (const [key, value] of Object.entries(data)) {
+            if (value !== undefined) {
+                searchParams.append(key, String(value));
+            }
+        }
+
+        return searchParams;
     }
 }
 

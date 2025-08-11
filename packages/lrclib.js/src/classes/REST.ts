@@ -1,4 +1,4 @@
-import { Routes } from './Routes.js';
+import { Routes } from '../../../api-types/src/structures/Routes.js';
 import { Utils } from './Utils.js';
 
 export interface RESTOptions {

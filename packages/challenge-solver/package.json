@@ -1,5 +1,5 @@
 {
-  "name": "lrclib.js",
+  "name": "@lrclib.js/challenge-solver",
   "version": "3.0.0",
   "type": "module",
   "main": "dist/index.cjs",
@@ -17,20 +17,23 @@
       }
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "clean": "rimraf dist",
-    "build": "tsup",
+    "build": "tsup && npm run asbuild",
+    "asbuild:debug": "asc assembly/index.ts --target debug",
+    "asbuild:release": "asc assembly/index.ts --target release",
+    "asbuild": "npm run asbuild:debug && npm run asbuild:release",
     "prepack": "npm run build"
   },
-  "dependencies": {
-    "@discordjs/collection": "^2.1.1",
-    "@lrclib.js/api-types": "^3.0.0",
-    "clrc": "^3.1.4"
-  },
+  "files": [
+    "dist",
+    "build"
+  ],
   "devDependencies": {
+    "assemblyscript": "^0.28.4",
     "tsup": "^8.3.6"
+  },
+  "dependencies": {
+    "@chainsafe/as-sha256": "^1.2.0"
   }
 }

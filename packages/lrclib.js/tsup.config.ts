@@ -6,7 +6,7 @@ export default defineConfig({
     external: [],
     noExternal: [],
     platform: 'browser',
-    format: ['esm', 'cjs'],
+    format: ['esm'],
     skipNodeModulesBundle: true,
     target: 'esnext',
     clean: true,

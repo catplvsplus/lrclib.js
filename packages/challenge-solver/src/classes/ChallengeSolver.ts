@@ -1,5 +1,4 @@
-import { SHA256 } from '@chainsafe/as-sha256';
-import { verifyNonce as WASMverifyNonce, decodeHex as WASMdecodeHex } from '../../build/release';
+import type { APIPublishTokenData, APIResponse } from '@lrclib.js/api-types';
 
 export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
     private _nonce: number = 0;
@@ -79,23 +78,63 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
 }
 
 export namespace ChallengeSolver {
+    let nodeCrypto: typeof import('node:crypto')|null = null;
+
     export class AbortError extends Error {}
 
     export interface Options {
         onAttempt?: (solver: ChallengeSolver) => void;
     }
 
-    export async function sha256(input: string): Promise<Uint8Array> {
-        const sha256 = new SHA256();
-        return sha256.init().update(Buffer.from(input, 'utf8') as Uint8Array).final();
+    export async function resolveNodeCrypto(): Promise<typeof import('node:crypto')> {
+        return nodeCrypto ??= await import('node:crypto');
+    }
+
+    export async function nodeSHA256(input: string): Promise<Uint8Array> {
+        const crypto = await resolveNodeCrypto();
+        const hash = crypto.createHash('sha256');
+        hash.update(input);
+        return Uint8Array.from(hash.digest());
+    }
+
+    export async function webSHA256(input: string): Promise<Uint8Array> {
+        const Uint8 = new TextEncoder().encode(input);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', Uint8);
+        return new Uint8Array(hashBuffer);
+    }
+
+    export function isNode(): boolean {
+       return typeof process !== 'undefined' && !!process.versions && !!process.versions.node;
+    }
+
+    export async function sha256(input: string, useNode?: boolean): Promise<Uint8Array> {
+        // const sha256 = new SHA256();
+        // const uint8 = new TextEncoder().encode(input);
+
+        // return sha256.init().update(uint8).final();
+        return (useNode ?? ChallengeSolver.isNode())
+            ? ChallengeSolver.nodeSHA256(input)
+            : ChallengeSolver.webSHA256(input);
     }
 
     export function decodeHex(hex: string): Uint8Array {
-        return WASMdecodeHex(hex);
+        return new Uint8Array(
+            Array.from({ length: hex.length / 2 }, (_, i) => parseInt(hex.slice(i * 2, (i + 1) * 2), 16))
+        );
     }
 
     export function verifyNonce(result: Uint8Array, target: Uint8Array): boolean {
-        return WASMverifyNonce(result, target);
+        if (result.length !== target.length) return false;
+
+        for (let i = 0; i < result.length - 1; i++) {
+            if (result[i] > target[i]) {
+                return false;
+            } else if (result[i] < target[i]) {
+                break;
+            }
+        }
+
+        return true;
     }
 
     export async function solve(data: APIResponse.Post.RequestChallenge): Promise<ChallengeSolver> {

@@ -1,8 +1,7 @@
 {
   "name": "@lrclib.js/challenge-solver",
-  "version": "3.0.0",
+  "version": "1.0.0",
   "type": "module",
-  "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -10,19 +9,12 @@
       "import": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
       }
     }
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "tsup && npm run asbuild",
-    "asbuild:debug": "asc assembly/index.ts --target debug",
-    "asbuild:release": "asc assembly/index.ts --target release",
-    "asbuild": "npm run asbuild:debug && npm run asbuild:release",
+    "build": "tsup",
     "prepack": "npm run build"
   },
   "files": [
@@ -30,7 +22,7 @@
     "build"
   ],
   "devDependencies": {
-    "assemblyscript": "^0.28.4",
+    "@lrclib.js/api-types": "^1.0.0",
     "tsup": "^8.3.6"
   },
   "dependencies": {

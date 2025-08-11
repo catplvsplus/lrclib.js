@@ -2,7 +2,6 @@ import lrclib from 'lrclib.js';
 import { savedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte.js';
 import { error } from '@sveltejs/kit';
 
-export const prerender = true;
 export const ssr = false;
 
 export async function load({ params, fetch }) {

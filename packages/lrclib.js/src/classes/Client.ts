@@ -2,7 +2,7 @@ import { Collection } from '@discordjs/collection';
 import { Track } from './Track.js';
 import { REST, type RESTOptions } from './REST.js';
 import type { APIOptions, APIPublishTokenData, APIResponse } from '@lrclib.js/api-types';
-import { Routes } from '../../../api-types/src/structures/Routes.js';
+import { Routes } from '@lrclib.js/api-types';
 import { Utils } from './Utils.js';
 
 export interface ClientOptions {

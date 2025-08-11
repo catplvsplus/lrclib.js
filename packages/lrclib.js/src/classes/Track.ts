@@ -1,4 +1,4 @@
-import type { APIOptions, APIResponse } from '../../../api-types/src/types/API.js';
+import type { APIOptions, APIResponse } from '@lrclib.js/api-types';
 import type { Client } from './Client.js';
 import { LRC } from './LRC.js';
 

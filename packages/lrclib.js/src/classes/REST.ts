@@ -1,4 +1,4 @@
-import { Routes } from '../../../api-types/src/structures/Routes.js';
+import { Routes } from '@lrclib.js/api-types';
 import { Utils } from './Utils.js';
 
 export interface RESTOptions {

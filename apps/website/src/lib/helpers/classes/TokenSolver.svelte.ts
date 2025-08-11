@@ -47,6 +47,7 @@ export class TokenSolver {
                 this._onSolved = [];
             })
             .catch(err => {
+                console.error(err);
                 this.abort();
 
                 this._onSolved.forEach(solve => solve(err));

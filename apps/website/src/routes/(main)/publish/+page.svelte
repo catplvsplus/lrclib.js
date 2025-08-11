@@ -8,7 +8,6 @@
     import { zod4Client } from 'sveltekit-superforms/adapters';
     import { publishTrackSchema } from '$lib/helpers/schema';
     import { toast } from 'svelte-sonner';
-    import { useDebounce } from 'runed';
     import { formatDurationString, formatNumberString } from '$lib/helpers/utils';
     import { notifications } from '$lib/helpers/classes/Notifications.svelte';
     import InfoCard from '$lib/components/shared/InfoCard.svelte';
@@ -18,7 +17,7 @@
     import { beforeNavigate } from '$app/navigation';
     import LyricsTextareaFields from '$lib/components/shared/publish/LyricsTextareaFields.svelte';
     import { tokenSolver } from '$lib/helpers/classes/TokenSolver.svelte.js';
-    import { publishDraft } from '../../../lib/helpers/classes/PublishDraft.svelte.js';
+    import { publishDraft } from '$lib/helpers/classes/PublishDraft.svelte.js';
     import { MetaTags } from 'svelte-meta-tags';
 
     let { data } = $props();

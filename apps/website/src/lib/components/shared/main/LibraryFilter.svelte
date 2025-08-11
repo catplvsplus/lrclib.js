@@ -29,7 +29,7 @@
         class={cn("rounded-full", props.class)}
         onclick={() => toggleFilter('liked')}
     >
-        <HeartIcon/>
+        <HeartIcon fill={props.variant === 'default' ? 'currentColor' : ''}/>
         Liked
     </Button>
 {/snippet}
@@ -41,7 +41,7 @@
         class={cn("rounded-full", props.class)}
         onclick={() => toggleFilter('saved')}
     >
-        <BookmarkIcon/>
+        <BookmarkIcon fill={props.variant === 'default' ? 'currentColor' : ''}/>
         Saved
     </Button>
 {/snippet}

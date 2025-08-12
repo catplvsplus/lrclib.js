@@ -1,5 +1,5 @@
 import { LRC } from 'lrclib.js';
-import z from 'zod/v4';
+import z from 'zod/v3';
 
 export const publishTrackSchema = z.object({
     trackName: z.string().min(1).default(''),
@@ -10,9 +10,7 @@ export const publishTrackSchema = z.object({
     syncedLyrics: z
         .string()
         .trim()
-        .refine(val => !val.trim() || LRC.isValidLRC(val), {
-            error: 'Invalid LRC lyrics'
-        })
+        .refine(val => !val.trim() || LRC.isValidLRC(val), 'Invalid LRC lyrics')
         .default(''),
     token: z.string().optional(),
 });

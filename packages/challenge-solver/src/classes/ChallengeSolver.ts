@@ -11,10 +11,13 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
 
     public readonly prefix: string;
     public readonly target: string;
+    public readonly method: ChallengeSolver.Method = ChallengeSolver.isNode() ? 'node' : 'web';
 
     constructor(data: APIResponse.Post.RequestChallenge, public readonly options?: ChallengeSolver.Options) {
         this.prefix = data.prefix;
         this.target = data.target;
+
+        if (options?.method) this.method = options.method;
     }
 
     get nonce(): number { return this._nonce; }
@@ -52,7 +55,7 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
             this.options?.onAttempt?.(this);
 
             const input = `${this.prefix}${this._nonce}`;
-            const hashed = await ChallengeSolver.sha256(input);
+            const hashed = await ChallengeSolver.sha256(input, this.method);
 
             if (ChallengeSolver.verifyNonce(hashed, target)) break;
 
@@ -80,10 +83,13 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
 export namespace ChallengeSolver {
     let nodeCrypto: typeof import('node:crypto')|null = null;
 
+    export type Method = 'node'|'web';
+
     export class AbortError extends Error {}
 
     export interface Options {
         onAttempt?: (solver: ChallengeSolver) => void;
+        method?: Method;
     }
 
     export async function resolveNodeCrypto(): Promise<typeof import('node:crypto')> {
@@ -107,12 +113,10 @@ export namespace ChallengeSolver {
        return typeof process !== 'undefined' && !!process.versions && !!process.versions.node;
     }
 
-    export async function sha256(input: string, useNode?: boolean): Promise<Uint8Array> {
-        // const sha256 = new SHA256();
-        // const uint8 = new TextEncoder().encode(input);
+    export async function sha256(input: string, method?: Method): Promise<Uint8Array> {
+        method ??= ChallengeSolver.isNode() ? 'node' : 'web';
 
-        // return sha256.init().update(uint8).final();
-        return (useNode ?? ChallengeSolver.isNode())
+        return method === 'node'
             ? ChallengeSolver.nodeSHA256(input)
             : ChallengeSolver.webSHA256(input);
     }

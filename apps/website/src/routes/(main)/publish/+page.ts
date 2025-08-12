@@ -6,7 +6,10 @@ import { publishDraft } from '$lib/helpers/classes/PublishDraft.svelte';
 export async function load() {
     return {
         form: await superValidate(zod4(publishTrackSchema), {
-            defaults: publishDraft.draft.current
+            defaults: {
+                ...publishDraft.draft.current,
+                token: ''
+            }
         })
     }
 }

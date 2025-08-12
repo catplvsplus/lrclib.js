@@ -24,8 +24,5 @@
   "devDependencies": {
     "@lrclib.js/api-types": "^1.0.0",
     "tsup": "^8.3.6"
-  },
-  "dependencies": {
-    "@chainsafe/as-sha256": "^1.2.0"
   }
 }

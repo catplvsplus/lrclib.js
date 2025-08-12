@@ -1,7 +1,7 @@
 <script lang="ts">
     import lrclib from 'lrclib.js';
     import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '$lib/components/ui/card';
-    import { InfoIcon, LoaderIcon, ClockIcon, PenSquareIcon, AlertCircleIcon, CircleX, BadgeCheckIcon } from '@lucide/svelte';
+    import { InfoIcon, LoaderIcon, ClockIcon, PenSquareIcon, AlertCircleIcon, CircleX, BadgeCheckIcon, SquarePenIcon } from '@lucide/svelte';
     import { Input } from '$lib/components/ui/input';
     import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
     import { superForm } from 'sveltekit-superforms';
@@ -36,6 +36,8 @@
                 body: err.result.error.message,
                 toastType: 'error'
             });
+
+            if (err.result.status === 400) resetToken();
         },
         onSubmit: async data => {
             saveToDraft();
@@ -49,25 +51,28 @@
                 });
             }
 
-            tokenSolver.onAbort = () => {
-                data.cancel();
-                throw new Error('Challenge solving aborted');
+            if (!$formData.token) {
+                tokenSolver.onAbort = () => {
+                    data.cancel();
+                    throw new Error('Challenge solving aborted');
+                }
+
+                if (tokenSolver.status === 'solving') {
+                    submitStatus = 'Solving challenge';
+
+                    await tokenSolver.onSolved.catch(tokenSolver.onAbort);
+                } else if (!tokenSolver.status || tokenSolver.status === 'aborted') {
+                    submitStatus = 'Fetching challenge';
+
+                    const challenge = await lrclib.requestChallenge();
+
+                    submitStatus = 'Solving challenge';
+                    await tokenSolver.solve(challenge).catch(tokenSolver.onAbort);
+                }
+
+                $formData.token = tokenSolver.solver?.token;
             }
 
-            if (tokenSolver.status === 'solving') {
-                submitStatus = 'Solving challenge';
-
-                await tokenSolver.onSolved.catch(tokenSolver.onAbort);
-            } else {
-                submitStatus = 'Fetching challenge';
-
-                const challenge = await lrclib.requestChallenge();
-
-                submitStatus = 'Solving challenge';
-                await tokenSolver.solve(challenge).catch(tokenSolver.onAbort);
-            }
-
-            $formData.token = tokenSolver.solver?.token;
             submitStatus = 'Publishing';
         },
         onUpdate: async event => {
@@ -79,7 +84,7 @@
                 return;
             }
 
-            tokenSolver.reset(true);
+            resetToken();
 
             notifications.send('Lyrics published!', {
                 body: `Published track ${$formData.trackName}`,
@@ -107,6 +112,11 @@
 
     function untaintForm() {
         formData.update(() => $formData, { taint: 'untaint-form' });
+    }
+
+    function resetToken() {
+        $formData.token = '';
+        tokenSolver.reset(true);
     }
 
     $effect(() => {
@@ -176,7 +186,7 @@
     <Card class="gap-0">
         <CardHeader class="pb-4">
             <CardTitle class="flex items-center gap-1">
-                <PenSquareIcon class="text-primary size-5"/>
+                <SquarePenIcon class="text-primary size-5"/>
                 Track Info
             </CardTitle>
             <CardDescription>
@@ -185,6 +195,15 @@
         </CardHeader>
         <CardContent class="pt-4 border-t">
             <form method="POST" class="grid gap-4" use:enhance>
+                <FormField {form} name="token">
+                    <FormControl>
+                        {#snippet children({ props })}
+                            <FormLabel>Token</FormLabel>
+                            <Input {...props} bind:value={$formData.token} disabled={$submitting} placeholder="Your publish token"/>
+                        {/snippet}
+                    </FormControl>
+                    <FormFieldErrors/>
+                </FormField>
                 <FormField {form} name="trackName">
                     <FormControl>
                         {#snippet children({ props })}

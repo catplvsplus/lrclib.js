@@ -12,7 +12,7 @@ export class Routes {
     }
 
     public static [`/api/search`](options: APIOptions.Get.Search): `/api/search` {
-        return `/api/search${Routes.parseURLSearchParams(options)}` as `/api/search`;
+        return `/api/search?${Routes.parseURLSearchParams(options)}` as `/api/search`;
     }
 
     public static [`/api/publish`](): `/api/publish` {

@@ -1,14 +1,11 @@
 import type { APIResponse } from 'lrclib.js';
 import { LRC } from 'lrclib.js';
-import { LyricsContentType, parseBlob } from 'music-metadata';
+import { LyricsContentType, parseBlob, type IAudioMetadata } from 'music-metadata';
 
 export async function parseAudioMetadata(file: File): Promise<Partial<Omit<APIResponse.Get.TrackSignature, 'id'|'instrumental'>>> {
     const data = await parseBlob(file);
 
-    const firstPlain = data.common.lyrics?.find(l => l.contentType === LyricsContentType.lyrics && l.text);
-    const firstSynced = data.common.lyrics?.find(l => l.contentType === LyricsContentType.lyrics && l.syncText);
-
-    const syncedLyrics = firstSynced?.syncText.map(l => `[${formatLRCDuration(l.timestamp ?? 0)}] ${l.text}`).join('\n');
+    const { plainLyrics, syncedLyrics } = parseMetadataLyrics(data);
 
     return {
         trackName: data.common.title,
@@ -16,7 +13,7 @@ export async function parseAudioMetadata(file: File): Promise<Partial<Omit<APIRe
         albumName: data.common.album,
         duration: data.format.duration && Math.floor(data.format.duration),
         syncedLyrics,
-        plainLyrics: firstPlain?.text ?? (syncedLyrics ? LRC.toPlain(LRC.parse(syncedLyrics)).trim() : undefined)
+        plainLyrics
     };
 }
 
@@ -45,4 +42,16 @@ export function formatLRCDuration(duration: number): string {
     ].map(n => String(n).padStart(2, '0'));
 
     return `${minutes}:${seconds}.${milliseconds}`;
+}
+
+export function parseMetadataLyrics(metadata: IAudioMetadata): Record<'plainLyrics'|'syncedLyrics', string|null> {
+    const plain = metadata.common.lyrics?.find(l => l.contentType === LyricsContentType.lyrics && l.text);
+    const firstSynced = metadata.common.lyrics?.find(l => l.contentType === LyricsContentType.lyrics && l.syncText);
+
+    const synced = firstSynced?.syncText.map(l => `[${formatLRCDuration(l.timestamp ?? 0)}] ${l.text}`).join('\n');
+
+    return {
+        syncedLyrics: synced || null,
+        plainLyrics: (plain?.text ?? (synced ? LRC.toPlain(LRC.parse(synced)).trim() : undefined)) || null
+    }
 }

@@ -92,8 +92,8 @@
             });
 
             publishDraft.set({});
+            formData.set({}, { taint: 'untaint-form' });
             submitStatus = undefined;
-            $formData = {};
         }
     });
 

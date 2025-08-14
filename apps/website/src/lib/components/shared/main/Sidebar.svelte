@@ -6,9 +6,18 @@
     import { CirclePlus, LibraryIcon, SearchIcon, ComponentIcon } from '@lucide/svelte';
     import { MediaQuery } from 'svelte/reactivity';
     import { settings } from '$lib/helpers/classes/Settings.svelte';
+    import { setBottomMenuActive } from '$lib/helpers/pageState';
 
     let pathname = $derived(page.url.pathname);
     let smallScreen = new MediaQuery('(max-width: 639px)');
+
+    $effect(() => {
+        setBottomMenuActive(smallScreen.current);
+
+        return () => {
+            setBottomMenuActive(false);
+        };
+    });
 </script>
 
 {#snippet SidebarContent({ hideTitle, ...props }: ButtonProps & { hideTitle?: boolean; } = {})}
@@ -37,8 +46,9 @@
 <div class="w-0 sm:w-56 md:w-64 lg:w-72 shrink-0"></div>
 <div
     class={cn(
+        settings.prefersReducedTransparency ? "bg-background" : "bg-background/80 backdrop-blur-sm backdrop-saturate-150",
         "fixed shrink-0 z-50",
-        "bottom-0 left-0 w-full bg-background/80 backdrop-blur-sm backdrop-saturate-150 border-t",
+        "bottom-0 left-0 w-full border-t",
         "sm:top-16 sm:left-auto sm:w-56 md:w-64 lg:w-72 sm:h-[calc(100%-4rem)] sm:bg-transparent sm:backdrop-blur-0 sm:backdrop-saturate-100 sm:border-0",
     )}
 >

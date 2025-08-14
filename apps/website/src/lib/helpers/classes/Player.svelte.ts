@@ -10,6 +10,7 @@ export class Player {
 
     public skippable: boolean = $derived(!!this.queue.length && !!this.player);
     public previousable: boolean = $derived(!!this.history.length && !!this.player);
+    public currentTime: number = $state(0);
 
     get tracks() {
         return [this.queue, this.playing ? [this.playing] : [], this.history].flat();
@@ -33,8 +34,14 @@ export class Player {
 
         const endOrSkip = () => {
             if (!this.queue.length) {
+                const currentTrack = this.playing;
+
+                if (currentTrack) {
+                    this.history.push(currentTrack);
+                    this.playing = null;
+                }
+
                 this.status = null;
-                this.playing = null;
                 this.player!.src = '';
                 this.player!.currentTime = 0;
                 return;
@@ -45,6 +52,7 @@ export class Player {
 
         this.player.addEventListener('error', () => endOrSkip());
         this.player.addEventListener('ended', () => endOrSkip());
+        this.player.addEventListener('timeupdate', () => this.currentTime = this.player!.currentTime);
     }
 
     public async destroy() {

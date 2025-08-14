@@ -1,6 +1,12 @@
 import { pushState, replaceState } from '$app/navigation';
 import { page } from '$app/state';
 
+export let bottomMenuActive = false;
+
+export function setBottomMenuActive(active: boolean) {
+    bottomMenuActive = active;
+}
+
 export function addActiveDialog(id: string, options: { type?: 'push'|'replace'; url?: string; } = {}) {
     let activeDialogs = [...(page.state.activeDialogs ?? [])];
     if (activeDialogs.includes(id)) activeDialogs = activeDialogs.filter(d => d !== id);

@@ -5,6 +5,9 @@
     import { toast } from 'svelte-sonner';
     import { TooltipProvider } from '../lib/components/ui/tooltip';
     import { notifications } from '../lib/helpers/classes/Notifications.svelte';
+    import { player } from '../lib/helpers/classes/Player.svelte';
+    import { onDestroy, onMount } from 'svelte';
+    import Player from '../lib/components/shared/player/Player.svelte';
 
 	let { children } = $props();
 
@@ -31,11 +34,12 @@
         });
     }
 
-    $effect(() => {
+    onMount(() => {
         updateServiceWorker();
     });
 </script>
 
+<Player/>
 <ModeWatcher/>
 <Toaster/>
 

@@ -16,6 +16,11 @@ export class Player {
     }
 
     public async initialize(audio?: HTMLAudioElement) {
+        if (this.player) {
+            console.warn('Player already initialized');
+            return;
+        }
+
         this.player = audio ?? new Audio();
 
         this.player.addEventListener('pause', () => this.status = 'paused');
@@ -26,17 +31,20 @@ export class Player {
         this.player.addEventListener('loadstart', () => this.status = 'buffering');
         this.player.addEventListener('abort', () => this.stop());
 
-        this.player.addEventListener('error', event => {
-            // TODO: Play next or end player
-            console.error('Player error', event);
-            this.status = 'error';
-        });
+        const endOrSkip = () => {
+            if (!this.queue.length) {
+                this.status = null;
+                this.playing = null;
+                this.player!.src = '';
+                this.player!.currentTime = 0;
+                return;
+            }
 
-        this.player.addEventListener('ended', () => {
-            // TODO: Play next or end player
-            console.log('Player ended');
-            this.status = null;
-        });
+            this.skip();
+        }
+
+        this.player.addEventListener('error', () => endOrSkip());
+        this.player.addEventListener('ended', () => endOrSkip());
     }
 
     public async destroy() {
@@ -92,7 +100,6 @@ export class Player {
         const currentTrack = this.playing;
 
         if (currentTrack) {
-            currentTrack.destroy();
             this.history.push(currentTrack);
             this.remove(currentTrack);
             this.playing = null;
@@ -152,7 +159,6 @@ export class Player {
         const currentTrack = this.playing;
 
         if (currentTrack) {
-            currentTrack.destroy();
             this.history.push(currentTrack);
             this.playing = null;
         }
@@ -163,7 +169,6 @@ export class Player {
         }
 
         for (const track of addToHistory) {
-            track.destroy();
             this.history.push(track);
         }
     }
@@ -178,7 +183,6 @@ export class Player {
         if (!previousTrack) return;
 
         if (currentTrack) {
-            currentTrack.destroy();
             this.history.push(currentTrack);
             this.playing = null;
         }

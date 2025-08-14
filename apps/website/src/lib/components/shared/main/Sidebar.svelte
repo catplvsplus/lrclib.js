@@ -4,18 +4,16 @@
     import { page } from '$app/state';
     import { Button, type ButtonProps } from '../../ui/button';
     import { CirclePlus, LibraryIcon, SearchIcon, ComponentIcon } from '@lucide/svelte';
-    import { MediaQuery } from 'svelte/reactivity';
     import { settings } from '$lib/helpers/classes/Settings.svelte';
-    import { setBottomMenuActive } from '$lib/helpers/pageState';
+    import { userInterface } from '$lib/helpers/classes/UserInterface.svelte';
 
     let pathname = $derived(page.url.pathname);
-    let smallScreen = new MediaQuery('(max-width: 639px)');
 
     $effect(() => {
-        setBottomMenuActive(smallScreen.current);
+        userInterface.menuMode = userInterface.smallScreen.current ? 'bottom' : 'side';
 
         return () => {
-            setBottomMenuActive(false);
+            userInterface.menuMode = 'none';
         };
     });
 </script>
@@ -62,7 +60,7 @@
         {@render SidebarContent({
             class: cn(
                 'sm:[&_svg]:text-primary [&_svg]:size-5! font-semibold relative hover:bg-black/5',
-                smallScreen.current
+                userInterface.smallScreen.current
                     ? [
                         'flex-col items-center w-full shrink h-fit [&_svg]:size-6! text-xs gap-1 text-foreground/70 hover:bg-transparent',
                         'data-[active]:text-primary',

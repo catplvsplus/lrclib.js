@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { onMount, untrack } from 'svelte';
     import { player } from '$lib/helpers/classes/Player.svelte';
     import { fly } from 'svelte/transition';
     import { resolve } from '$app/paths';
@@ -7,11 +7,32 @@
     import { PlayIcon, PauseIcon } from '@lucide/svelte';
     import FlyInOut from '../FlyInOut.svelte';
     import { cn } from '../../../helpers/utils';
-    import { bottomMenuActive } from '../../../helpers/pageState';
     import { settings } from '../../../helpers/classes/Settings.svelte';
+    import { userInterface } from '../../../helpers/classes/UserInterface.svelte';
+
+    $effect(() => {
+        if (untrack(() => !('mediaSession' in navigator))) return;
+
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: player.playing?.title,
+            artist: player.playing?.artist,
+            album: player.playing?.album,
+            artwork: [
+                { src: player.playing?.coverImageURL ?? `${resolve('/')}cover.png` }
+            ]
+        });
+    });
 
     onMount(() => {
         player.initialize();
+
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.setActionHandler('play', () => player.play());
+            navigator.mediaSession.setActionHandler('pause', () => player.pause());
+            navigator.mediaSession.setActionHandler('previoustrack', () => player.previous());
+            navigator.mediaSession.setActionHandler('nexttrack', () => player.skip());
+            navigator.mediaSession.setActionHandler('stop', () => player.stop());
+        }
     });
 </script>
 
@@ -22,8 +43,8 @@
     {@const durationPercentage = (player.currentTime / (player.playing.duration ?? 0)) * 100}
     <div
         class={cn([
-            "fixed right-0 w-full max-w-sm z-30",
-            bottomMenuActive ? "bottom-17 max-w-md" : "bottom-0",
+            "fixed right-0 w-full max-w-sm z-30 transition-all duration-300",
+            userInterface.menuMode === 'bottom' ? "bottom-17 max-w-md" : "bottom-0",
             "sm:bottom-0"
         ])}
         transition:fly={{ y: 200 }}
@@ -32,7 +53,7 @@
             class={cn(
                 settings.prefersReducedTransparency ? "bg-card" : "bg-card/85 backdrop-blur-sm backdrop-saturate-150",
                 "border rounded-lg p-2 pb-2.5 shadow flex items-center gap-2 relative overflow-hidden",
-                bottomMenuActive ? "m-2" : "m-4",
+                userInterface.menuMode === 'bottom' ? "m-2" : "m-4",
                 "sm:m-4"
             )}
         >
@@ -62,7 +83,7 @@
                     {/if}
                 </Button>
             </div>
-            <div class="absolute bottom-0 left-0 w-full h-0.5 bg-accent">
+            <div class="absolute bottom-0 left-0 w-[calc(100%-1rem)] h-0.5 bg-accent rounded-full overflow-hidden mx-2">
                 <div class="h-full bg-primary/70 duration-100 transition-all" style="width: {durationPercentage}%;"></div>
             </div>
         </div>

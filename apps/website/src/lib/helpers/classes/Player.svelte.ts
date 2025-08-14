@@ -52,7 +52,7 @@ export class Player {
 
         this.player.addEventListener('error', () => endOrSkip());
         this.player.addEventListener('ended', () => endOrSkip());
-        this.player.addEventListener('timeupdate', () => this.currentTime = this.player!.currentTime);
+        this.player.addEventListener('timeupdate', () => this.currentTime = this.player?.currentTime ?? 0);
     }
 
     public async destroy() {

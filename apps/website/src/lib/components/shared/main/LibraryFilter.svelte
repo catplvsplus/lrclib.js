@@ -17,8 +17,6 @@
             filter.push(key);
         }
     }
-
-    $inspect(filter);
 </script>
 
 {#snippet LikedButton(props: ButtonProps)}

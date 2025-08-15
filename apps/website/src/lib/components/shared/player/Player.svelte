@@ -13,26 +13,26 @@
     $effect(() => {
         if (untrack(() => !('mediaSession' in navigator))) return;
 
-        navigator.mediaSession.metadata = new MediaMetadata({
-            title: player.playing?.title,
-            artist: player.playing?.artist,
-            album: player.playing?.album,
-            artwork: [
-                { src: player.playing?.coverImageURL ?? `${resolve('/')}cover.png` }
-            ]
-        });
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: player.playing?.title,
+                artist: player.playing?.artist,
+                album: player.playing?.album,
+                artwork: [
+                    { src: player.playing?.coverImageURL ?? `${resolve('/')}cover.png` }
+                ]
+            });
+
+            navigator.mediaSession.setActionHandler('play', () => player.play());
+            navigator.mediaSession.setActionHandler('pause', () => player.pause());
+            navigator.mediaSession.setActionHandler('previoustrack', player.previousable ? (() => player.previous()) : null);
+            navigator.mediaSession.setActionHandler('nexttrack', player.skippable ? (() => player.skip()) : null);
+            navigator.mediaSession.setActionHandler('stop', player.playing ? () => player.stop() : null);
+        }
     });
 
     onMount(() => {
         player.initialize();
-
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.setActionHandler('play', () => player.play());
-            navigator.mediaSession.setActionHandler('pause', () => player.pause());
-            navigator.mediaSession.setActionHandler('previoustrack', () => player.previous());
-            navigator.mediaSession.setActionHandler('nexttrack', () => player.skip());
-            navigator.mediaSession.setActionHandler('stop', () => player.stop());
-        }
     });
 </script>
 
@@ -52,7 +52,7 @@
         <div
             class={cn(
                 settings.prefersReducedTransparency ? "bg-card" : "bg-card/85 backdrop-blur-sm backdrop-saturate-150",
-                "border rounded-lg p-2 pb-2.5 shadow flex items-center gap-2 relative overflow-hidden",
+                "border rounded-xl p-2 pb-2.5 shadow flex items-center gap-2 relative overflow-hidden",
                 userInterface.menuMode === 'bottom' ? "m-2" : "m-4",
                 "sm:m-4"
             )}

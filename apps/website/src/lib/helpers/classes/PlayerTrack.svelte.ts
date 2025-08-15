@@ -6,7 +6,7 @@ export class PlayerTrack {
     private _audioURL?: string;
     private _coverImageURL?: string;
 
-    public id: string = crypto.randomUUID();
+    public id: string = Math.random().toString(36).substring(2, 15);
 
     public lyrics?: APIResponse.Get.TrackSignature = $state(undefined);
     public metadata?: IAudioMetadata = $state(undefined);

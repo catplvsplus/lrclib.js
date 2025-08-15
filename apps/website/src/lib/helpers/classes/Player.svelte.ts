@@ -37,7 +37,7 @@ export class Player {
                 const currentTrack = this.playing;
 
                 if (currentTrack) {
-                    this.history.push(currentTrack);
+                    this.history.unshift(currentTrack);
                     this.playing = null;
                 }
 
@@ -108,7 +108,7 @@ export class Player {
         const currentTrack = this.playing;
 
         if (currentTrack) {
-            this.history.push(currentTrack);
+            this.history.unshift(currentTrack);
             this.remove(currentTrack);
             this.playing = null;
         }
@@ -167,7 +167,7 @@ export class Player {
         const currentTrack = this.playing;
 
         if (currentTrack) {
-            this.history.push(currentTrack);
+            this.history.unshift(currentTrack);
             this.playing = null;
         }
 
@@ -177,7 +177,7 @@ export class Player {
         }
 
         for (const track of addToHistory) {
-            this.history.push(track);
+            this.history.unshift(track);
         }
     }
 
@@ -191,7 +191,7 @@ export class Player {
         if (!previousTrack) return;
 
         if (currentTrack) {
-            this.history.push(currentTrack);
+            this.queue.unshift(currentTrack);
             this.playing = null;
         }
 

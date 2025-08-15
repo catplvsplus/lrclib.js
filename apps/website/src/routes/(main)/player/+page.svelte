@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { toast } from 'svelte-sonner';
     import { Button } from '../../../lib/components/ui/button';
     import { Card, CardDescription, CardHeader, CardTitle } from '../../../lib/components/ui/card';
     import { Input } from '../../../lib/components/ui/input';
@@ -13,12 +14,12 @@
         parsing = true;
 
         for (const file of files ?? []) {
-            const track = await PlayerTrack.fromFile({
+            await PlayerTrack.fromFile({
                 file,
                 fetch: true
-            });
-
-            player.play(track);
+            })
+            .then(track => player.play(track))
+            .catch(err => toast.error(String(err)));
         }
 
         parsing = false;

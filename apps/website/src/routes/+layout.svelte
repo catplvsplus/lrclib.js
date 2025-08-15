@@ -5,9 +5,9 @@
     import { toast } from 'svelte-sonner';
     import { TooltipProvider } from '../lib/components/ui/tooltip';
     import { notifications } from '../lib/helpers/classes/Notifications.svelte';
-    import { player } from '../lib/helpers/classes/Player.svelte';
-    import { onDestroy, onMount } from 'svelte';
+    import { onMount } from 'svelte';
     import Player from '../lib/components/shared/player/Player.svelte';
+    import { userInterface } from '../lib/helpers/classes/UserInterface.svelte';
 
 	let { children } = $props();
 
@@ -41,7 +41,7 @@
 
 <Player/>
 <ModeWatcher/>
-<Toaster/>
+<Toaster position={userInterface.smallScreen.current && userInterface.menuMode === 'bottom' ? 'top-center' : 'bottom-right'}/>
 
 <svelte:head>
     <title>Lrclib.js</title>

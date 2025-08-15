@@ -34,7 +34,16 @@ export class PlayerTrack {
     public audioURL = $derived.by(() => this._audioURL ??= URL.createObjectURL(this.audio));
 
     public coverImage = $derived.by(() => (this.metadata?.common.picture && selectCover(this.metadata.common.picture)?.data) ?? null);
-    public coverImageURL = $derived.by(() => this.coverImage ? (this._coverImageURL ??= URL.createObjectURL(new Blob([this.coverImage]))) : null);
+    public coverImageURL = $derived.by(() => this.coverImage
+        ? (this._coverImageURL ??= URL.createObjectURL(new Blob([
+            this.coverImage instanceof Uint8Array
+                ? this.coverImage.buffer instanceof ArrayBuffer
+                    ? this.coverImage.buffer
+                    : new Uint8Array(this.coverImage).buffer
+                : this.coverImage
+        ])))
+        : null
+    );
 
     public plainLyrics = $derived.by(() => {
         return this.lyrics?.plainLyrics

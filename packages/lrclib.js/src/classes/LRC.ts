@@ -67,7 +67,7 @@ export namespace LRC {
 
     export function isValidLRC(lyrics: string): boolean {
         const parse = LRC.parse(lyrics);
-        return parse.every(line => line.type !== LineType.INVALID);
+        return !parse.every(line => line.type === LineType.INVALID);
     }
 
     export interface ActiveLyricsData {

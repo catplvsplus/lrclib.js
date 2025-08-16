@@ -3,7 +3,7 @@
     import { cn } from '$lib/helpers/utils';
     import { page } from '$app/state';
     import { Button, type ButtonProps } from '../../ui/button';
-    import { CirclePlus, LibraryIcon, SearchIcon, ComponentIcon } from '@lucide/svelte';
+    import { CirclePlus, LibraryIcon, SearchIcon, ComponentIcon, PlayIcon, Music2, Music2Icon, CirclePlusIcon } from '@lucide/svelte';
     import { settings } from '$lib/helpers/classes/Settings.svelte';
     import { userInterface } from '$lib/helpers/classes/UserInterface.svelte';
 
@@ -37,7 +37,8 @@
         </Button>
     {/snippet}
     {@render SidebarButton('/search', resolve('/(main)/search'), SearchIcon, 'Search')}
-    {@render SidebarButton('/publish', resolve('/(main)/publish'), CirclePlus, 'Publish')}
+    {@render SidebarButton('/player', resolve('/(main)/player'), Music2Icon, 'Player')}
+    {@render SidebarButton('/publish', resolve('/(main)/publish'), CirclePlusIcon, 'Publish')}
     {@render SidebarButton('/library', resolve('/(main)/library'), LibraryIcon, 'Library')}
 {/snippet}
 

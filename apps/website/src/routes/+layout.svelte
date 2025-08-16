@@ -5,9 +5,10 @@
     import { toast } from 'svelte-sonner';
     import { TooltipProvider } from '../lib/components/ui/tooltip';
     import { notifications } from '../lib/helpers/classes/Notifications.svelte';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import Player from '../lib/components/shared/player/Player.svelte';
     import { userInterface } from '../lib/helpers/classes/UserInterface.svelte';
+    import { player } from '../lib/helpers/classes/Player.svelte';
 
 	let { children } = $props();
 
@@ -36,6 +37,11 @@
 
     onMount(() => {
         updateServiceWorker();
+        player.initialize();
+    });
+
+    onDestroy(() => {
+        player.destroy();
     });
 </script>
 

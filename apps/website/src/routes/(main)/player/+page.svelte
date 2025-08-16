@@ -5,6 +5,8 @@
     import { Input } from '../../../lib/components/ui/input';
     import { player } from '../../../lib/helpers/classes/Player.svelte';
     import { PlayerTrack } from '../../../lib/helpers/classes/PlayerTrack.svelte';
+    import { onMount } from 'svelte';
+    import { userInterface } from '../../../lib/helpers/classes/UserInterface.svelte';
 
     let parsing = $state(false);
 
@@ -24,6 +26,14 @@
 
         parsing = false;
     }
+
+    onMount(() => {
+        userInterface.playerMode = 'hidden';
+
+        return () => {
+            userInterface.playerMode = 'visible';
+        };
+    });
 </script>
 
 <Input type="file" accept="audio/*" multiple onchange={handleFileUpload} disabled={parsing}/>

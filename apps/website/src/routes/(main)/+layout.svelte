@@ -34,7 +34,7 @@
 <Topbar/>
 <div
     class={cn(
-        "min-h-full pt-16 flex justify-center relative overflow-clip sm:pb-0 pb-20",
+        "min-h-full pt-16 flex justify-center relative overflow-clip pb-20",
         player.playing && "pb-36"
     )}
 >

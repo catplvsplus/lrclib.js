@@ -7,10 +7,14 @@ export class Player {
 
     public player: HTMLAudioElement|null = $state(null);
     public status: Player.Status|null = $state(null);
+    public currentTime: number = $state(0);
 
     public skippable: boolean = $derived(!!this.queue.length && !!this.player);
     public previousable: boolean = $derived(!!this.history.length && !!this.player);
-    public currentTime: number = $state(0);
+    public progress: number = $derived.by(() => {
+        if (!this.player) return 0;
+        return (this.currentTime / this.player.duration) * 100;
+    });
 
     get tracks() {
         return [this.queue, this.playing ? [this.playing] : [], this.history].flat();

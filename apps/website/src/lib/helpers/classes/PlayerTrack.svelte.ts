@@ -1,6 +1,7 @@
-import lrclib, { LRC, type APIResponse } from 'lrclib.js';
+import { LRC, type APIOptions, type APIResponse } from 'lrclib.js';
 import { LyricsContentType, parseBlob, selectCover, type IAudioMetadata } from 'music-metadata';
 import { formatLRCDuration } from '../metadata';
+import { savedLyrics } from './SavedLyrics.svelte';
 
 export class PlayerTrack {
     private _audioURL?: string;
@@ -78,19 +79,22 @@ export class PlayerTrack {
 
     public static async fromFile(options: PlayerTrack.FromFileOptions): Promise<PlayerTrack> {
         const metadata = await parseBlob(options.file);
+        const search: APIOptions.Get.Search|null = metadata.common.title && options.fetch
+            ? {
+                track_name: metadata.common.title,
+                artist_name: metadata.common.artist,
+                album_name: metadata.common.album
+            }
+            : null;
 
         return new PlayerTrack({
             audio: options.file,
             metadata,
-            lyrics: options.lyrics
-            ?? (options.fetch && metadata.common.title
-                ? await lrclib.search({
-                    track_name: metadata.common.title,
-                    artist_name: metadata.common.artist,
-                    album_name: metadata.common.album
-                })
-                .then(tracks => tracks.at(0))
-                .catch(() => undefined)
+            lyrics: options.lyrics ?? (search
+                ? await savedLyrics
+                    .search(search)
+                    .then(tracks => tracks.at(0))
+                    .catch(() => undefined)
                 : undefined
             )
         });

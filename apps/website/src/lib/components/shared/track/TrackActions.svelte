@@ -69,7 +69,7 @@
             </Button>
         {/snippet}
     </TooltipTrigger>
-    <TooltipContent class={labelClass}>{isLiked ? 'Remove from like' : 'Add to likes'}</TooltipContent>
+    <TooltipContent class={labelClass}>{isLiked ? 'Remove from likes' : 'Add to likes'}</TooltipContent>
 </Tooltip>
 <Tooltip>
     <TooltipTrigger>

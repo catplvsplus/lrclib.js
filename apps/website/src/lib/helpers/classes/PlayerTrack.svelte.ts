@@ -42,7 +42,7 @@ export class PlayerTrack {
                     ? this.coverImage.buffer
                     : new Uint8Array(this.coverImage).buffer
                 : this.coverImage
-        ])))
+        ]))) ?? null
         : null
     );
 

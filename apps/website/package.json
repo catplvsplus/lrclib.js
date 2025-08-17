@@ -44,6 +44,10 @@
 	},
 	"dependencies": {
 		"@lucide/svelte": "@lucide/svelte@^0.515.0",
+		"@threlte/core": "^8.1.4",
+		"@threlte/extras": "^9.4.5",
+		"@types/three": "^0.179.0",
+		"color2k": "^2.0.3",
 		"fast-average-color": "^9.5.0",
 		"humanize-duration": "^3.33.0",
 		"lrclib.js": "^1.0.0",
@@ -51,6 +55,7 @@
 		"svelte-meta-tags": "^4.4.0",
 		"svelte-query-params": "^0.2.5",
 		"sveltekit-search-params": "^3.0.0",
+		"three": "^0.179.1",
 		"zod": "^4.0.16"
 	}
 }

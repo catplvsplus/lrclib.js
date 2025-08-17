@@ -7,6 +7,10 @@
     import { PlayerTrack } from '../../../lib/helpers/classes/PlayerTrack.svelte';
     import { onMount } from 'svelte';
     import { userInterface } from '../../../lib/helpers/classes/UserInterface.svelte';
+    import { resolve } from '$app/paths';
+    import { AspectRatio } from '../../../lib/components/ui/aspect-ratio';
+    import { blur } from 'svelte/transition';
+    import PlayerBackground from '../../../lib/components/shared/player/PlayerBackground.svelte';
 
     let parsing = $state(false);
 
@@ -34,7 +38,30 @@
             userInterface.playerMode = 'visible';
         };
     });
+
+    let coverURL = $derived(player.playing?.coverImageURL ?? `${resolve('/')}cover.png`);
 </script>
+
+<div class="grid grid-cols-3 gap-2 min-h-full w-full">
+    <div class="col-span-2">
+        <h1 class="text-2xl font-bold">Player</h1>
+    </div>
+    <div class="flex flex-col gap-2 p-4 bg-card border shadow-lg rounded-xl relative overflow-hidden">
+        <PlayerBackground {coverURL}/>
+        <AspectRatio ratio={1/1} class="h-fit shadow overflow-hidden rounded-lg relative">
+            {#key coverURL}
+                <img class="size-full object-cover absolute top-0 left-0" src={coverURL} alt="" transition:blur>
+            {/key}
+            <img class="size-full object-cover opacity-0" src={coverURL} alt="">
+        </AspectRatio>
+        <div class="text-center relative">
+            <h1 class="w-full text-2xl font-bold truncate line-clamp-2 whitespace-normal">{player.playing?.title ?? ''}</h1>
+            <p class="text-muted-foreground text-sm truncate">
+                {[player.playing?.artist, player.playing?.album].filter(Boolean).join(' • ')}
+            </p>
+        </div>
+    </div>
+</div>
 
 <Input type="file" accept="audio/*" multiple onchange={handleFileUpload} disabled={parsing}/>
 <div>{player.queue.length} tracks</div>

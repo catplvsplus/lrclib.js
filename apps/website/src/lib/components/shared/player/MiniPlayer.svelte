@@ -35,7 +35,7 @@
     });
 
     beforeNavigate(async navigate => {
-        if (isQueueEmpty) return;
+        if (isQueueEmpty || !navigate.willUnload) return;
 
         const leave = confirm('Your queue will be cleared. Are you sure you want to leave?');
         if (!leave) navigate.cancel();
@@ -56,8 +56,8 @@
     {@const coverURL = player.playing.coverImageURL ?? `${resolve('/')}cover.png`}
     <div
         class={cn([
-            "fixed right-0 w-full max-w-sm z-30 transition-all duration-300",
-            userInterface.menuMode === 'bottom' ? "bottom-17 max-w-md" : "bottom-0",
+            "fixed right-0 w-full sm:max-w-sm z-30 transition-all duration-300",
+            userInterface.menuMode === 'bottom' ? "bottom-17 sm:max-w-md" : "bottom-0",
             "sm:bottom-0"
         ])}
         transition:fly={{ y: 200 }}

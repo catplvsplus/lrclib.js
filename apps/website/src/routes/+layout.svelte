@@ -6,7 +6,7 @@
     import { TooltipProvider } from '../lib/components/ui/tooltip';
     import { notifications } from '../lib/helpers/classes/Notifications.svelte';
     import { onDestroy, onMount } from 'svelte';
-    import Player from '../lib/components/shared/player/Player.svelte';
+    import Player from '../lib/components/shared/player/MiniPlayer.svelte';
     import { userInterface } from '../lib/helpers/classes/UserInterface.svelte';
     import { player } from '../lib/helpers/classes/Player.svelte';
 

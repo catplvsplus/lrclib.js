@@ -47,7 +47,12 @@
 
 <Player/>
 <ModeWatcher/>
-<Toaster position={userInterface.smallScreen.current && userInterface.menuMode === 'bottom' ? 'top-center' : 'bottom-right'}/>
+<Toaster
+    position={userInterface.smallScreen.current && userInterface.menuMode === 'bottom' ? 'top-center' : 'bottom-right'}
+    mobileOffset={{
+        top: userInterface.smallScreen.current && userInterface.menuMode === 'bottom' ? '4rem' : 0
+    }}
+/>
 
 <svelte:head>
     <title>Lrclib.js</title>

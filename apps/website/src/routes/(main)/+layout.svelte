@@ -16,7 +16,7 @@
 
     function onOffline() {
         toast.warning('Connection lost', {
-            description: 'Go to library to view offline tracks you saved',
+            description: 'View your offline lyrics in library',
             duration: Infinity,
             action: {
                 label: 'Go to library',

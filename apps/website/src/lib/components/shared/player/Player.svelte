@@ -9,6 +9,9 @@
     import { cn } from '$lib/helpers/utils';
     import { settings } from '$lib/helpers/classes/Settings.svelte';
     import { userInterface } from '$lib/helpers/classes/UserInterface.svelte';
+    import { beforeNavigate } from '$app/navigation';
+
+    let isQueueEmpty = $derived(!player.queue.length && !player.playing);
 
     $effect(() => {
         if (untrack(() => !('mediaSession' in navigator))) return;
@@ -30,7 +33,22 @@
             navigator.mediaSession.setActionHandler('stop', player.playing ? () => player.stop() : null);
         }
     });
+
+    beforeNavigate(async navigate => {
+        if (isQueueEmpty) return;
+
+        const leave = confirm('Your queue will be cleared. Are you sure you want to leave?');
+        if (!leave) navigate.cancel();
+    });
 </script>
+<svelte:window
+    onbeforeunload={event => {
+        if (isQueueEmpty) return;
+
+        event.preventDefault();
+        event.returnValue = '';
+    }}
+/>
 
 {#if player.playing && userInterface.playerMode === 'visible'}
     {@const title = player.playing.title}

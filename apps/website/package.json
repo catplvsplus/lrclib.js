@@ -50,11 +50,13 @@
 		"color2k": "^2.0.3",
 		"fast-average-color": "^9.5.0",
 		"humanize-duration": "^3.33.0",
+		"is-mobile": "^5.0.0",
 		"lrclib.js": "^1.0.0",
 		"music-metadata": "^11.7.3",
 		"svelte-meta-tags": "^4.4.0",
 		"svelte-query-params": "^0.2.5",
 		"sveltekit-search-params": "^3.0.0",
+		"swapy": "^1.0.5",
 		"three": "^0.179.1",
 		"zod": "^4.0.16"
 	}

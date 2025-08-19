@@ -3,7 +3,7 @@
     import { cn } from '$lib/helpers/utils';
     import { page } from '$app/state';
     import { Button, type ButtonProps } from '../../ui/button';
-    import { CirclePlus, LibraryIcon, SearchIcon, ComponentIcon, PlayIcon, Music2, Music2Icon, CirclePlusIcon } from '@lucide/svelte';
+    import { LibraryIcon, SearchIcon, ComponentIcon, PlayIcon, Music2, Music2Icon, CirclePlusIcon } from '@lucide/svelte';
     import { settings } from '$lib/helpers/classes/Settings.svelte';
     import { userInterface } from '$lib/helpers/classes/UserInterface.svelte';
 
@@ -45,7 +45,7 @@
 <div class="w-0 sm:w-56 md:w-64 lg:w-72 shrink-0"></div>
 <div
     class={cn(
-        settings.prefersReducedTransparency ? "bg-background" : "bg-background/80 backdrop-blur-sm backdrop-saturate-150",
+        settings.prefersReducedTransparency ? "bg-background" : "bg-background/80 backdrop-blur-sm backdrop-saturate-150 sm:bg-transparent sm:backdrop-blur-none sm:backdrop-saturate-100",
         "fixed shrink-0 z-50",
         "bottom-0 left-0 w-full border-t",
         "sm:top-16 sm:left-auto sm:w-56 md:w-64 lg:w-72 sm:h-[calc(100%-4rem)] sm:bg-transparent sm:backdrop-blur-0 sm:backdrop-saturate-100 sm:border-0",

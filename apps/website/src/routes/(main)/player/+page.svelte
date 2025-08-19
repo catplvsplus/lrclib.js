@@ -8,9 +8,10 @@
     import { onMount } from 'svelte';
     import { userInterface } from '../../../lib/helpers/classes/UserInterface.svelte';
     import { resolve } from '$app/paths';
-    import { AspectRatio } from '../../../lib/components/ui/aspect-ratio';
+    import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { blur } from 'svelte/transition';
-    import PlayerBackground from '../../../lib/components/shared/player/PlayerBackground.svelte';
+    import PlayerBackground from '$lib/components/shared/player/PlayerBackground.svelte';
+    import Queue from '$lib/components/shared/player/Queue.svelte';
 
     let parsing = $state(false);
 
@@ -45,18 +46,21 @@
 <div class="grid grid-cols-3 gap-2 min-h-full w-full">
     <div class="col-span-2">
         <h1 class="text-2xl font-bold">Player</h1>
+        {#key player.queue}
+            <Queue/>
+        {/key}
     </div>
-    <div class="flex flex-col gap-2 p-4 bg-card border shadow-lg rounded-xl relative overflow-hidden">
+    <div class="flex flex-col gap-2 p-4 bg-card border shadow-lg rounded-xl relative overflow-hidden dark">
         <PlayerBackground {coverURL}/>
-        <AspectRatio ratio={1/1} class="h-fit shadow overflow-hidden rounded-lg relative">
+        <AspectRatio ratio={1/1} class="h-fit shadow overflow-hidden rounded-lg relative z-10">
             {#key coverURL}
                 <img class="size-full object-cover absolute top-0 left-0" src={coverURL} alt="" transition:blur>
             {/key}
             <img class="size-full object-cover opacity-0" src={coverURL} alt="">
         </AspectRatio>
-        <div class="text-center relative">
-            <h1 class="w-full text-2xl font-bold truncate line-clamp-2 whitespace-normal">{player.playing?.title ?? ''}</h1>
-            <p class="text-muted-foreground text-sm truncate">
+        <div class="text-center relative z-10">
+            <h1 class="w-full text-2xl font-bold text-foreground truncate line-clamp-2 whitespace-normal">{player.playing?.title ?? ''}</h1>
+            <p class="text-foreground/80 text-sm truncate">
                 {[player.playing?.artist, player.playing?.album].filter(Boolean).join(' • ')}
             </p>
         </div>
@@ -71,36 +75,4 @@
     <Button disabled={!player.previousable} onclick={() => player.previous()}>Play Previous</Button>
     <Button disabled={!player.player} onclick={() => player.status === 'paused' ? player.play() : player.pause()}>{player.status === 'paused' ? 'Resume' : 'Pause'}</Button>
     <Button disabled={!player.player} onclick={() => player.stop()}>Stop</Button>
-</div>
-<div class="grid grid-cols-2 gap-2 w-full">
-    <div class="grid gap-2">
-        {#if player.playing}
-            <Card class="border-2 border-primary">
-                <CardHeader>
-                    <CardTitle>Now Playing</CardTitle>
-                    <CardDescription>{player.playing.title} - {player.playing?.artist}</CardDescription>
-                </CardHeader>
-            </Card>
-        {:else}
-            <div>No track is currently playing.</div>
-        {/if}
-        {#each player.queue as track (track.id)}
-            <Card>
-                <CardHeader>
-                    <CardTitle>{track.title}</CardTitle>
-                    <CardDescription>{track.artist} - {track.album}</CardDescription>
-                </CardHeader>
-            </Card>
-        {/each}
-    </div>
-    <div class="grid gap-2 opacity-80">
-        {#each player.history as track (track.id)}
-            <Card>
-                <CardHeader>
-                    <CardTitle>{track.title}</CardTitle>
-                    <CardDescription>{track.artist} - {track.album}</CardDescription>
-                </CardHeader>
-            </Card>
-        {/each}
-    </div>
 </div>

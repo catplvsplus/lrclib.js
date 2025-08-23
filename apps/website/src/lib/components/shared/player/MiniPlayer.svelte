@@ -101,7 +101,7 @@
             <div class="absolute bottom-0 left-0 w-[calc(100%-1rem)] h-0.5 bg-accent/80 rounded-full overflow-hidden mx-2">
                 <div class="h-full bg-primary/70 duration-100 transition-all" style="width: {player.progress}%;"></div>
             </div>
-            <div class="absolute left-0 w-3/4 h-full -z-10 blur-3xl opacity-60" class:hidden={settings.prefersReducedTransparency}>
+            <div class="absolute left-0 w-3/4 h-5/6 -z-10 blur-3xl opacity-60" class:hidden={settings.prefersReducedTransparency}>
                 {#key coverURL}
                     <img class="size-full absolute top-0 left-0" src={coverURL} alt="" transition:fade={{ duration: 1000 }}>
                 {/key}

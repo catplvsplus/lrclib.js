@@ -5,7 +5,6 @@
   "scripts": {
     "build": "lerna run build",
     "preview": "lerna run preview",
-    "postinstall": "patch-package",
     "dev": "lerna run dev"
   },
   "devDependencies": {
@@ -13,7 +12,6 @@
     "esbuild-plugin-version-injector": "^1.2.1",
     "lerna": "^8.1.8",
     "lrclib.js": "^1.0.0",
-    "patch-package": "^8.0.0",
     "rimraf": "^6.0.1",
     "typescript": "^5.5.4"
   },

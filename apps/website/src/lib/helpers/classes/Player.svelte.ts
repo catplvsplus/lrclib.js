@@ -203,6 +203,15 @@ export class Player {
         this.player.play();
     }
 
+    public move(from: number, to: number): this {
+        if (!this.player) throw new Error('Player not initialized');
+        if (from < 0 || from >= this.queue.length || to < 0 || to >= this.queue.length) return this;
+
+        const [track] = this.queue.splice(from, 1);
+        this.queue.splice(to, 0, track);
+        return this;
+    }
+
     public pause(): this {
         if (!this.player) throw new Error('Player not initialized');
         this.player.pause();

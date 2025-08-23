@@ -46,9 +46,7 @@
 <div class="grid grid-cols-3 gap-2 min-h-full w-full">
     <div class="col-span-2">
         <h1 class="text-2xl font-bold">Player</h1>
-        {#key player.queue}
-            <Queue/>
-        {/key}
+        <Queue/>
     </div>
     <div class="flex flex-col gap-2 p-4 bg-card border shadow-lg rounded-xl relative overflow-hidden dark">
         <PlayerBackground {coverURL}/>

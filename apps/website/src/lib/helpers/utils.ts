@@ -26,6 +26,18 @@ export function formatNumberString(number: number): string {
     }
 }
 
+export function formatBytesString(bytes: number): string {
+    if (bytes < 1000) {
+        return `${bytes} B`;
+    } else if (bytes < 1000000) {
+        return `${(bytes / 1000).toFixed(1)} KB`;
+    } else if (bytes < 1000000000) {
+        return `${(bytes / 1000000).toFixed(1)} MB`;
+    } else {
+        return `${(bytes / 1000000000).toFixed(1)} GB`;
+    }
+}
+
 export const formatDurationString = humanizeDuration.humanizer({
     largest: 1,
     language: "shortEn",

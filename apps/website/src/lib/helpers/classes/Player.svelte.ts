@@ -1,4 +1,5 @@
-import type { PlayerTrack } from './PlayerTrack.svelte';
+import { toast } from 'svelte-sonner';
+import { PlayerTrack } from './PlayerTrack.svelte';
 
 export class Player {
     public queue: PlayerTrack[] = $state([]);
@@ -15,6 +16,8 @@ export class Player {
         if (!this.player) return 0;
         return (this.currentTime / this.player.duration) * 100;
     });
+
+    public filesParsing: File[] = $state([]);
 
     get tracks() {
         return [this.queue, this.playing ? [this.playing] : [], this.history].flat();
@@ -216,6 +219,21 @@ export class Player {
         if (!this.player) throw new Error('Player not initialized');
         this.player.pause();
         return this;
+    }
+
+    public async addTracksFromFiles(files: FileList): Promise<void> {
+        this.filesParsing.push(...Array.from(files));
+
+        for (const file of files ?? []) {
+            await PlayerTrack.fromFile({
+                file,
+                fetch: true
+            })
+            .then(track => player.play(track))
+            .catch(err => toast.error(String(err)));
+
+            this.filesParsing = this.filesParsing.filter(f => f !== file);
+        }
     }
 }
 

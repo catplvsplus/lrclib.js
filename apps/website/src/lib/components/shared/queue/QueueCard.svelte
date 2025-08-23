@@ -3,9 +3,8 @@
     import { Card, CardAction, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
     import Queue from '@/components/shared/queue/QueueList.svelte';
     import CardContent from '$lib/components/ui/card/card-content.svelte';
-    import { ListMusicIcon, PlayIcon } from '@lucide/svelte';
-    import { Skeleton } from '$lib/components/ui/skeleton';
-    import { formatBytesString, formatDurationString } from '$lib/helpers/utils';
+    import { CirclePlusIcon, ListMusicIcon } from '@lucide/svelte';
+    import { formatDurationString } from '$lib/helpers/utils';
     import { player } from '$lib/helpers/classes/Player.svelte';
     import type { HTMLAttributes } from 'svelte/elements';
     import QueueParsingList from './QueueParsingList.svelte';
@@ -30,7 +29,7 @@
         </CardDescription>
         <CardAction>
             <Button variant="outline" onclick={() => fileInput?.click()} class="relative overflow-hidden">
-                <PlayIcon/>
+                <CirclePlusIcon/>
                 Add Track
             </Button>
         </CardAction>

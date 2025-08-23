@@ -6,14 +6,7 @@
     let currentProgressFormatted = $derived(DateTime.fromSeconds(player.currentTime).toFormat('mm:ss'));
     let durationFormatted = $derived(DateTime.fromSeconds(player.playing?.duration ?? 0).toFormat('mm:ss'));
 
-    let seekProgress: number|null = $state(null);
     let progressBar: HTMLDivElement|null = $state(null);
-
-    const setCurrentTime = useDebounce((time: number) => {
-        if (player.player) player.player.currentTime = time;
-
-        seekProgress = null;
-    }, 500);
 
     function seek(e: PointerEvent) {
         const { left, width } = progressBar!.getBoundingClientRect();
@@ -26,8 +19,7 @@
 
         const time = p * player.player.duration;
 
-        seekProgress = time / player.player.duration * 100;
-        setCurrentTime(time);
+        player.player.currentTime = time;
     }
 
     function pointerSeek(event: PointerEvent) {
@@ -46,10 +38,14 @@
     }
 </script>
 
-<div class="flex items-center text-xs font-semibold text-foreground/80 gap-2">
-    <span class="shrink-0 w-8 text-start">{currentProgressFormatted}</span>
+<div class="flex items-center text-xs font-semibold text-foreground/80 gap-2 flex-col md:flex-row lg:flex-col xl:flex-row">
+    <span class="shrink-0 w-8 text-start hidden md:block lg:hidden xl:block">{currentProgressFormatted}</span>
     <div class="w-full h-2 rounded-full bg-current/25 overflow-hidden" onpointerdown={pointerSeek} bind:this={progressBar}>
-        <div class="h-full bg-current" style="width: {seekProgress ?? player.progress}%"></div>
+        <div class="h-full bg-current" style="width: {player.progress}%"></div>
     </div>
-    <span class="shrink-0 w-8 text-end">{durationFormatted}</span>
+    <span class="shrink-0 w-8 text-end hidden md:block lg:hidden xl:block">{durationFormatted}</span>
+    <div class="flex justify-between w-full md:hidden lg:flex xl:hidden">
+        <span class="shrink-0 w-8 text-start">{currentProgressFormatted}</span>
+        <span class="shrink-0 w-8 text-end">{durationFormatted}</span>
+    </div>
 </div>

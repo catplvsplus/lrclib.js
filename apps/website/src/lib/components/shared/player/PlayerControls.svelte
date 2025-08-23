@@ -22,18 +22,14 @@
     <Button
         size="icon"
         variant="secondary"
-        class="size-16 rounded-full overflow-hidden relative bg-foreground/15 hover:bg-foreground/20"
+        class="size-16 rounded-full bg-foreground/15 hover:bg-foreground/20"
         onclick={() => player.status === 'playing' ? player.pause() : player.play()}
         disabled={player.status !== 'playing' && player.status !== 'paused'}
     >
         {#if player.status === 'playing'}
-            <FlyInOut inY={70} outY={-70}>
-                <PauseIcon fill="currentColor" class="size-8"/>
-            </FlyInOut>
+            <PauseIcon fill="currentColor" class="size-8"/>
         {:else}
-            <FlyInOut inY={70} outY={-70}>
-                <PlayIcon fill="currentColor" class="size-8"/>
-            </FlyInOut>
+            <PlayIcon fill="currentColor" class="size-8"/>
         {/if}
     </Button>
     <Button

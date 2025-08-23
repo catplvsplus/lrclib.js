@@ -1,12 +1,9 @@
 <script lang="ts">
     import { player } from '$lib/helpers/classes/Player.svelte';
     import { resolve } from '$app/paths';
-    import { Button } from '../../ui/button';
-    import { ChevronDownIcon, ChevronUpIcon } from '@lucide/svelte';
-    import autoanimate from '@formkit/auto-animate';
     import { dndzone } from 'svelte-dnd-action';
     import { flip } from 'svelte/animate';
-    import { settings } from '../../../helpers/classes/Settings.svelte';
+    import { settings } from '$lib/helpers/classes/Settings.svelte';
 </script>
 
 <div>

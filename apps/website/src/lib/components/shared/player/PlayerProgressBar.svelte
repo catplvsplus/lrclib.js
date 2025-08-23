@@ -48,7 +48,7 @@
 
 <div class="flex items-center text-xs font-semibold text-foreground/80 gap-2">
     <span class="shrink-0 w-8 text-start">{currentProgressFormatted}</span>
-    <div class="w-full h-2 rounded-full bg-foreground/40 overflow-hidden" onpointerdown={pointerSeek} bind:this={progressBar}>
+    <div class="w-full h-2 rounded-full bg-current/25 overflow-hidden" onpointerdown={pointerSeek} bind:this={progressBar}>
         <div class="h-full bg-current" style="width: {seekProgress ?? player.progress}%"></div>
     </div>
     <span class="shrink-0 w-8 text-end">{durationFormatted}</span>

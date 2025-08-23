@@ -6,6 +6,7 @@
     import { cn } from '$lib/helpers/utils';
     import PlayerControls from './PlayerControls.svelte';
     import PlayerProgressBar from './PlayerProgressBar.svelte';
+    import { settings } from '../../../helpers/classes/Settings.svelte';
 
     let coverURL = $derived(player.playing?.coverImageURL ?? `${resolve('/')}cover.png`);
 </script>
@@ -18,7 +19,7 @@
     <CardContent class="flex gap-5 items-center relative z-10">
         <div class="size-60 shrink-0 overflow-hidden rounded-lg relative shadow">
             {#key coverURL}
-                <img src={coverURL} alt="" class="size-full object-cover absolute" transition:blur>
+                <img src={coverURL} alt="" class="size-full object-cover absolute" transition:blur={{ duration: settings.prefersReducedMotion ? 0 : 300 }}>
             {/key}
         </div>
         <div class="grid gap-6 h-fit w-full">
@@ -34,7 +35,7 @@
     </CardContent>
     <div class="size-full absolute top-0 left-0 -z-10 overflow-hidden">
         {#key coverURL}
-            <img src={coverURL} alt="" class="size-full top-1/2 left-1/2 -translate-1/2 object-cover absolute blur-3xl opacity-40 saturate-150" transition:fade>
+            <img src={coverURL} alt="" class="size-full top-1/2 left-1/2 -translate-1/2 object-cover absolute blur-3xl opacity-50 dark:opacity-30 saturate-150" transition:fade={{ duration: settings.prefersReducedMotion ? 0 : 300 }}>
         {/key}
     </div>
 </Card>

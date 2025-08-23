@@ -7,6 +7,7 @@
     import PlayerControls from './PlayerControls.svelte';
     import PlayerProgressBar from './PlayerProgressBar.svelte';
     import { settings } from '../../../helpers/classes/Settings.svelte';
+    import { AspectRatio } from '../../ui/aspect-ratio';
 
     let coverURL = $derived(player.playing?.coverImageURL ?? `${resolve('/')}cover.png`);
 </script>
@@ -16,18 +17,20 @@
         "h-fit z-10 relative overflow-hidden"
     )}
 >
-    <CardContent class="flex gap-5 items-center relative z-10">
-        <div class="size-60 shrink-0 overflow-hidden rounded-lg relative shadow">
-            {#key coverURL}
-                <img src={coverURL} alt="" class="size-full object-cover absolute" transition:blur={{ duration: settings.prefersReducedMotion ? 0 : 300 }}>
-            {/key}
+    <CardContent class="flex gap-5 items-center relative z-10 flex-col xl:flex-row">
+        <div class="w-full xl:w-60 max-w-96 shrink-0">
+            <AspectRatio class="overflow-hidden rounded-lg relative shadow">
+                {#key coverURL}
+                    <img src={coverURL} alt="" class="size-full object-cover absolute" transition:blur={{ duration: settings.prefersReducedMotion ? 0 : 300 }}>
+                {/key}
+            </AspectRatio>
         </div>
         <div class="grid gap-6 h-fit w-full">
-            <div class="grid">
-                <h3 class="text-4xl font-bold leading-tight truncate whitespace-normal line-clamp-2">{player.playing?.title}</h3>
-                <p class="text-lg text-foreground/70">{[player.playing?.artist, player.playing?.album].filter(Boolean).join(' • ')}</p>
+            <div class="grid text-center xl:text-start">
+                <h3 class="text-2xl lg:text-4xl font-bold leading-tight truncate whitespace-normal line-clamp-2">{player.playing?.title}</h3>
+                <p class="text-sm lg:text-lg text-foreground/70">{[player.playing?.artist, player.playing?.album].filter(Boolean).join(' • ')}</p>
             </div>
-            <div class="grid gap-1">
+            <div class="grid gap-2">
                 <PlayerProgressBar/>
                 <PlayerControls class="justify-center"/>
             </div>

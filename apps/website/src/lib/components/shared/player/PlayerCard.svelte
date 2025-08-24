@@ -37,9 +37,9 @@
                 </div>
                 <div class="grid gap-2">
                     <PlayerProgressBar/>
-                    <div class="flex gap-4 items-center lg:justify-between lg:flex-row flex-col">
+                    <div class="flex gap-4 items-center lg:flex-row flex-col">
                         <PlayerControls class="w-full lg:w-auto justify-center"/>
-                        <div class="flex items-center gap-2 w-full xl:w-auto justify-between xl:justify-end">
+                        <div class="flex items-center gap-2 w-full justify-between lg:justify-end">
                             <Tooltip>
                                 <TooltipTrigger>
                                     {#snippet child({ props })}

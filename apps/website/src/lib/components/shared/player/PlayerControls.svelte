@@ -9,7 +9,7 @@
     let { ...props }: {} & HTMLAttributes<HTMLDivElement> = $props();
 </script>
 
-<div {...props} class={cn("flex items-center gap-2 mt-2", props.class)}>
+<div {...props} class={cn("flex items-center gap-4 md:gap-2 mt-2", props.class)}>
     <Button
         size="icon"
         variant="secondary"

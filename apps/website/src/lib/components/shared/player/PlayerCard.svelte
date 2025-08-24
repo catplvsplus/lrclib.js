@@ -6,12 +6,11 @@
     import { cn } from '$lib/helpers/utils';
     import PlayerControls from './PlayerControls.svelte';
     import PlayerProgressBar from './PlayerProgressBar.svelte';
-    import { settings } from '../../../helpers/classes/Settings.svelte';
-    import { AspectRatio } from '../../ui/aspect-ratio';
-    import { Button } from '../../ui/button/index';
-    import { CirclePlusIcon, ListMusicIcon, MicVocalIcon } from '@lucide/svelte';
-    import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/tooltip';
-    import { userInterface } from '../../../helpers/classes/UserInterface.svelte';
+    import { settings } from '$lib/helpers/classes/Settings.svelte';
+    import { AspectRatio } from '@/components/ui/aspect-ratio';
+    import { Button } from '@/components/ui/button/index';
+    import { CirclePlusIcon } from '@lucide/svelte';
+    import QueueLyricsToggle from './QueueLyricsToggle.svelte';
 
     let coverURL = $derived(player.playing?.coverImageURL ?? `${resolve('/')}cover.png`);
 </script>
@@ -39,46 +38,7 @@
                     <PlayerProgressBar/>
                     <div class="flex gap-4 items-center lg:flex-row flex-col">
                         <PlayerControls class="w-full lg:w-auto justify-center"/>
-                        <div class="flex items-center gap-2 w-full justify-between lg:justify-end">
-                            <Tooltip>
-                                <TooltipTrigger>
-                                    {#snippet child({ props })}
-                                        <Button
-                                            {...props}
-                                            size="icon"
-                                            variant="secondary"
-                                            class={cn(
-                                                "size-10 rounded-full overflow-hidden relative bg-foreground/5 hover:bg-foreground/20 text-foreground/70",
-                                                userInterface.playerMenu === 'lyrics' ? "bg-foreground/20 text-foreground" : ""
-                                            )}
-                                            onclick={() => userInterface.playerMenu = 'lyrics'}
-                                        >
-                                            <MicVocalIcon class="size-5"/>
-                                        </Button>
-                                    {/snippet}
-                                </TooltipTrigger>
-                                <TooltipContent>Show lyrics</TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                                <TooltipTrigger>
-                                    {#snippet child({ props })}
-                                        <Button
-                                            {...props}
-                                            size="icon"
-                                            variant="secondary"
-                                            class={cn(
-                                                "size-10 rounded-full overflow-hidden relative bg-foreground/5 hover:bg-foreground/20 text-foreground/70",
-                                                userInterface.playerMenu === 'queue' ? "bg-foreground/20 text-foreground" : ""
-                                            )}
-                                            onclick={() => userInterface.playerMenu = 'queue'}
-                                        >
-                                            <ListMusicIcon class="size-5"/>
-                                        </Button>
-                                    {/snippet}
-                                </TooltipTrigger>
-                                <TooltipContent>Show queue</TooltipContent>
-                            </Tooltip>
-                        </div>
+                        <QueueLyricsToggle/>
                     </div>
                 </div>
             </div>

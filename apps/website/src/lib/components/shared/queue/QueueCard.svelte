@@ -22,7 +22,7 @@
     <CardHeader>
         <CardTitle class="flex items-center gap-1">
             <ListMusicIcon class="size-5 text-primary"/>
-            Queue
+            Up Next
         </CardTitle>
         <CardDescription class="relative overflow-hidden">
             {#if !player.queue.length}
@@ -51,7 +51,7 @@
         </CardContent>
         {#if player.queue.length}
             <CardFooter class="flex justify-end gap-2">
-                <Button variant="outline" class="font-semibold" onclick={() => player.queue = player.queue.sort(() => Math.random() - 0.5)}>
+                <Button variant="outline" class="font-semibold" disabled={player.queue.length <= 1} onclick={() => player.queue = player.queue.sort(() => Math.random() - 0.5)}>
                     <ShuffleIcon/>
                     Shuffle
                 </Button>

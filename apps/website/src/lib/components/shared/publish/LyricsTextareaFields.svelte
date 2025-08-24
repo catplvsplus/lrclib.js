@@ -24,17 +24,15 @@
         $formData.plainLyrics = LRC.toPlain(LRC.parse($formData.syncedLyrics ?? '')).trim();
     }
 
-    const syncedSize = new TextareaAutosize({
+    new TextareaAutosize({
         element: () => syncedTextarea!,
         input: () => $formData.syncedLyrics ?? ''
     });
 
-    const plainSize = new TextareaAutosize({
+    new TextareaAutosize({
         element: () => plainTextarea!,
         input: () => $formData.plainLyrics ?? ''
     });
-
-    let largestSize = $derived(Math.max(syncedSize.textareaHeight, plainSize.textareaHeight));
 </script>
 <div class="flex lg:flex-row flex-col gap-5">
     <FormField {form} name="syncedLyrics" class="lg:w-1/2">

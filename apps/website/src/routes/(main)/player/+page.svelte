@@ -3,8 +3,9 @@
     import { userInterface } from '$lib/helpers/classes/UserInterface.svelte';
     import QueueCard from '$lib/components/shared/queue/QueueCard.svelte';
     import PlayerCard from '@/components/shared/player/PlayerCard.svelte';
-    import { cn } from '../../../lib/helpers/utils';
-    import { player } from '../../../lib/helpers/classes/Player.svelte';
+    import { cn } from '$lib/helpers/utils';
+    import { player } from '$lib/helpers/classes/Player.svelte';
+    import PreviewCard from '$lib/components/shared/preview/PreviewCard.svelte';
 
     onMount(() => {
         userInterface.playerMode = 'hidden';
@@ -22,6 +23,12 @@
             class={cn(
                 "h-fit",
                 userInterface.playerMenu !== 'queue' && "hidden"
+            )}
+        />
+        <PreviewCard
+            class={cn(
+                "h-fit",
+                userInterface.playerMenu !== 'lyrics' && "hidden"
             )}
         />
     {/if}

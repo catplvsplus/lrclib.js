@@ -46,6 +46,57 @@
         event.preventDefault();
         event.returnValue = '';
     }}
+    onkeypress={event => {
+        if (
+            event.target instanceof HTMLInputElement ||
+            event.target instanceof HTMLTextAreaElement ||
+            event.target instanceof HTMLSelectElement ||
+            event.target instanceof HTMLButtonElement ||
+            event.target instanceof HTMLAnchorElement ||
+            !player.playing || !player.player
+        ) return;
+
+        switch (event.code) {
+            case 'Space':
+                if (player.status !== 'playing' && player.status !== 'paused') break;
+                event.preventDefault();
+
+                if (player.status === 'playing') {
+                    player.pause();
+                } else {
+                    player.play();
+                }
+                break;
+            case 'ArrowRight':
+                if (event.shiftKey) {
+                    if (!player.skippable) break;
+                    event.preventDefault();
+                    player.skip();
+                    break;
+                }
+
+                event.preventDefault();
+
+                const newTimeForward = Math.min(player.currentTime + 5, player.player.duration);
+                player.player.currentTime = newTimeForward;
+                break;
+            case 'ArrowLeft':
+                if (event.shiftKey) {
+                    if (!player.previousable) break;
+                    event.preventDefault();
+                    player.previous();
+                    break;
+                }
+
+                event.preventDefault();
+
+                const newTimeBackward = Math.max(player.currentTime - 5, 0);
+                player.player.currentTime = newTimeBackward;
+                break;
+            default:
+                break;
+        }
+    }}
 />
 
 {#if player.playing && userInterface.playerMode === 'visible'}

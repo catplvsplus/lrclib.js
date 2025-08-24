@@ -6,6 +6,8 @@
     import { Button } from '$lib/components/ui/button';
     import { resolve } from '$app/paths';
     import { MetaTags } from 'svelte-meta-tags';
+    import { PressedKeys } from 'runed';
+    import { player } from '../../lib/helpers/classes/Player.svelte';
 </script>
 
 <svelte:head>

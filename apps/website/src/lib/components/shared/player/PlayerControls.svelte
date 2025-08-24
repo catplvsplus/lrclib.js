@@ -1,7 +1,7 @@
 <script lang="ts">
     import { player } from '$lib/helpers/classes/Player.svelte';
     import { Button } from '@/components/ui/button';
-    import { SkipBackIcon, PauseIcon, PlayIcon, SkipForwardIcon } from '@lucide/svelte';
+    import { SkipBackIcon, PauseIcon, PlayIcon, SkipForwardIcon, ListMusicIcon, MicVocalIcon } from '@lucide/svelte';
     import FlyInOut from '../FlyInOut.svelte';
     import type { HTMLAttributes } from 'svelte/elements';
     import { cn } from '$lib/helpers/utils';

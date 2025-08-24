@@ -17,6 +17,7 @@ export class Player {
     });
 
     public filesParsing: File[] = $state([]);
+    public filesInput: HTMLInputElement|null = $state(null);
 
     get tracks() {
         return [this.queue, this.playing ? [this.playing] : [], this.history].flat();
@@ -223,13 +224,22 @@ export class Player {
     public async addTracksFromFiles(files: FileList): Promise<void> {
         this.filesParsing.push(...Array.from(files));
 
-        for (const file of files ?? []) {
-            await PlayerTrack.fromFile({
-                file,
-                fetch: true
-            })
-            .then(track => player.play(track))
-            .catch(err => toast.error(String(err)));
+        for (const file of files) {
+            await PlayerTrack
+                .fromFile({ file })
+                .then(async track => {
+                    await player.play(track);
+                    await track.fetchMetadata().catch(console.error);
+
+                    track.fetch().catch(console.error);
+
+                    return track;
+                })
+                .catch(err => {
+                    console.error(err);
+                    toast.error(String(err));
+                    return null;
+                });
 
             this.filesParsing = this.filesParsing.filter(f => f !== file);
         }

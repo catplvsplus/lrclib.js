@@ -12,6 +12,7 @@ export class PlayerTrack {
     public lyrics?: APIResponse.Get.TrackSignature = $state(undefined);
     public metadata?: IAudioMetadata = $state(undefined);
     public audio: File;
+    public status: 'fetching'|null = $state(null);
 
     constructor(options: PlayerTrack.Options) {
         this.lyrics = options.lyrics;
@@ -77,27 +78,48 @@ export class PlayerTrack {
         return this.lyrics?.albumName || this.metadata?.common.album;
     });
 
-    public static async fromFile(options: PlayerTrack.FromFileOptions): Promise<PlayerTrack> {
-        const metadata = await parseBlob(options.file);
-        const search: APIOptions.Get.Search|null = metadata.common.title && options.fetch
+    public async fetch(): Promise<this> {
+        this.status = 'fetching';
+        await this.fetchMetadata();
+        await this.fetchLyrics();
+        this.status = null;
+        return this;
+    }
+
+    public async fetchMetadata(): Promise<this> {
+        this.metadata ??= await parseBlob(this.audio);
+        return this;
+    }
+
+    public async fetchLyrics(): Promise<this> {
+        const search: APIOptions.Get.Search|null = this.metadata?.common.title
             ? {
-                track_name: metadata.common.title,
-                artist_name: metadata.common.artist,
-                album_name: metadata.common.album
+                track_name: this.metadata.common.title,
+                artist_name: this.metadata.common.artist,
+                album_name: this.metadata.common.album
             }
             : null;
 
-        return new PlayerTrack({
+        if (search) {
+            this.lyrics ??= await savedLyrics
+                .search(search)
+                .then(tracks => tracks.at(0))
+                .catch(() => undefined);
+        }
+
+        return this;
+    }
+
+    public static async fromFile(options: PlayerTrack.FromFileOptions): Promise<PlayerTrack> {
+        const track = new PlayerTrack({
             audio: options.file,
-            metadata,
-            lyrics: options.lyrics ?? (search
-                ? await savedLyrics
-                    .search(search)
-                    .then(tracks => tracks.at(0))
-                    .catch(() => undefined)
-                : undefined
-            )
+            metadata: options.metadata,
+            lyrics: options.lyrics
         });
+
+        if (options.fetch === true) track.fetch();
+
+        return track;
     }
 }
 

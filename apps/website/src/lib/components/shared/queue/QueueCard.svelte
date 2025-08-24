@@ -13,8 +13,6 @@
 
     let { ...props }: {} & HTMLAttributes<HTMLDivElement> = $props();
 
-    let fileInput: HTMLInputElement|null = $state(null);
-
     const clearQueueDialog = new DialogState({
         id: 'clear-queue'
     });
@@ -33,12 +31,14 @@
                 {player.queue.length} track{player.queue.length > 1 ? 's' : ''} • {formatDurationString(player.queue.reduce((acc, track) => acc + (track.duration ?? 0), 0) * 1000)}
             {/if}
         </CardDescription>
-        <CardAction>
-            <Button variant="outline" onclick={() => fileInput?.click()} class="relative overflow-hidden">
-                <CirclePlusIcon/>
-                Add Track
-            </Button>
-        </CardAction>
+        {#if player.filesInput}
+            <CardAction>
+                <Button variant="outline" onclick={() => player.filesInput?.click()} class="relative overflow-hidden">
+                    <CirclePlusIcon/>
+                    Add Track
+                </Button>
+            </CardAction>
+        {/if}
     </CardHeader>
     {#if player.queue.length || player.filesParsing.length}
         <CardContent class="grid gap-2">
@@ -57,13 +57,12 @@
                 </Button>
                 <Button variant="destructive" class="font-semibold" onclick={clearQueueDialog.open}>
                     <TrashIcon/>
-                    Clear All
+                    Clear
                 </Button>
             </CardFooter>
         {/if}
     {/if}
 </Card>
-<input type="file" accept="audio/*" multiple onchange={e => e.currentTarget.files && player.addTracksFromFiles(e.currentTarget.files)} bind:this={fileInput} style="display: none"/>
 <ResponsiveDialog dialogState={clearQueueDialog}>
     {#snippet title()}
         Warning

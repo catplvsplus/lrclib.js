@@ -67,3 +67,4 @@
 <TooltipProvider>
     {@render children?.()}
 </TooltipProvider>
+<input type="file" accept="audio/*" multiple onchange={e => e.currentTarget.files && player.addTracksFromFiles(e.currentTarget.files)} bind:this={player.filesInput} style="display: none"/>

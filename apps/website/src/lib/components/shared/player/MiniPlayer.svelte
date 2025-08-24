@@ -16,22 +16,20 @@
     $effect(() => {
         if (untrack(() => !('mediaSession' in navigator))) return;
 
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: player.playing?.title,
-                artist: player.playing?.artist,
-                album: player.playing?.album,
-                artwork: [
-                    { src: player.playing?.coverImageURL ?? `${resolve('/')}cover.png` }
-                ]
-            });
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: player.playing?.title,
+            artist: player.playing?.artist,
+            album: player.playing?.album,
+            artwork: [
+                { src: player.playing?.coverImageURL ?? `${resolve('/')}cover.png` }
+            ]
+        });
 
-            navigator.mediaSession.setActionHandler('play', () => player.play());
-            navigator.mediaSession.setActionHandler('pause', () => player.pause());
-            navigator.mediaSession.setActionHandler('previoustrack', player.previousable ? (() => player.previous()) : null);
-            navigator.mediaSession.setActionHandler('nexttrack', player.skippable ? (() => player.skip()) : null);
-            navigator.mediaSession.setActionHandler('stop', player.playing ? () => player.stop() : null);
-        }
+        navigator.mediaSession.setActionHandler('play', () => player.play());
+        navigator.mediaSession.setActionHandler('pause', () => player.pause());
+        navigator.mediaSession.setActionHandler('previoustrack', player.previousable ? (() => player.previous()) : null);
+        navigator.mediaSession.setActionHandler('nexttrack', player.skippable ? (() => player.skip()) : null);
+        navigator.mediaSession.setActionHandler('stop', player.playing ? (() => player.stop()) : null);
     });
 
     beforeNavigate(async navigate => {
@@ -60,7 +58,7 @@
             userInterface.menuMode === 'bottom' ? "bottom-17 sm:max-w-md" : "bottom-0",
             "sm:bottom-0"
         ])}
-        transition:fly={{ y: 200 }}
+        transition:fly={{ y: 200, duration: settings.prefersReducedMotion ? 0 : 300 }}
     >
         <div
             class={cn(
@@ -101,9 +99,10 @@
             <div class="absolute bottom-0 left-0 w-[calc(100%-1rem)] h-0.5 bg-accent/80 rounded-full overflow-hidden mx-2">
                 <div class="h-full bg-primary/70 duration-100 transition-all" style="width: {player.progress}%;"></div>
             </div>
-            <div class="absolute left-0 w-3/4 h-5/6 -z-10 blur-3xl opacity-60" class:hidden={settings.prefersReducedTransparency}>
+            <div class="absolute left-0 w-3/4 h-5/6 -z-10 blur-3xl saturate-150 opacity-70" class:hidden={settings.prefersReducedTransparency}>
                 {#key coverURL}
-                    <img class="size-full absolute top-0 left-0" src={coverURL} alt="" transition:fade={{ duration: 1000 }}>
+                    <div class="size-full absolute top-0 left-0 bg-cover bg-center" style="background-image: url({coverURL});" transition:fade={{ duration: 1000 }}>
+                    </div>
                 {/key}
             </div>
         </div>

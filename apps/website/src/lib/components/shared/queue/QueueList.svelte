@@ -32,7 +32,7 @@
                 <div class="size-full absolute bg-background/10 hidden">
                     <PlayIcon class="size-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-foreground animate-in zoom-in-90" fill="currentColor"/>
                 </div>
-                <img src={coverURL} class="size-full object-cover" alt="">
+                <img src={coverURL} class="size-full object-cover object-center" alt="">
             </a>
             <a href={resolve('/(main)/player')} onclick={() => player.skip(index)} class="grid w-full">
                 <h3 class="text-sm font-semibold leading-tight truncate">{track?.title}</h3>
@@ -47,8 +47,8 @@
                             <CircleMinusIcon/>
                         </Button>
                     {/snippet}
-                    <TooltipContent>Remove from queue</TooltipContent>
                 </TooltipTrigger>
+                <TooltipContent>Remove from queue</TooltipContent>
             </Tooltip>
         </div>
     {/each}

@@ -13,8 +13,7 @@ export class Player {
     public skippable: boolean = $derived(!!this.queue.length && !!this.player);
     public previousable: boolean = $derived(!!this.history.length && !!this.player);
     public progress: number = $derived.by(() => {
-        if (!this.player) return 0;
-        return (this.currentTime / this.player.duration) * 100;
+        return this.player && this.playing ? (this.currentTime / this.player.duration) * 100 : 0;
     });
 
     public filesParsing: File[] = $state([]);

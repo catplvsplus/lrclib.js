@@ -72,7 +72,7 @@
         >
             <a href={resolve('/(main)/player')} class="size-12 overflow-hidden rounded-sm shrink-0 relative">
                 {#key coverURL}
-                    <img class="size-full object-cover absolute top-0 left-0" src={coverURL} alt="" transition:blur>
+                    <img class="size-full object-coverobject-center absolute top-0 left-0" src={coverURL} alt="" transition:blur>
                 {/key}
             </a>
             <a href={resolve('/(main)/player')} class="flex flex-col justify-center w-full whitespace-nowrap overflow-hidden">

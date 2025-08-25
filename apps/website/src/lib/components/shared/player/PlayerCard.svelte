@@ -64,7 +64,7 @@
         <div class="absolute size-full backdrop-blur-3xl backdrop-saturate-150 z-10 bg-black/50"></div>
         {#key coverURL}
             <div
-                class="size-full scale-125 object-cover object-center absolute"
+                class="size-full scale-125 bg-cover bg-center absolute"
                 style="background-image: url({coverURL})"
                 transition:fade={{ duration: settings.prefersReducedMotion ? 0 : 300 }}
             >

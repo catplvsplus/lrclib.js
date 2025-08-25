@@ -12,11 +12,13 @@
         lyrics,
         currentTime = $bindable(0),
         delay = 0,
+        scrollAlign,
         ...props
     }: {
         lyrics: string;
         currentTime: number;
         delay?: number;
+        scrollAlign?: 'start'|'center'|'end';
 		scrollbarXClasses?: ClassValue;
 		scrollbarYClasses?: ClassValue;
     } & ScrollAreaRootProps = $props();
@@ -32,7 +34,7 @@
 
         activeLines.forEach(line => {
             container?.scrollTo({
-                top: untrack(() => userInterface.smallScreen.current) ? line.offsetTop : line.offsetTop - (container?.offsetHeight || 0) / 3,
+                top: getScrollPosition(line),
                 behavior: untrack(() => settings.prefersReducedMotion) ? 'auto' : 'smooth',
             })
         });
@@ -41,6 +43,17 @@
     $effect(() => {
         if (currentTime == 0) container?.scrollTo(0, 0);
     });
+
+    function getScrollPosition(line: HTMLElement): number {
+        switch (scrollAlign) {
+            case 'start': return line.offsetTop;
+            case 'center': return line.offsetTop - (container?.offsetHeight || 0) / 3;
+            case 'end': return line.offsetTop - (container?.offsetHeight || 0);
+            default: return userInterface.smallScreen.current
+                ? line.offsetTop
+                : line.offsetTop - (container?.offsetHeight || 0) / 3
+        }
+    }
 </script>
 
 <ScrollArea
@@ -50,7 +63,7 @@
     scrollbarYClasses={cn(props.scrollbarYClasses, "[&>div]:bg-current/50")}
     scrollbarXClasses={cn(props.scrollbarXClasses, "[&>div]:bg-current/50")}
 >
-    <div class="grid gap-4">
+    <div class="grid gap-4 px-2">
         <div class="h-20"></div>
         {#each lines as line (line.lineNumber)}
             {@const words = line.content.trim().split(' ')}
@@ -74,13 +87,13 @@
                                 settings.prefersReducedMotion
                                     ? "duration-0"
                                     : [
-                                        active ? "duration-500" : "duration-200",
-                                        active || sung ? "translate-y-0" : "translate-y-2",
+                                        "duration-500",
+                                        active || sung ? "translate-y-0" : "translate-y-5",
                                     ],
                                 (sung || !active) && "opacity-30",
                                 active && "blur-none opacity-100"
                             )}
-                            style={!settings.prefersReducedMotion && active ? `transition-delay: ${i * 100}ms;` : ""}
+                            style={!settings.prefersReducedMotion && active ? `transition-delay: ${i * 40}ms;` : ""}
                         >
                             {word}
                         </span>

@@ -37,6 +37,10 @@
             });
         });
     });
+
+    $effect(() => {
+        if (currentTime == 0) container?.scrollTo(0, 0);
+    })
 </script>
 
 <ScrollArea

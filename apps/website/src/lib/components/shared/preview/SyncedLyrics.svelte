@@ -31,10 +31,10 @@
         if (!autoScroll) return;
 
         activeLines.forEach(line => {
-            line.scrollIntoView({
+            container?.scrollTo({
+                top: untrack(() => userInterface.smallScreen.current) ? line.offsetTop : line.offsetTop - (container?.offsetHeight || 0) / 3,
                 behavior: untrack(() => settings.prefersReducedMotion) ? 'auto' : 'smooth',
-                block: untrack(() => userInterface.smallScreen.current) ? 'start' : 'center',
-            });
+            })
         });
     });
 
@@ -45,7 +45,7 @@
 
 <ScrollArea
     {...props}
-    bind:ref={container}
+    bind:viewport={container}
     class={cn(props.class)}
     scrollbarYClasses={cn(props.scrollbarYClasses, "[&>div]:bg-current/50")}
     scrollbarXClasses={cn(props.scrollbarXClasses, "[&>div]:bg-current/50")}

@@ -7,6 +7,8 @@
     import type { ClassValue } from 'clsx';
     import { settings } from '../../../helpers/classes/Settings.svelte';
     import { Skeleton } from '../../ui/skeleton';
+    import { userInterface } from '../../../helpers/classes/UserInterface.svelte';
+    import { untrack } from 'svelte';
 
     let {
         lyrics,
@@ -20,8 +22,21 @@
     } & ScrollAreaRootProps = $props();
 
     let lines = $derived(LRC.parse(lyrics).filter(l => l.type === LRC.LineType.LYRIC));
-    let activeLines = $derived(LRC.getActiveLyrics(lines, currentTime * 1000));
+    let activeLyrics = $derived(LRC.getActiveLyrics(lines, currentTime * 1000));
+    let activeLines = $derived(activeLyrics.lines.map(l => document.getElementById(`line-${l.line.lineNumber}`)).filter(Boolean) as HTMLButtonElement[]);
     let container: HTMLDivElement|null = $state(null);
+    let autoScroll = $state(true);
+
+    $effect(() => {
+        if (!autoScroll) return;
+
+        activeLines.forEach(line => {
+            line.scrollIntoView({
+                behavior: untrack(() => settings.prefersReducedMotion) ? 'auto' : 'smooth',
+                block: untrack(() => userInterface.smallScreen.current) ? 'start' : 'center',
+            });
+        });
+    });
 </script>
 
 <ScrollArea
@@ -35,17 +50,18 @@
         <div class="h-20"></div>
         {#each lines as line (line.lineNumber)}
             {@const words = line.content.trim().split(' ')}
-            {@const active = activeLines.lines.find(l => l.line.lineNumber === line.lineNumber)}
+            {@const active = activeLyrics.lines.find(l => l.line.lineNumber === line.lineNumber)}
             {@const sung = !active && line.startMillisecond < currentTime * 1000}
             {@const time = line.startMillisecond / 1000}
             <button
+                id="line-{line.lineNumber}"
                 onclick={() => currentTime = time}
                 class={cn(
-                    "w-full text-start flex flex-wrap space-x-2 -space-y-2 transition-all",
+                    "w-full text-start flex cursor-pointer flex-wrap space-x-2 -space-y-2 transition-all",
                     settings.prefersReducedMotion ? "duration-0" : "duration-200",
                 )}
             >
-                {#if words.length}
+                {#if words.length > 0}
                     {#each words as word, i}
                         <span
                             class={cn(
@@ -54,7 +70,7 @@
                                 settings.prefersReducedMotion
                                     ? "duration-0"
                                     : [
-                                        "duration-500",
+                                        active ? "duration-500" : "duration-200",
                                         active || sung ? "translate-y-0" : "translate-y-2",
                                     ],
                                 (sung || !active) && "opacity-30",

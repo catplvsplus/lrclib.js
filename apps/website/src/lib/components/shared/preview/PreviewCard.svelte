@@ -124,7 +124,7 @@
                     <p class="text-xs text-muted-foreground mb-2">Adjust the delay of the lyrics when synced lyrics are displayed</p>
                     <Slider bind:value={delay} type="single" min={-5} max={5} step={0.5} class="w-full"/>
                     <p class="text-center text-xs text-muted-foreground font-medium mt-2">
-                        {delay ? `${delay} seconds` : 'No delay'}
+                        {delay ? `${delay} second${delay != 1 && delay != -1 ? 's' : ''}` : 'No delay'}
                     </p>
                 </div>
             {/if}

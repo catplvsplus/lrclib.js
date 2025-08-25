@@ -7,6 +7,7 @@
     import { settings } from '$lib/helpers/classes/Settings.svelte';
     import { userInterface } from '$lib/helpers/classes/UserInterface.svelte';
     import { untrack } from 'svelte';
+    import Interlude from './Interlude.svelte';
 
     let {
         lyrics,
@@ -66,7 +67,7 @@
     <div class="grid gap-4 px-2">
         <div class="h-20"></div>
         {#each lines as line (line.lineNumber)}
-            {@const words = line.content.trim().split(' ')}
+            {@const words = line.content.trim().split(' ').filter(Boolean)}
             {@const active = activeLyrics.lines.find(l => l.line.lineNumber === line.lineNumber)}
             {@const sung = !active && line.startMillisecond < currentTime * 1000}
             {@const time = line.startMillisecond / 1000}
@@ -78,7 +79,7 @@
                     settings.prefersReducedMotion ? "duration-0" : "duration-200",
                 )}
             >
-                {#if words.length > 0}
+                {#if words.length}
                     {#each words as word, i}
                         <span
                             class={cn(
@@ -99,7 +100,9 @@
                         </span>
                     {/each}
                 {:else}
-                    <span>Interlude</span>
+                    {#if active}
+                        <Interlude/>
+                    {/if}
                 {/if}
             </button>
         {/each}

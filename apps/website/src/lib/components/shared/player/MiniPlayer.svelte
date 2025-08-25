@@ -67,27 +67,33 @@
                     player.play();
                 }
                 break;
+            case 'KeyN':
+                if (!event.shiftKey || !player.skippable) break;
+                event.preventDefault();
+                player.skip();
+                break;
+            case 'KeyP':
+                if (!event.shiftKey || !player.previousable) break;
+                event.preventDefault();
+                player.previous();
+                break;
+            case 'KeyQ':
+                if (!event.shiftKey) break;
+                event.preventDefault();
+                userInterface.playerMenu = 'queue';
+                break;
+            case 'KeyL':
+                if (!event.shiftKey) break;
+                event.preventDefault();
+                userInterface.playerMenu = 'lyrics';
+                break;
             case 'ArrowRight':
-                if (event.shiftKey) {
-                    if (!player.skippable) break;
-                    event.preventDefault();
-                    player.skip();
-                    break;
-                }
-
                 event.preventDefault();
 
                 const newTimeForward = Math.min(player.currentTime + 5, player.player.duration);
                 player.player.currentTime = newTimeForward;
                 break;
             case 'ArrowLeft':
-                if (event.shiftKey) {
-                    if (!player.previousable) break;
-                    event.preventDefault();
-                    player.previous();
-                    break;
-                }
-
                 event.preventDefault();
 
                 const newTimeBackward = Math.max(player.currentTime - 5, 0);

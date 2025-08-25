@@ -3,26 +3,26 @@
     import type { ScrollAreaRootProps } from 'bits-ui';
     import { LRC } from 'lrclib.js';
     import { cn } from '$lib/helpers/utils';
-    import { Button } from '@/components/ui/button';
     import type { ClassValue } from 'clsx';
-    import { settings } from '../../../helpers/classes/Settings.svelte';
-    import { Skeleton } from '../../ui/skeleton';
-    import { userInterface } from '../../../helpers/classes/UserInterface.svelte';
+    import { settings } from '$lib/helpers/classes/Settings.svelte';
+    import { userInterface } from '$lib/helpers/classes/UserInterface.svelte';
     import { untrack } from 'svelte';
 
     let {
         lyrics,
         currentTime = $bindable(0),
+        delay = 0,
         ...props
     }: {
         lyrics: string;
         currentTime: number;
+        delay?: number;
 		scrollbarXClasses?: ClassValue;
 		scrollbarYClasses?: ClassValue;
     } & ScrollAreaRootProps = $props();
 
     let lines = $derived(LRC.parse(lyrics).filter(l => l.type === LRC.LineType.LYRIC));
-    let activeLyrics = $derived(LRC.getActiveLyrics(lines, currentTime * 1000));
+    let activeLyrics = $derived(LRC.getActiveLyrics(lines, (currentTime - delay) * 1000));
     let activeLines = $derived(activeLyrics.lines.map(l => document.getElementById(`line-${l.line.lineNumber}`)).filter(Boolean) as HTMLButtonElement[]);
     let container: HTMLDivElement|null = $state(null);
     let autoScroll = $state(true);
@@ -40,7 +40,7 @@
 
     $effect(() => {
         if (currentTime == 0) container?.scrollTo(0, 0);
-    })
+    });
 </script>
 
 <ScrollArea
@@ -59,7 +59,7 @@
             {@const time = line.startMillisecond / 1000}
             <button
                 id="line-{line.lineNumber}"
-                onclick={() => currentTime = time}
+                onclick={() => currentTime = time + delay}
                 class={cn(
                     "w-full text-start flex cursor-pointer flex-wrap space-x-2 -space-y-2 transition-all",
                     settings.prefersReducedMotion ? "duration-0" : "duration-200",
@@ -70,7 +70,7 @@
                         <span
                             class={cn(
                                 "transition-[filter,translate,opacity,color] ease-out",
-                                !settings.prefersReducedTransparency && "blur-[2px]",
+                                !settings.prefersReducedTransparency && autoScroll && "blur-[2px]",
                                 settings.prefersReducedMotion
                                     ? "duration-0"
                                     : [

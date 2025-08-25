@@ -14,7 +14,15 @@
     let { ...props }: {} & HTMLAttributes<HTMLDivElement> = $props();
 
     let coverURL = $derived(player.playing?.coverImageURL ?? `${resolve('/')}cover.png`);
-    let lyricsType = $derived(player.playing?.syncedLyrics ? 'synced' : player.playing?.plainLyrics ? 'plain' : 'instrumental');
+    let lyricsType = $derived(
+        player.playing?.syncedLyrics
+        ? 'synced'
+        : player.playing?.plainLyrics
+            ? 'plain'
+            : player.playing?.status === 'fetching'
+                ? 'fetching'
+                : 'instrumental'
+    );
 </script>
 
 <Card
@@ -33,7 +41,7 @@
             </Button>
         </CardAction>
     </CardHeader>
-    {#if lyricsType !== 'instrumental'}
+    {#if lyricsType === 'synced' || lyricsType === 'plain'}
         <CardContent class="relative z-20 text-3xl md:text-4xl lg:text-5xl font-extrabold leading-relaxed overflow-hidden">
             {#if lyricsType === 'plain'}
                 {@const lines = player.playing?.plainLyrics?.split('\n') ?? []}
@@ -56,10 +64,11 @@
             {/if}
         </CardContent>
     {:else}
+        {@const fetching = lyricsType === 'fetching'}
         <CardContent class="relative z-20 text-center flex h-full items-center">
             <div class="w-full grid">
-                <h3 class="text-3xl md:text-4xl lg:text-5xl font-extrabold">No lyrics available</h3>
-                <p class="text-sm opacity-70 mt-1 font-semibold">You'll have to guess this one</p>
+                <h3 class="text-3xl md:text-4xl lg:text-5xl font-extrabold">{fetching ? 'Loading...' : 'No lyrics available'}</h3>
+                <p class="text-sm opacity-70 mt-1 font-semibold">{fetching ? 'Looking for the right lyrics' : "You'll have to guess this one"}</p>
             </div>
         </CardContent>
     {/if}

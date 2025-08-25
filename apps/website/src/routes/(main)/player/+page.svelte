@@ -6,6 +6,7 @@
     import { cn } from '$lib/helpers/utils';
     import { player } from '$lib/helpers/classes/Player.svelte';
     import PreviewCard from '$lib/components/shared/preview/PreviewCard.svelte';
+    import { MetaTags } from 'svelte-meta-tags';
 
     onMount(() => {
         userInterface.playerMode = 'hidden';
@@ -15,6 +16,10 @@
         };
     });
 </script>
+
+<MetaTags
+    title="Lrclib.js | {player.playing ? `Now playing ${player.playing.title}` : 'Player'}"
+/>
 
 <div class="grid gap-2 w-full">
     <PlayerCard/>
@@ -27,7 +32,6 @@
         />
         <PreviewCard
             class={cn(
-                "h-fit",
                 userInterface.playerMenu !== 'lyrics' && "hidden"
             )}
         />

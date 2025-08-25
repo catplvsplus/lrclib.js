@@ -2,21 +2,25 @@
     import type { HTMLAttributes } from 'svelte/elements';
     import { Card, CardAction, CardContent, CardHeader, CardTitle } from '../../ui/card';
     import { cn } from '../../../helpers/utils';
-    import { FullscreenIcon, Maximize2Icon } from '@lucide/svelte';
+    import { Maximize2Icon } from '@lucide/svelte';
     import { Button } from '../../ui/button';
     import { player } from '../../../helpers/classes/Player.svelte';
     import { settings } from '../../../helpers/classes/Settings.svelte';
     import { resolve } from '$app/paths';
     import { fade } from 'svelte/transition';
+    import { ScrollArea } from '../../ui/scroll-area';
+    import { LRC } from 'lrclib.js';
 
     let { ...props }: {} & HTMLAttributes<HTMLDivElement> = $props();
 
     let coverURL = $derived(player.playing?.coverImageURL ?? `${resolve('/')}cover.png`);
+    let lyricsType = $derived(player.playing?.syncedLyrics ? 'synced' : player.playing?.lyrics ? 'plain' : 'instrumental');
 </script>
+
 <Card
     {...props}
     class={cn(
-        'relative overflow-hidden',
+        'relative overflow-hidden h-96 min-h-96 sm:h-[500px] gap-4',
         !settings.prefersReducedTransparency && 'dark',
         props.class
     )}
@@ -29,9 +33,29 @@
             </Button>
         </CardAction>
     </CardHeader>
-    <CardContent class="relative z-20">
-        {player.playing?.syncedLyrics ?? player.playing?.lyrics}
-    </CardContent>
+    {#if lyricsType !== 'instrumental'}
+        <CardContent class="relative z-20 text-3xl md:text-4xl lg:text-5xl font-black text-foreground/80 leading-relaxed overflow-hidden">
+            {#if lyricsType === 'plain'}
+                <ScrollArea class="h-full" scrollbarYClasses="[&>div]:bg-current/50">
+                    {player.playing?.lyrics}
+                </ScrollArea>
+            {:else}
+                {@const lyrics = LRC.parse(player.playing?.syncedLyrics ?? '')}
+                <ScrollArea class="h-full" scrollbarYClasses="[&>div]:bg-current/50">
+                    {#each lyrics.filter(l => l.type === LRC.LineType.LYRIC) as line (line.lineNumber)}
+                        <p>{line.content}</p>
+                    {/each}
+                </ScrollArea>
+            {/if}
+        </CardContent>
+    {:else}
+        <CardContent class="relative z-20 text-center flex h-full items-center">
+            <div class="w-full grid">
+                <h3 class="text-3xl md:text-4xl lg:text-5xl font-extrabold">No lyrics available</h3>
+                <p class="text-sm opacity-70 mt-1 font-semibold">You'll have to guess this one</p>
+            </div>
+        </CardContent>
+    {/if}
     <div
         class="size-full absolute top-0 left-0 overflow-hidden"
         class:hidden={settings.prefersReducedTransparency || !player.playing}

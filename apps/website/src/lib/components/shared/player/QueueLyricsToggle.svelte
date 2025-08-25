@@ -15,12 +15,15 @@
                     size="icon"
                     variant="secondary"
                     class={cn(
-                        "size-10 rounded-full overflow-hidden relative bg-foreground/5 hover:bg-foreground/20 text-foreground/70",
-                        userInterface.playerMenu === 'lyrics' ? "bg-foreground/20 text-foreground" : ""
+                        "size-10 lg:w-fit lg:px-4 rounded-full overflow-hidden relative bg-foreground/10 hover:bg-foreground/20 text-foreground/80 font-semibold text-sm",
+                        userInterface.playerMenu === 'lyrics' ? "bg-foreground/30 text-foreground" : ""
                     )}
                     onclick={() => userInterface.playerMenu = 'lyrics'}
                 >
                     <MicVocalIcon class="size-5"/>
+                    <span class="hidden lg:block">
+                        Lyrics
+                    </span>
                 </Button>
             {/snippet}
         </TooltipTrigger>
@@ -34,12 +37,15 @@
                     size="icon"
                     variant="secondary"
                     class={cn(
-                        "size-10 rounded-full overflow-hidden relative bg-foreground/5 hover:bg-foreground/20 text-foreground/70",
-                        userInterface.playerMenu === 'queue' ? "bg-foreground/20 text-foreground" : ""
+                        "size-10 xl:w-fit xl:px-4 rounded-full overflow-hidden relative bg-foreground/10 hover:bg-foreground/20 text-foreground/80 font-semibold text-sm",
+                        userInterface.playerMenu === 'queue' ? "bg-foreground/30 text-foreground" : ""
                     )}
                     onclick={() => userInterface.playerMenu = 'queue'}
                 >
                     <ListMusicIcon class="size-5"/>
+                    <span class="hidden xl:block">
+                        Queue
+                    </span>
                 </Button>
             {/snippet}
         </TooltipTrigger>

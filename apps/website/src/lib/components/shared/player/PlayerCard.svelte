@@ -13,6 +13,27 @@
     import QueueLyricsToggle from './QueueLyricsToggle.svelte';
 
     let coverURL = $derived(player.playing?.coverImageURL ?? `${resolve('/')}cover.png`);
+    let wakeLock: WakeLockSentinel|null = null;
+
+    $effect(() => {
+        if (!('requestWakeLock' in navigator)) return;
+
+        if (player.status === 'playing' && !wakeLock) {
+            navigator.wakeLock.request('screen')
+                .then((lock) => {
+                    wakeLock = lock;
+                    wakeLock.addEventListener('release', () => {
+                        wakeLock = null;
+                    });
+                })
+                .catch(() => {
+                    wakeLock = null;
+                });
+        } else if (player.status === 'paused' && wakeLock) {
+            wakeLock.release();
+            wakeLock = null;
+        }
+    });
 </script>
 
 <Card

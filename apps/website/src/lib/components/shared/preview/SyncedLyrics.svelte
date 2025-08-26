@@ -33,16 +33,24 @@
     $effect(() => {
         if (!autoScroll) return;
 
-        activeLines.forEach(line => {
-            container?.scrollTo({
-                top: getScrollPosition(line),
-                behavior: untrack(() => settings.prefersReducedMotion) ? 'auto' : 'smooth',
-            })
-        });
-    });
+        const line = activeLines.at(0);
+        const top = line
+            ? getScrollPosition(line)
+            : untrack(() => {
+                if (!currentTime) return 0;
 
-    $effect(() => {
-        if (currentTime == 0) container?.scrollTo(0, 0);
+                const lastLine = lines.at(-1);
+                return lastLine && currentTime * 1000 <= lastLine.startMillisecond
+                    ? 0
+                    : null;
+            });
+
+        if (top === null) return;
+
+        container?.scrollTo({
+            top,
+            behavior: untrack(() => settings.prefersReducedMotion) ? 'auto' : 'smooth',
+        });
     });
 
     function getScrollPosition(line: HTMLElement): number {

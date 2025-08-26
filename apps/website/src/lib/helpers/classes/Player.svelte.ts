@@ -229,10 +229,16 @@ export class Player {
                 .fromFile({ file })
                 .then(async track => {
                     this.filesParsing = this.filesParsing.filter(f => f !== file);
+                    track.status = 'fetching';
+
                     await player.play(track);
                     await track.fetchMetadata().catch(console.error);
 
-                    track.fetch().catch(console.error);
+                    track.fetch()
+                        .catch(console.error)
+                        .finally(() => {
+                            track.status = null;
+                        });
 
                     return track;
                 })

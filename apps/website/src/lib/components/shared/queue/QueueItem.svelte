@@ -28,12 +28,12 @@
         </div>
         <img src={coverURL} class="size-full object-cover object-center" alt="">
     </a>
-    <a href={resolve('/(main)/player')} onclick={() => player.skip(index)} class="grid w-full">
+    <button onclick={() => player.skip(index)} class="grid w-full text-start cursor-grab">
         <h3 class="text-sm font-semibold leading-tight truncate">{track?.title}</h3>
         <p class="text-xs leading-tight text-muted-foreground truncate">
             {[track?.artist, track?.album].filter(Boolean).join(' • ')}
         </p>
-    </a>
+    </button>
     <Tooltip>
         <TooltipTrigger>
             {#snippet child({ props })}

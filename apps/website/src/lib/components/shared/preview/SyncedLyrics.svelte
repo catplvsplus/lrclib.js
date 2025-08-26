@@ -75,14 +75,13 @@
 
         function onUserScroll() {
             autoScroll = false;
+            checkVisibleLines();
         }
 
-        container.addEventListener('scroll', checkVisibleLines);
         container.addEventListener('wheel', onUserScroll);
         container.addEventListener('touchmove', onUserScroll);
 
         return () => {
-            container?.removeEventListener('scroll', checkVisibleLines);
             container?.removeEventListener('wheel', onUserScroll);
             container?.removeEventListener('touchmove', onUserScroll);
         }

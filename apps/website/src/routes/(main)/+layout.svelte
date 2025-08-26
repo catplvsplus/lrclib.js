@@ -6,7 +6,8 @@
     import { toast } from 'svelte-sonner';
     import { resolve } from '$app/paths';
     import { goto } from '$app/navigation';
-    import { player } from '../../lib/helpers/classes/Player.svelte';
+    import { player } from '$lib/helpers/classes/Player.svelte';
+    import FullscreenLyrics from '$lib/components/shared/preview/FullscreenLyrics.svelte';
 
     let { children } = $props();
 
@@ -32,9 +33,10 @@
 <svelte:window ononline={onOnline} onoffline={onOffline}/>
 
 <Topbar/>
+<FullscreenLyrics/>
 <div
     class={cn(
-        "min-h-full pt-16 flex justify-center relative overflow-clip pb-20",
+        "min-h-full pt-16 flex justify-center pb-20",
         player.playing && "pb-36"
     )}
 >

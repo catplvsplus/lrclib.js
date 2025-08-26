@@ -7,6 +7,7 @@
     import { player } from '$lib/helpers/classes/Player.svelte';
     import PreviewCard from '$lib/components/shared/preview/PreviewCard.svelte';
     import { MetaTags } from 'svelte-meta-tags';
+    import { fullscreenLyricsDialogState } from '$lib/components/shared/preview/FullscreenLyrics.svelte';
 
     onMount(() => {
         userInterface.playerMode = 'hidden';
@@ -21,19 +22,22 @@
     title="Lrclib.js | {player.playing ? `Now playing ${player.playing.title}` : 'Player'}"
 />
 
-<div class="grid gap-2 w-full">
-    <PlayerCard/>
-    {#if player.playing}
-        <QueueCard
-            class={cn(
-                "h-fit",
-                userInterface.playerMenu !== 'queue' && "hidden"
-            )}
-        />
-        <PreviewCard
-            class={cn(
-                userInterface.playerMenu !== 'lyrics' && "hidden"
-            )}
-        />
-    {/if}
-</div>
+{#if !fullscreenLyricsDialogState.isOpen}
+    <div class="grid gap-2 w-full">
+        <PlayerCard/>
+        {#if player.playing}
+            <QueueCard
+                class={cn(
+                    "h-fit",
+                    userInterface.playerMenu !== 'queue' && "hidden"
+                )}
+            />
+            <PreviewCard
+                track={player.playing}
+                class={cn(
+                    userInterface.playerMenu !== 'lyrics' && "hidden"
+                )}
+            />
+        {/if}
+    </div>
+{/if}

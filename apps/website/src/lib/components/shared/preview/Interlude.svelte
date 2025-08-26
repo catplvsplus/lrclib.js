@@ -1,9 +1,8 @@
 <script lang="ts">
     import type { HTMLAttributes } from 'svelte/elements';
-    import { cn } from '../../../helpers/utils';
-    import { Skeleton } from '../../ui/skeleton';
-    import { fade } from 'svelte/transition';
-    import { settings } from '../../../helpers/classes/Settings.svelte';
+    import { cn } from '$lib/helpers/utils';
+    import { Skeleton } from '@/components/ui/skeleton';
+    import { settings } from '$lib/helpers/classes/Settings.svelte';
 
     let {
         ...props

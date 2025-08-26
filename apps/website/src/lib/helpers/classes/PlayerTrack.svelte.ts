@@ -78,6 +78,15 @@ export class PlayerTrack {
         return this.lyrics?.albumName || this.metadata?.common.album;
     });
 
+    public lyricsType: PlayerTrack.LyricsType = $derived(this.syncedLyrics
+        ? 'synced'
+        : this.plainLyrics
+            ? 'plain'
+            : this.status === 'fetching'
+                ? 'fetching'
+                : 'instrumental'
+    );
+
     public async fetch(): Promise<this> {
         this.status = 'fetching';
         await this.fetchMetadata();
@@ -124,6 +133,8 @@ export class PlayerTrack {
 }
 
 export namespace PlayerTrack {
+    export type LyricsType = 'synced'|'plain'|'instrumental'|'fetching';
+
     export interface Options {
         lyrics?: APIResponse.Get.TrackSignature;
         metadata?: IAudioMetadata;

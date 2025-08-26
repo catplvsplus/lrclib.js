@@ -33,7 +33,11 @@
     let linesVisible = $state(true);
     let autoScroll = $state(true);
 
-    const linesObserver = useIntersectionObserver(
+    const checkVisibleLines = useDebounce(() => {
+        autoScroll = linesVisible;
+    }, 1000);
+
+    useIntersectionObserver(
         () => activeLines,
         event => {
             linesVisible = event.some(l => l.isIntersecting);
@@ -42,10 +46,6 @@
             root: () => container
         }
     );
-
-    const checkVisibleLines = useDebounce(() => {
-        autoScroll = linesVisible;
-    }, 1000);
 
     $effect(() => {
         if (!autoScroll) return;
@@ -68,22 +68,21 @@
             top,
             behavior: untrack(() => settings.prefersReducedMotion) ? 'instant' : 'smooth',
         });
-
-        autoScroll = linesVisible;
     });
 
     $effect(() => {
         if (!container) return;
 
-        function onUserScroll(e: Event) {
+        function onUserScroll() {
             autoScroll = false;
-            checkVisibleLines();
         }
 
+        container.addEventListener('scroll', checkVisibleLines);
         container.addEventListener('wheel', onUserScroll);
         container.addEventListener('touchmove', onUserScroll);
 
         return () => {
+            container?.removeEventListener('scroll', checkVisibleLines);
             container?.removeEventListener('wheel', onUserScroll);
             container?.removeEventListener('touchmove', onUserScroll);
         }

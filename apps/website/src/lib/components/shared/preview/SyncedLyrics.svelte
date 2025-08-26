@@ -8,6 +8,7 @@
     import { userInterface } from '$lib/helpers/classes/UserInterface.svelte';
     import { untrack } from 'svelte';
     import Interlude from './Interlude.svelte';
+    import { useDebounce, useIntersectionObserver } from 'runed';
 
     let {
         lyrics,
@@ -28,7 +29,23 @@
     let activeLyrics = $derived(LRC.getActiveLyrics(lines, (currentTime - delay) * 1000));
     let activeLines = $derived(activeLyrics.lines.map(l => document.getElementById(`line-${l.line.lineNumber}`)).filter(Boolean) as HTMLButtonElement[]);
     let container: HTMLDivElement|null = $state(null);
+
+    let linesVisible = $state(true);
     let autoScroll = $state(true);
+
+    const linesObserver = useIntersectionObserver(
+        () => activeLines,
+        event => {
+            linesVisible = event.some(l => l.isIntersecting);
+        },
+        {
+            root: () => container
+        }
+    );
+
+    const checkVisibleLines = useDebounce(() => {
+        autoScroll = linesVisible;
+    }, 1000);
 
     $effect(() => {
         if (!autoScroll) return;
@@ -49,8 +66,32 @@
 
         container?.scrollTo({
             top,
-            behavior: untrack(() => settings.prefersReducedMotion) ? 'auto' : 'smooth',
+            behavior: untrack(() => settings.prefersReducedMotion) ? 'instant' : 'smooth',
         });
+
+        autoScroll = linesVisible;
+    });
+
+    $effect(() => {
+        if (!container) return;
+
+        function onUserScroll(e: Event) {
+            autoScroll = false;
+            checkVisibleLines();
+        }
+
+        container.addEventListener('wheel', onUserScroll);
+        container.addEventListener('touchmove', onUserScroll);
+
+        return () => {
+            container?.removeEventListener('wheel', onUserScroll);
+            container?.removeEventListener('touchmove', onUserScroll);
+        }
+    });
+
+    $effect(() => {
+        lyrics;
+        autoScroll = true;
     });
 
     function getScrollPosition(line: HTMLElement): number {
@@ -81,7 +122,10 @@
             {@const time = line.startMillisecond / 1000}
             <button
                 id="line-{line.lineNumber}"
-                onclick={() => currentTime = time + delay}
+                onclick={() => {
+                    currentTime = time + delay;
+                    autoScroll = true;
+                }}
                 class={cn(
                     "w-full text-start flex cursor-pointer flex-wrap space-x-2 -space-y-2 transition-all",
                     settings.prefersReducedMotion ? "duration-0" : "duration-200",

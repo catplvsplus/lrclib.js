@@ -67,7 +67,7 @@
     <div
         class={cn(
             "h-full w-full fixed top-0 left-0 pointer-events-auto z-[60] bg-background",
-            !settings.prefersReducedTransparency && "dark"
+            !settings.prefersReducedTransparency && "dark text-foreground"
         )}
         transition:fly={{ y: window.innerHeight, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
         bind:this={container}

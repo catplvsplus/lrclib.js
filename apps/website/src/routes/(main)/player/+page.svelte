@@ -7,7 +7,7 @@
     import { player } from '$lib/helpers/classes/Player.svelte';
     import PreviewCard from '$lib/components/shared/preview/PreviewCard.svelte';
     import { MetaTags } from 'svelte-meta-tags';
-    import { fullscreenLyricsDialogState } from '$lib/components/shared/preview/FullscreenLyrics.svelte';
+    import { fullscreenLyricsDialogState } from '@/components/shared/player/FullscreenLyrics.svelte';
 
     onMount(() => {
         userInterface.playerMode = 'hidden';

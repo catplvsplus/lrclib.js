@@ -11,6 +11,7 @@
     import { Button } from '@/components/ui/button/index';
     import { CirclePlusIcon } from '@lucide/svelte';
     import QueueLyricsToggle from './QueueLyricsToggle.svelte';
+    import CoverBackground from './CoverBackground.svelte';
 
     let coverURL = $derived(player.playing?.coverImageURL ?? `${resolve('/')}cover.png`);
     let wakeLock: WakeLockSentinel|null = null;
@@ -78,18 +79,5 @@
             </div>
         {/if}
     </CardContent>
-    <div
-        class="size-full absolute top-0 left-0 -z-10 overflow-hidden"
-        class:hidden={settings.prefersReducedTransparency || !player.playing}
-    >
-        <div class="absolute size-full backdrop-blur-3xl backdrop-saturate-150 z-10 bg-black/50"></div>
-        {#key coverURL}
-            <div
-                class="size-full scale-125 bg-cover bg-center absolute"
-                style="background-image: url({coverURL})"
-                transition:fade={{ duration: settings.prefersReducedMotion ? 0 : 300 }}
-            >
-            </div>
-        {/key}
-    </div>
+    <CoverBackground track={player.playing}/>
 </Card>

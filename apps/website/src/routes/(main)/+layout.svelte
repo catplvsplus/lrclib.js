@@ -7,7 +7,7 @@
     import { resolve } from '$app/paths';
     import { goto } from '$app/navigation';
     import { player } from '$lib/helpers/classes/Player.svelte';
-    import FullscreenLyrics from '$lib/components/shared/preview/FullscreenLyrics.svelte';
+    import FullscreenLyrics from '@/components/shared/player/FullscreenLyrics.svelte';
 
     let { children } = $props();
 

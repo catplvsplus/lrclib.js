@@ -15,12 +15,14 @@
         currentTime = $bindable(0),
         delay = 0,
         scrollAlign,
+        scrollMargin,
         ...props
     }: {
         lyrics: string;
         currentTime: number;
         delay?: number;
         scrollAlign?: 'start'|'center'|'end';
+        scrollMargin?: number;
 		scrollbarXClasses?: ClassValue;
 		scrollbarYClasses?: ClassValue;
     } & ScrollAreaRootProps = $props();
@@ -93,14 +95,26 @@
     });
 
     function getScrollPosition(line: HTMLElement): number {
+        let position: number;
+
         switch (scrollAlign) {
-            case 'start': return line.offsetTop;
-            case 'center': return line.offsetTop - (container?.offsetHeight || 0) / 3;
-            case 'end': return line.offsetTop - (container?.offsetHeight || 0);
-            default: return userInterface.smallScreen.current
-                ? line.offsetTop
-                : line.offsetTop - (container?.offsetHeight || 0) / 3
+            case 'start':
+                position = line.offsetTop;
+                break;
+            case 'center':
+                position = line.offsetTop - (container?.offsetHeight || 0) / 3;
+                break;
+            case 'end':
+                position = line.offsetTop - (container?.offsetHeight || 0);
+                break;
+            default:
+                position = userInterface.smallScreen.current
+                    ? line.offsetTop
+                    : line.offsetTop - (container?.offsetHeight || 0) / 3;
+                break;
         }
+
+        return position + (scrollMargin || 0);
     }
 </script>
 

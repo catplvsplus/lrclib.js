@@ -12,7 +12,7 @@
     import SyncedLyrics from './SyncedLyrics.svelte';
     import LyricsSettings, { lyricsSettingsDialogState } from './LyricsSettings.svelte';
     import type { PlayerTrack } from '$lib/helpers/classes/PlayerTrack.svelte';
-    import { fullscreenLyricsDialogState } from './FullscreenLyrics.svelte';
+    import { fullscreenLyricsDialogState } from '../player/FullscreenLyrics.svelte';
 
     let {
         track,

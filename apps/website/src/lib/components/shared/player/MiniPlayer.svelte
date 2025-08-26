@@ -130,9 +130,9 @@
                     <img class="size-full object-coverobject-center absolute top-0 left-0" src={coverURL} alt="" transition:blur>
                 {/key}
             </a>
-            <a href={resolve('/(main)/player')} class="flex flex-col justify-center w-full whitespace-nowrap overflow-hidden">
-                <h3 title={title} class="text-base font-semibold text-ellipsis overflow-clip">{title}</h3>
-                <p title={description} class="text-xs leading-tight text-muted-foreground text-ellipsis overflow-clip">{description}</p>
+            <a href={resolve('/(main)/player')} class="flex flex-col justify-center w-full overflow-hidden">
+                <h3 title={title} class="text-base font-semibold truncate">{title}</h3>
+                <p title={description} class="text-xs leading-tight font-medium text-foreground/70 truncate">{description}</p>
             </a>
             <div class="shrink-0 size-10">
                 <Button

@@ -3,6 +3,7 @@
     import { cn } from '../../../helpers/utils';
     import { Skeleton } from '../../ui/skeleton';
     import { fade } from 'svelte/transition';
+    import { settings } from '../../../helpers/classes/Settings.svelte';
 
     let {
         ...props
@@ -11,8 +12,11 @@
 
 <div
     {...props}
-    class={cn("flex items-center justify-center gap-1 py-2", props.class)}
-    transition:fade
+    class={cn(
+        "flex items-center justify-center gap-1.5 py-2 overflow-hidden h-fit transition-all",
+        settings.prefersReducedMotion ? "duration-0" : "duration-500",
+        props.class
+    )}
 >
     <Skeleton class="size-4 rounded-full bg-current/50" />
     <Skeleton class="size-4 rounded-full delay-500 bg-current/50" />

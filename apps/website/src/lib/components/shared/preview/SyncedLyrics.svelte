@@ -100,9 +100,7 @@
                         </span>
                     {/each}
                 {:else}
-                    {#if active}
-                        <Interlude/>
-                    {/if}
+                    <Interlude class={active ? "opacity-100" : sung ? "opacity-0" : "h-0 opacity-0"}/>
                 {/if}
             </button>
         {/each}

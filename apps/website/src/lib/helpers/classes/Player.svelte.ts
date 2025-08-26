@@ -228,6 +228,7 @@ export class Player {
             await PlayerTrack
                 .fromFile({ file })
                 .then(async track => {
+                    this.filesParsing = this.filesParsing.filter(f => f !== file);
                     await player.play(track);
                     await track.fetchMetadata().catch(console.error);
 
@@ -240,8 +241,6 @@ export class Player {
                     toast.error(String(err));
                     return null;
                 });
-
-            this.filesParsing = this.filesParsing.filter(f => f !== file);
         }
     }
 }

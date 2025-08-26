@@ -6,7 +6,7 @@
     import type { ClassValue } from 'clsx';
     import { settings } from '$lib/helpers/classes/Settings.svelte';
     import { userInterface } from '$lib/helpers/classes/UserInterface.svelte';
-    import { untrack } from 'svelte';
+    import { untrack, type Snippet } from 'svelte';
     import Interlude from './Interlude.svelte';
     import { useDebounce, useIntersectionObserver } from 'runed';
 
@@ -16,6 +16,8 @@
         delay = 0,
         scrollAlign,
         scrollMargin,
+        hideSung = false,
+        padding,
         ...props
     }: {
         lyrics: string;
@@ -23,8 +25,10 @@
         delay?: number;
         scrollAlign?: 'start'|'center'|'end';
         scrollMargin?: number;
+        hideSung?: boolean;
 		scrollbarXClasses?: ClassValue;
 		scrollbarYClasses?: ClassValue;
+        padding?: Snippet<[type: 'top'|'bottom']>;
     } & ScrollAreaRootProps = $props();
 
     let lines = $derived(LRC.parse(lyrics).filter(l => l.type === LRC.LineType.LYRIC));
@@ -126,7 +130,11 @@
     scrollbarXClasses={cn(props.scrollbarXClasses, "[&>div]:bg-current/50")}
 >
     <div class="grid gap-4 px-2">
-        <div class="h-20"></div>
+        {#if padding}
+            {@render padding?.('top')}
+        {:else}
+            <div class="h-20"></div>
+        {/if}
         {#each lines as line (line.lineNumber)}
             {@const words = line.content.trim().split(' ').filter(Boolean)}
             {@const active = activeLyrics.lines.find(l => l.line.lineNumber === line.lineNumber)}
@@ -156,6 +164,7 @@
                                         active || sung ? "translate-y-0" : "translate-y-5",
                                     ],
                                 (sung || !active) && "opacity-30",
+                                sung && hideSung && autoScroll && "opacity-0",
                                 active && "blur-none opacity-100"
                             )}
                             style={!settings.prefersReducedMotion && active ? `transition-delay: ${i * 40}ms;` : ""}
@@ -168,6 +177,10 @@
                 {/if}
             </button>
         {/each}
-        <div class="h-20"></div>
+        {#if padding}
+            {@render padding?.('bottom')}
+        {:else}
+            <div class="h-20"></div>
+        {/if}
     </div>
 </ScrollArea>

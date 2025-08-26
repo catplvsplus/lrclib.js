@@ -15,6 +15,7 @@
     import PlayerControls from './PlayerControls.svelte';
     import QueueLyricsToggle from './QueueLyricsToggle.svelte';
     import SyncedLyrics from '../preview/SyncedLyrics.svelte';
+    import { MediaQuery } from 'svelte/reactivity';
 
     let {
         children
@@ -38,6 +39,8 @@
     let coverURL = $derived(player.playing?.coverImageURL ?? `${resolve('/')}cover.png`);
     let title = $derived(player.playing?.title ?? 'Unknown Title');
     let description = $derived([player.playing?.artist, player.playing?.album].filter(Boolean).join(' • ') || 'Unknown Artist');
+
+    const isScreenLg = new MediaQuery(`(min-width: 64rem)`);
 </script>
 
 <script module>
@@ -73,22 +76,26 @@
         bind:this={container}
     >
         <CoverBackground track={player.playing}/>
-        <div class="relative h-full w-full flex flex-col z-10">
-            <div class="flex shrink-0 h-fit items-center p-4 gap-2 w-full overflow-hidden">
-                <div class="size-15 overflow-hidden relative rounded-lg shadow-lg shrink-0">
+        <div class="container absolute left-1/2 -translate-x-1/2 h-full w-full z-10 flex flex-col lg:flex-row lg:gap-10 lg:justify-center">
+            <div class="flex shrink-0 h-fit lg:h-full lg:w-md xl:w-2xl lg:justify-center items-center p-4 gap-2 w-full lg:flex-col lg:gap-5 overflow-hidden">
+                <div class="size-15 lg:size-96 xl:size-[32rem] overflow-hidden relative rounded-lg shadow-lg shrink-0">
                     {#key coverURL}
                         <img class="size-full object-coverobject-center absolute top-0 left-0" src={coverURL} alt="" transition:blur>
                     {/key}
                 </div>
-                <div class="flex flex-col justify-center w-full overflow-hidden">
-                    <h3 title={title} class="text-base font-semibold truncate">{title}</h3>
-                    <p title={description} class="text-xs leading-tight font-medium text-foreground/70 truncate">{description}</p>
+                <div class="flex flex-col justify-center w-full overflow-hidden lg:text-center lg:max-w-lg">
+                    <h3 title={title} class="text-base lg:text-3xl font-semibold lg:font-extrabold truncate">{title}</h3>
+                    <p title={description} class="text-xs lg:text-sm leading-tight font-medium text-foreground/70 truncate">{description}</p>
                 </div>
-                <Button size="icon" variant="secondary" class="size-10 rounded-full overflow-hidden relative bg-foreground/20! text-foreground">
+                <Button size="icon" variant="secondary" class="size-10 rounded-full overflow-hidden relative bg-foreground/20! text-foreground lg:hidden">
                     <EllipsisIcon class="size-5!"/>
                 </Button>
+                <div class="w-full max-w-lg gap-2 pt-2 hidden lg:grid">
+                    <PlayerProgressBar/>
+                    <PlayerControls class="w-full justify-center"/>
+                </div>
             </div>
-            <div class="flex-grow h-full w-full relative z-20 text-3xl md:text-4xl lg:text-5xl font-extrabold leading-relaxed overflow-hidden px-4">
+            <div class="h-full w-full relative z-20 text-3xl md:text-4xl lg:text-5xl font-extrabold leading-relaxed overflow-hidden px-4 lg:w-lg xl:w-2xl">
                 {#if player.playing?.lyricsType === 'plain'}
                     {@const lines = player.playing?.plainLyrics?.split('\n') ?? []}
                     <ScrollArea class="h-full text-2xl mask-intersect mask-b-from-95% mask-t-from-95% px-2 leading-relaxed" scrollbarYClasses="[&>div]:bg-current/50">
@@ -107,12 +114,17 @@
                         delay={settings.lyricsDelay.current}
                         lyrics={player.playing?.syncedLyrics ?? ''}
                         scrollAlign="start"
-                        scrollMargin={-40}
+                        scrollMargin={isScreenLg.current ? -300 : -40}
+                        hideSung
                         class="h-full mask-intersect mask-b-from-95% mask-t-from-95%"
-                    />
+                    >
+                        {#snippet padding(type)}
+                            <div class="h-20" class:h-full={type === 'bottom'}></div>
+                        {/snippet}
+                    </SyncedLyrics>
                 {/if}
             </div>
-            <div class="grid gap-2 p-5 pt-2">
+            <div class="grid gap-2 p-5 pt-2 lg:hidden">
                 <PlayerProgressBar/>
                 <PlayerControls class="w-full justify-center"/>
             </div>

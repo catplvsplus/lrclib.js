@@ -18,7 +18,7 @@
         props.class
     )}
 >
-    <Skeleton class="size-4 rounded-full bg-current/50" />
-    <Skeleton class="size-4 rounded-full delay-500 bg-current/50" />
-    <Skeleton class="size-4 rounded-full delay-1000 bg-current/50" />
+    <Skeleton class="size-4 lg:size-6 rounded-full bg-current/50" />
+    <Skeleton class="size-4 lg:size-6 rounded-full delay-500 bg-current/50" />
+    <Skeleton class="size-4 lg:size-6 rounded-full delay-1000 bg-current/50" />
 </div>

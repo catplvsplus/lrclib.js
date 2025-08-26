@@ -119,9 +119,17 @@
                         class="h-full mask-intersect mask-b-from-95% mask-t-from-95%"
                     >
                         {#snippet padding(type)}
-                            <div class="h-20" class:h-full={type === 'bottom'}></div>
+                            <div class="pb-96"></div>
                         {/snippet}
                     </SyncedLyrics>
+                {:else}
+                    {@const fetching = player.playing?.lyricsType === 'fetching'}
+                    <div class="relative z-20 text-center flex h-full items-center">
+                        <div class="w-full grid">
+                            <h3 class="text-3xl md:text-4xl lg:text-5xl font-extrabold">{fetching ? 'Loading...' : 'No lyrics available'}</h3>
+                            <p class="text-sm opacity-70 mt-1 font-semibold">{fetching ? 'Looking for the right lyrics' : "You'll have to guess this one"}</p>
+                        </div>
+                    </div>
                 {/if}
             </div>
             <div class="grid gap-2 p-5 pt-2 lg:hidden">

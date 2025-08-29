@@ -1,143 +1,96 @@
-import { type ClassValue, clsx } from "clsx";
-import type { APIOptions, Track } from 'lrclib';
-import { parseBlob, selectCover, type IPicture } from 'music-metadata';
-import { toast } from 'svelte-sonner';
+import { clsx, type ClassValue } from "clsx";
+import humanizeDuration from 'humanize-duration';
+import type { APIOptions } from 'lrclib.js';
 import { twMerge } from "tailwind-merge";
-import { spotifyAPI } from './constants';
-import { base } from '$app/paths';
-import type { IAudioMetadata } from './types';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export function getSearchName(options: APIOptions.Get.Search): string {
-    return ('q' in options ? options.q : `${options.track_name} ${options.artist_name ? ('by ' + options.artist_name) : ''}`).trim();
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "children"> : T;
+export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
+export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
 
-export function isAdvancedSearchOptions(options: APIOptions.Get.Search): options is APIOptions.Get.SearchTrackSignature {
-    return 'track_name' in options;
-}
-
-export function selectText(node: HTMLElement): boolean {
-    if ('createTextRange' in document.body) {
-        // @ts-expect-error
-        const range = document.body.createTextRange();
-        range.moveToElementText(node);
-        range.select();
-        return true;
-    } else if (window.getSelection) {
-        const selection = window.getSelection();
-        const range = document.createRange();
-        range.selectNodeContents(node);
-        selection?.removeAllRanges();
-        selection?.addRange(range);
-        return true;
+export function formatNumberString(number: number): string {
+    if (number < 1000) {
+        return number.toLocaleString();
+    } else if (number < 1000000) {
+        return `${(number / 1000).toFixed(1)}K`;
+    } else if (number < 1000000000) {
+        return `${(number / 1000000).toFixed(1)}M`;
     } else {
-        toast.error(`Your browser doesn't support select text.`);
-        return false;
+        return `${(number / 1000000000).toFixed(1)}B`;
     }
 }
 
-export function copyText(options: { text?: string; container?: HTMLElement; selectRequired?: boolean; }) {
-    const text = options.text ?? options.container?.textContent ?? '';
-    const selected = options.container ? selectText(options.container) : false;
-    if (options.selectRequired && !selected) return false;
-
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(text);
+export function formatBytesString(bytes: number): string {
+    if (bytes < 1000) {
+        return `${bytes} B`;
+    } else if (bytes < 1000000) {
+        return `${(bytes / 1000).toFixed(1)} KB`;
+    } else if (bytes < 1000000000) {
+        return `${(bytes / 1000000).toFixed(1)} MB`;
     } else {
-        document.execCommand('copy');
+        return `${(bytes / 1000000000).toFixed(1)} GB`;
     }
+}
+
+export const formatDurationString = humanizeDuration.humanizer({
+    largest: 1,
+    language: "shortEn",
+    maxDecimalPoints: 1,
+    spacer: "",
+    languages: {
+        shortEn: {
+            y: () => "y",
+            mo: () => "mo",
+            w: () => "w",
+            d: () => "d",
+            h: () => "h",
+            m: () => "m",
+            s: () => "s",
+            ms: () => "ms",
+        },
+    },
+});
+
+export function stringifyQuery(query: APIOptions.Get.Search): string {
+    return 'track_name' in query
+        ? `${query.track_name}${query.artist_name ? ` ${query.artist_name}` : ''}`
+        : query.q ?? '';
+}
+
+export function parseQuery(query: PartialNull<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): APIOptions.Get.Search|null {
+    if ('track_name' in query && query.track_name !== undefined && query.track_name !== null) return {
+        track_name: query.track_name,
+        artist_name: query.artist_name ?? undefined,
+        album_name: query.album_name ?? undefined
+    }
+
+    if ('q' in query && query.q !== undefined && query.q !== null) return { q: query.q };
+
+    return null;
+}
+
+export function isQueryEmpty(query: Partial<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): boolean {
+    if ('track_name' in query) {
+        return !query.track_name?.trim() && !query.artist_name?.trim() && !query.album_name?.trim();
+    }
+
+    if ('q' in query) return !query.q?.trim();
 
     return true;
 }
 
-export function getMetadataCoverURL(covers: IPicture[]): string|null {
-    const cover = selectCover(covers);
-    if (!cover) return null;
-
-    const data = new Blob([cover.data], { type: cover.format });
-    return URL.createObjectURL(data);
+export function isTrackSignatureSearch(query: Partial<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): boolean|null {
+    if ('track_name' in query) return true;
+    if ('q' in query) return false;
+    return null;
 }
 
-export async function getAudioMetadata(blob: Blob|File, track: Track, fetchSpotify: boolean = true): Promise<IAudioMetadata> {
-    const fileData = await parseBlob(blob);
-
-    let cover = fileData.common.picture?.length ? getMetadataCoverURL(fileData.common.picture) : null;
-    let title = fileData.common.title ?? null;
-    let artist = fileData.common.artist ?? null;
-    let album = fileData.common.album ?? null;
-
-    if (fetchSpotify && (!cover || !title || !artist || !album)) {
-        const data = await spotifyAPI.searchTracks(`${title ?? track.trackName} ${artist ?? track.artistName}`, {
-            limit: 1
-        })
-        .then(res => res.tracks.items[0])
-        .catch(() => null);
-
-        if (data) {
-            cover ??= data.album.images.length ? data.album.images[0].url : null;
-            title ??= data.name;
-            artist ??= data.artists.join(', ');
-            album ??= data.album.name;
-        }
-    }
-
-    cover ??= `${base}/audio.png`;
-    title ??= track.trackName;
-    artist ??= track.artistName;
-    album ??= track.albumName;
-
-    return { cover, title, artist, album };
-}
-
-export function getTrackDefaultMetadata(track: Track): IAudioMetadata {
-    return {
-        cover: `${base}/audio.png`,
-        title: track.trackName,
-        artist: track.artistName,
-        album: track.albumName
-    }
-}
-
-export function getBlurAmount(currentIndex: number, activeIndex: number): string {
-    const indexDistance = activeIndex - currentIndex;
-
-    let amount: number|string = 0;
-
-    switch (indexDistance) {
-        case 0:
-            amount = 0;
-            break;
-        case 1:
-        case -1:
-            amount = 1;
-            break;
-        case 2:
-        case -2:
-            amount = 2;
-            break;
-        default:
-            amount = 3;
-            break;
-    }
-
-    return `blur(${amount}px)`;
-}
-
-export function createLocalDownload(content: string|Blob, filename: string) {
-    const blob = typeof content !== 'string' ? content : new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-
-    a.href = url;
-    a.download = filename;
-
-    document.body.appendChild(a);
-    a.click();
-
-    URL.revokeObjectURL(url);
-    a.remove();
-}
+export type PartialNull<T> = {
+    [P in keyof T]?: T[P] | null;
+};

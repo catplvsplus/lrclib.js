@@ -1,18 +1,16 @@
 <script lang="ts">
-	import '$lib/styles/app.pcss';
-    import '$lib/styles/global.scss';
-    import { onMount } from 'svelte';
-    import { Toaster } from '../lib/components/ui/sonner';
-    import { toast } from 'svelte-sonner';
+	import '$lib/styles/app.css';
     import { ModeWatcher } from 'mode-watcher';
-    import { isMobile } from 'is-mobile';
-    import { isBlurAllowed } from '../lib/helpers/stores';
-    import { afterNavigate, beforeNavigate, onNavigate } from '$app/navigation';
-    import PageLoading from '../lib/components/shared/PageLoading.svelte';
+    import { Toaster } from '$lib/components/ui/sonner/index';
+    import { toast } from 'svelte-sonner';
+    import { TooltipProvider } from '../lib/components/ui/tooltip';
+    import { notifications } from '../lib/helpers/classes/Notifications.svelte';
+    import { onDestroy, onMount } from 'svelte';
+    import Player from '../lib/components/shared/player/MiniPlayer.svelte';
+    import { userInterface } from '../lib/helpers/classes/UserInterface.svelte';
+    import { player } from '../lib/helpers/classes/Player.svelte';
 
 	let { children } = $props();
-
-    let isNavigating = $state(false);
 
     async function updateServiceWorker() {
         const registration = await navigator.serviceWorker.ready;
@@ -39,29 +37,34 @@
 
     onMount(() => {
         updateServiceWorker();
-
-        $isBlurAllowed = !isMobile() && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        player.initialize();
     });
 
-    beforeNavigate(() => {
-        isNavigating = true;
+    onDestroy(() => {
+        player.destroy();
     });
-
-    afterNavigate(() => {
-        isNavigating = false;
-    })
 </script>
 
-<Toaster/>
-{#if isNavigating}
-    <PageLoading/>
-    <style>
-        main {
-            overflow: hidden;
-        }
-    </style>
-{/if}
-<main class="w-full h-full bg-background" data-vaul-drawer-wrapper="">
-    <ModeWatcher defaultMode="system"/>
-    {@render children()}
-</main>
+<Player/>
+<ModeWatcher/>
+<Toaster
+    position={userInterface.smallScreen.current && userInterface.menuMode === 'bottom' ? 'top-center' : 'bottom-right'}
+    mobileOffset={{
+        top: userInterface.smallScreen.current && userInterface.menuMode === 'bottom' ? '4rem' : 0
+    }}
+/>
+
+<svelte:head>
+    <title>Lrclib.js</title>
+</svelte:head>
+
+<svelte:document
+    on:visibilitychange={() => {
+        if (document.visibilityState === 'visible') notifications.clear();
+    }}
+/>
+
+<TooltipProvider>
+    {@render children?.()}
+</TooltipProvider>
+<input type="file" accept="audio/*" multiple onchange={e => e.currentTarget.files && player.addTracksFromFiles(e.currentTarget.files)} bind:this={player.filesInput} style="display: none"/>

@@ -1,14 +1,14 @@
 {
   "name": "@lrclibjs/monorepo",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "lerna run build",
     "preview": "lerna run preview",
     "dev": "lerna run dev"
   },
   "devDependencies": {
-    "@reciple/utils": "^9.3.2",
-    "@types/node": "^22.4.0",
+    "@types/node": "^24.2.1",
     "esbuild-plugin-version-injector": "^1.2.1",
     "lerna": "^8.1.8",
     "lrclib.js": "^1.0.0",
@@ -18,8 +18,5 @@
   "workspaces": [
     "packages/*",
     "apps/*"
-  ],
-  "dependencies": {
-    "svelte-meta-tags": "^3.1.4"
-  }
+  ]
 }

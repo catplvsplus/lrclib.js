@@ -1,22 +1,39 @@
-import SpotifyWebApi from 'spotify-web-api-js';
+import { SiBun, SiDeno, SiNpm, SiPnpm, SiYarn } from '@icons-pack/svelte-simple-icons';
+import type { ComponentType } from 'svelte';
 
-export const exampleCode = `import { lrclib, Client } from 'lrclib.js';
+export const links = {
+    github: 'https://github.com/catplvsplus/lrclib.js',
+    npm: 'https://www.npmjs.com/package/lrclib.js',
+    contact: 'https://catplvsplus.is-a.dev',
+    lrclib: 'https://lrclib.net'
+};
 
-// Get lyrics for a track
-await lrclib.search('Born To Die');
-await lrclib.search({ track_name: 'Born To Die', artist_name: 'Lana Del Rey' });
-await lrclib.fetchTrack({ track_name: 'Born To Die', artist_name: 'Lana Del Rey', duration: 285 });
-await lrclib.fetchTrackById(13373);
+export const publishNote = `Please be mindful, your contributions help build a reliable and comprehensive database by ensuring the accuracy and quality of the lyrics you submit.`;
 
-// Publish a track
-const client = new Client();
-await client.publishTrack({
-    trackName: 'Born To Die',
-    artistName: 'Lana Del Rey',
-    albumName: 'Born To Die',
-    duration: 285,
-    plainLyrics: 'Feet don\\'t fail me now...',
-    syncedLyrics: '[00:22.83] Feet, don\\'t fail me now...'
-});`;
-
-export const spotifyAPI = new SpotifyWebApi();
+export const installCommands: (Record<'pkgManager'|'command', string> & { icon?: ComponentType; })[] = [
+    {
+        icon: SiNpm,
+        pkgManager: 'npm',
+        command: 'npm install lrclib.js'
+    },
+    {
+        icon: SiYarn,
+        pkgManager: 'yarn',
+        command: 'yarn add lrclib.js'
+    },
+    {
+        icon: SiPnpm,
+        pkgManager: 'pnpm',
+        command: 'pnpm add lrclib.js'
+    },
+    {
+        icon: SiBun,
+        pkgManager: 'bun',
+        command: 'bun install lrclib.js'
+    },
+    {
+        icon: SiDeno,
+        pkgManager: 'deno',
+        command: 'deno install npm:lrclib.js'
+    }
+];

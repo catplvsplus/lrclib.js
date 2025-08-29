@@ -1,26 +1,15 @@
 {
-  "name": "lrclib.js",
-  "short_name": "lrclib.js",
-  "start_url": "/lrclib.js",
+  "name": "Lrclib.js",
+  "short_name": "Lrclib.js",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#fff",
-  "theme_color": "#e11d48",
-  "description": "A javascript library for interacting with lrclib.net API",
+  "background_color": "#fcf5f7",
+  "theme_color": "#a84370",
   "icons": [
-    {
-      "src": "pwa-64x64.png",
-      "sizes": "64x64",
-      "type": "image/png"
-    },
-    {
-      "src": "pwa-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "pwa-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
+    { "src": "/favicon.ico", "type": "image/x-icon", "sizes": "16x16 32x32" },
+    { "src": "/icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512" },
+    { "src": "/icon-192-maskable.png", "type": "image/png", "sizes": "192x192", "purpose": "maskable" },
+    { "src": "/icon-512-maskable.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
   ]
 }

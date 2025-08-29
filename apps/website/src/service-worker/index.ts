@@ -5,7 +5,7 @@ declare let self: ServiceWorkerGlobalScope;
 
 import { build, files, version } from '$service-worker';
 
-const cacheName = `cache-v${version}`;
+const cacheName = `cache-${version}`;
 const assets = [...files, ...build];
 
 self.addEventListener('install', (event) => {
@@ -19,11 +19,11 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
-    event.respondWith(serveFromCache(event.request));
+    event.respondWith(serveFromCache(event));
 });
 
-self.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+self.addEventListener('message', async (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') await self.skipWaiting();
 });
 
 async function addFilesToCache(files?: RequestInfo[]) {
@@ -39,25 +39,24 @@ async function clearOldCache() {
     }
 }
 
-async function serveFromCache(request: Request) {
+async function serveFromCache(event: FetchEvent) {
+    const { request } = event;
     const url = new URL(request.url);
-    const cache = await caches.open(cacheName);
-
-    // if (assets.includes(url.pathname)) {
-    //     const cached = await cache.match(request);
-    //     if (cached) return cached;
-    // }
 
     try {
         const response = await fetch(request);
+        const clone = response.clone();
 
         if (response.ok && url.protocol.startsWith('http')) {
-            cache.put(request, response.clone());
+            event.waitUntil((async () => {
+                const cache = await caches.open(cacheName);
+                await cache.put(request, clone);
+            })());
         }
 
         return response;
     } catch (error) {
-        const cached = await cache.match(request);
+        const cached = await caches.match(request);
         if (cached) return cached;
     }
 

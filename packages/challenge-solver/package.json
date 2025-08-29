@@ -18,8 +18,7 @@
     "prepack": "npm run build"
   },
   "files": [
-    "dist",
-    "build"
+    "dist"
   ],
   "devDependencies": {
     "@lrclib.js/api-types": "^1.0.0",

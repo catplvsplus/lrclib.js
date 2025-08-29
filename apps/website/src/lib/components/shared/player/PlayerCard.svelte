@@ -43,7 +43,7 @@
     )}
 >
     <CardContent class="flex gap-5 items-center relative z-10 flex-col lg:flex-row">
-        <div class="w-full lg:w-60 max-w-96 shrink-0">
+        <div class="w-full lg:w-60 max-w-96 shrink-0" class:hidden={!player.playing}>
             <AspectRatio class="overflow-hidden rounded-lg relative shadow">
                 {#key coverURL}
                     <img src={coverURL} alt="" class="size-full object-cover object-center absolute" transition:blur={{ duration: settings.prefersReducedMotion ? 0 : 300 }}>
@@ -65,8 +65,8 @@
                 </div>
             </div>
         {:else}
-            <div class="grid gap-6 h-fit w-full max-w-96 sm:max-w-none">
-                <div class="grid text-center">
+            <div class="flex justify-center items-center h-fit w-full max-w-96 sm:max-w-none min-h-60">
+                <div class="grid text-center h-fit">
                     <h3 class="text-2xl xl:text-4xl text-foreground font-bold leading-tight">No track playing</h3>
                     <p class="text-base xl:text-lg text-foreground/70">Add some tracks to the queue and start playing!</p>
                     <div class="mt-2">

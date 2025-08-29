@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Snippet } from 'svelte';
+    import { onMount, untrack, type Snippet } from 'svelte';
     import { Button, type ButtonProps } from '../../ui/button';
     import { blur, fly } from 'svelte/transition';
     import { onClickOutside, PressedKeys } from 'runed';
@@ -9,21 +9,26 @@
     import { player } from '../../../helpers/classes/Player.svelte';
     import CoverBackground from './CoverBackground.svelte';
     import { resolve } from '$app/paths';
-    import { EllipsisIcon } from '@lucide/svelte';
+    import { EllipsisIcon, Info, InfoIcon, SettingsIcon, XIcon } from '@lucide/svelte';
     import { ScrollArea } from '../../ui/scroll-area';
     import PlayerProgressBar from './PlayerProgressBar.svelte';
     import PlayerControls from './PlayerControls.svelte';
-    import QueueLyricsToggle from './QueueLyricsToggle.svelte';
     import SyncedLyrics from '../preview/SyncedLyrics.svelte';
     import { MediaQuery } from 'svelte/reactivity';
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../ui/dropdown-menu';
+    import { pl } from 'zod/locales';
+    import { goto } from '$app/navigation';
+    import { lyricsSettingsDialogState } from '../preview/LyricsSettings.svelte';
 
     let {
         children
     }: {
         children?: Snippet<[{ props: ButtonProps; }]>;
+        fullscreenWindow?: boolean;
     } = $props();
 
     let container: HTMLDivElement|null = $state(null);
+    let screenHalf: number = $state(0);
 
     const pressedKeys = new PressedKeys();
 
@@ -34,6 +39,7 @@
     });
 
     pressedKeys.onKeys('Escape', () => fullscreenLyricsDialogState.isOpen && fullscreenLyricsDialogState.close());
+
     onClickOutside(() => container, () => fullscreenLyricsDialogState.isOpen && fullscreenLyricsDialogState.close());
 
     let coverURL = $derived(player.playing?.coverImageURL ?? `${resolve('/')}cover.png`);
@@ -41,6 +47,10 @@
     let description = $derived([player.playing?.artist, player.playing?.album].filter(Boolean).join(' • ') || 'Unknown Artist');
 
     const isScreenLg = new MediaQuery(`(min-width: 64rem)`);
+
+    onMount(() => {
+        screenHalf = window.innerHeight / 3;
+    });
 </script>
 
 <script module>
@@ -48,6 +58,8 @@
         id: 'fullscreen-lyrics'
     });
 </script>
+
+<svelte:window onresize={() => screenHalf = window.innerHeight / 3}/>
 
 {@render children?.({
     props: {
@@ -69,7 +81,7 @@
     </style>
     <div
         class={cn(
-            "h-full w-full fixed top-0 left-0 pointer-events-auto z-[60] bg-background",
+            "h-full w-full fixed top-0 left-0 pointer-events-auto z-50 bg-background",
             !settings.prefersReducedTransparency && "dark text-foreground"
         )}
         transition:fly={{ y: window.innerHeight, opacity: 1, duration: settings.prefersReducedMotion ? 0 : 300 }}
@@ -87,15 +99,35 @@
                     <h3 title={title} class="text-base lg:text-3xl font-semibold lg:font-extrabold truncate">{title}</h3>
                     <p title={description} class="text-xs lg:text-sm leading-tight font-medium text-foreground/70 truncate">{description}</p>
                 </div>
-                <Button size="icon" variant="secondary" class="size-10 rounded-full overflow-hidden relative bg-foreground/20! text-foreground lg:hidden">
-                    <EllipsisIcon class="size-5!"/>
-                </Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        {#snippet child({ props })}
+                            <Button {...props} size="icon" variant="secondary" class="size-10 rounded-full overflow-hidden relative bg-foreground/20! text-foreground lg:hidden">
+                                <EllipsisIcon class="size-5!"/>
+                            </Button>
+                        {/snippet}
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent class="min-w-40 font-medium">
+                        <DropdownMenuItem onclick={() => fullscreenLyricsDialogState.close()}>
+                            <XIcon/>
+                            Close
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onclick={() => lyricsSettingsDialogState.open()}>
+                            <SettingsIcon/>
+                            Lyrics Settings
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onclick={() => goto(player.playing?.lyrics ?`${resolve('/(main)/track/[id]', { id: player.playing.id })}` : '')} disabled={!player.playing?.lyrics}>
+                            <InfoIcon/>
+                            Lyrics Info
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
                 <div class="w-full max-w-lg gap-2 pt-2 hidden lg:grid">
                     <PlayerProgressBar/>
                     <PlayerControls class="w-full justify-center"/>
                 </div>
             </div>
-            <div class="h-full w-full relative z-20 text-3xl md:text-4xl lg:text-5xl font-extrabold leading-relaxed overflow-hidden px-4 lg:w-lg xl:w-2xl">
+            <div class="h-full w-full relative z-20 text-4xl lg:text-5xl font-extrabold leading-relaxed overflow-hidden px-4 lg:w-lg xl:w-2xl">
                 {#if player.playing?.lyricsType === 'plain'}
                     {@const lines = player.playing?.plainLyrics?.split('\n') ?? []}
                     <ScrollArea class="h-full text-2xl mask-intersect mask-b-from-95% mask-t-from-95% px-2 leading-relaxed" scrollbarYClasses="[&>div]:bg-current/50">
@@ -114,12 +146,12 @@
                         delay={settings.lyricsDelay.current}
                         lyrics={player.playing?.syncedLyrics ?? ''}
                         scrollAlign="start"
-                        scrollMargin={isScreenLg.current ? -300 : -40}
+                        scrollMargin={isScreenLg.current ? -screenHalf : -40}
                         hideSung
-                        class="h-full mask-intersect mask-b-from-95% mask-t-from-95%"
+                        class="h-full mask-intersect mask-b-from-0 sm:mask-b-from-50% mask-t-from-95%"
                     >
                         {#snippet padding(type)}
-                            <div class="pb-96"></div>
+                            <div class="pb-[30dvh]"></div>
                         {/snippet}
                     </SyncedLyrics>
                 {:else}

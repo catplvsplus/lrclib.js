@@ -1,6 +1,6 @@
 <script lang="ts">
     import { resolve } from "$app/paths";
-    import { EqualIcon, FileIcon, GitBranchIcon, HouseIcon, UsersIcon, XIcon } from '@lucide/svelte';
+    import { CirclePlayIcon, EqualIcon, GitBranchIcon, HouseIcon, UsersIcon, XIcon } from '@lucide/svelte';
     import Logo from '../svg/logo.svelte';
     import { Button, buttonVariants } from '$lib/components/ui/button';
     import ModeSwitcher from './ModeSwitcher.svelte';
@@ -22,9 +22,9 @@
         <HouseIcon class={!showIcons ? 'hidden' : ''}/>
         Home
     </a>
-    <a class={className} href={resolve("/docs")} onclick={() => menuState.close()}>
-        <FileIcon class={!showIcons ? 'hidden' : ''}/>
-        Docs
+    <a class={className} href={resolve("/(main)/player")} onclick={() => menuState.close()}>
+        <CirclePlayIcon class={!showIcons ? 'hidden' : ''}/>
+        Player
     </a>
     <a class={className} href={links.contact} target="_blank" onclick={() => menuState.close()}>
         <UsersIcon class={!showIcons ? 'hidden' : ''}/>

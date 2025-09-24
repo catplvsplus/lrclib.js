@@ -6,8 +6,6 @@
     import { Button } from '$lib/components/ui/button';
     import { resolve } from '$app/paths';
     import { MetaTags } from 'svelte-meta-tags';
-    import { PressedKeys } from 'runed';
-    import { player } from '../../lib/helpers/classes/Player.svelte';
 </script>
 
 <svelte:head>
@@ -17,9 +15,9 @@
 <MetaTags title="Lrclib.js" description="A library interacting with lrclib.net API"/>
 
 <div class="text-center pt-24 pb-18">
-    <Button size="sm" variant="outline" href={resolve('/publish')} class="rounded-full font-bold text-foreground/70 mb-2 text-xs">
+    <Button size="sm" variant="outline" href={resolve('/(main)/player')} class="rounded-full font-bold text-foreground/70 mb-2 text-xs">
         <span class="size-1.5 bg-primary ring-primary/30 ring-3 mr-1 rounded-full animate-pulse"></span>
-        Publish Lyrics
+        Preview Lyrics
     </Button>
     <h1 class="sm:text-7xl text-6xl font-bold tracking-wide text-foreground/80 text-shadow-current/20 text-shadow-lg">Lrclib<span class="text-primary">.js</span></h1>
     <p class="mt-2 sm:text-base text-sm font-medium text-muted-foreground">A library interacting with <a href={links.lrclib} target="_blank" rel="noopener noreferrer" class="border-b border-transparent hover:border-foreground focus-visible::border-foreground">lrclib.net</a> API</p>

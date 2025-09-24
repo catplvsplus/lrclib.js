@@ -1,9 +1,9 @@
 <script lang="ts">
     import lrclib from 'lrclib.js';
     import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '$lib/components/ui/card';
-    import { InfoIcon, LoaderIcon, ClockIcon, PenSquareIcon, AlertCircleIcon, CircleX, BadgeCheckIcon, SquarePenIcon } from '@lucide/svelte';
+    import { InfoIcon, LoaderIcon, ClockIcon, BadgeCheckIcon, SquarePenIcon, KeyIcon, CircleAlertIcon } from '@lucide/svelte';
     import { Input } from '$lib/components/ui/input';
-    import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
+    import { Button, FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
     import { superForm } from 'sveltekit-superforms';
     import { zodClient } from 'sveltekit-superforms/adapters';
     import { publishTrackSchema } from '$lib/helpers/schema';
@@ -144,6 +144,8 @@
         if (!leave) navigate.cancel();
     });
 
+    let isGeneratingToken = $derived(tokenSolver.status === 'solving');
+
     export const snapshot = { capture, restore };
 </script>
 
@@ -199,7 +201,51 @@
                     <FormControl>
                         {#snippet children({ props })}
                             <FormLabel>Token</FormLabel>
-                            <Input {...props} bind:value={$formData.token} disabled={$submitting} placeholder="Your publish token"/>
+                            <div class="flex gap-2 sm:flex-row flex-col">
+                                <Input {...props} bind:value={$formData.token} disabled={$submitting || isGeneratingToken} placeholder="Your publish token"/>
+                                <Button
+                                    variant="secondary"
+                                    type="button"
+                                    class="overflow-hidden relative"
+                                    disabled={$submitting || isGeneratingToken || !!$formData.token}
+                                    onclick={async () => {
+                                        resetToken();
+                                        isGeneratingToken = true;
+
+                                        const challenge = await lrclib.requestChallenge();
+
+                                        tokenSolver.onAbort = () => {
+                                            toast.error('Challenge solving aborted');
+                                        }
+
+                                        tokenSolver.solve(challenge)
+                                            .then(() => {
+                                                $formData.token = tokenSolver.solver?.token ?? '';
+                                                toast.success('Challenge solved, token generated');
+                                            }).catch(err => {
+                                                if (err.message === 'Challenge solving aborted') return;
+                                                console.error(err);
+                                                toast.error('Failed to solve challenge');
+                                            });
+                                    }}
+                                >
+                                    {#if isGeneratingToken}
+                                        <FlyInOut class="flex gap-2" inY={30} outY={-30}>
+                                            <LoaderIcon class="animate-spin"/>
+                                            <span>Generating</span>
+                                        </FlyInOut>
+                                    {:else}
+                                        <FlyInOut class="flex gap-2" inY={30} outY={-30}>
+                                            <KeyIcon/>
+                                            <span>Generate</span>
+                                        </FlyInOut>
+                                    {/if}
+                                    <div class="flex gap-2 opacity-0">
+                                        <KeyIcon/>
+                                        <span>{tokenSolver.status === 'solving' ? 'Generating' : 'Generate'}</span>
+                                    </div>
+                                </Button>
+                            </div>
                         {/snippet}
                     </FormControl>
                     <FormFieldErrors/>
@@ -242,7 +288,7 @@
                 </FormField>
                 <LyricsTextareaFields {form}/>
                 <InfoCard
-                    icon={AlertCircleIcon}
+                    icon={CircleAlertIcon}
                     title="Note"
                     description="Publishing a track requires solving a proof-of-work challenge. This process can take a few minutes, don't close this page till your track is published."
                 />

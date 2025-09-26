@@ -161,7 +161,7 @@
                                     ? "duration-0"
                                     : [
                                         "duration-500",
-                                        active || sung ? "translate-y-0 scale-105" : "translate-y-5",
+                                        active || sung ? "translate-y-0 scale-101" : "translate-y-5",
                                     ],
                                 (sung || !active) && "opacity-30",
                                 sung && hideSung && autoScroll && "opacity-0",

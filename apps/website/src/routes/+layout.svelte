@@ -1,7 +1,7 @@
 <script lang="ts">
-	import '$lib/styles/app.css';
-    import { ModeWatcher } from 'mode-watcher';
-    import { Toaster } from '$lib/components/ui/sonner/index';
+	import '$lib/styles/app.pcss';
+    import '$lib/styles/global.scss';
+    import { Toaster } from '../lib/components/ui/sonner';
     import { toast } from 'svelte-sonner';
     import { TooltipProvider } from '../lib/components/ui/tooltip';
     import { notifications } from '../lib/helpers/classes/Notifications.svelte';
@@ -9,6 +9,9 @@
     import Player from '../lib/components/shared/player/MiniPlayer.svelte';
     import { userInterface } from '../lib/helpers/classes/UserInterface.svelte';
     import { player } from '../lib/helpers/classes/Player.svelte';
+    import { page } from '$app/state';
+    import { resolve } from '$app/paths';
+    import { ModeWatcher } from 'mode-watcher';
 
 	let { children } = $props();
 
@@ -55,6 +58,7 @@
 />
 
 <svelte:head>
+    <link rel="search" type="application/opensearchdescription+xml" title="Lrclib.js Lyrics" href="{page.url.origin}{resolve('/(main)/search/search.xml')}" />
     <title>Lrclib.js</title>
 </svelte:head>
 

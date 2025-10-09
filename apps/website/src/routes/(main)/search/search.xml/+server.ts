@@ -1,3 +1,6 @@
+import { resolve } from '$app/paths';
+import path from 'node:path';
+
 export async function GET({ url }) {
     const base = url.origin;
     const details = {
@@ -10,8 +13,8 @@ export async function GET({ url }) {
             type: 'image/x-icon',
             url: `${base}/favicon.ico`,
         },
-        searchURL: `${base}/search?q={searchTerms}`,
-        suggestionURL: `${base}/search/suggestions?q={searchTerms}`,
+        searchURL: `${base}${path.join('/', resolve('/(main)/search'))}?q={searchTerms}`,
+        suggestionURL: `${base}${path.join('/', resolve('/(main)/search/autocomplete'))}?q={searchTerms}`,
     };
 
     const content = `<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">

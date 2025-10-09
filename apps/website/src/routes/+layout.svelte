@@ -1,14 +1,13 @@
 <script lang="ts">
-	import '$lib/styles/app.pcss';
-    import '$lib/styles/global.scss';
-    import { Toaster } from '../lib/components/ui/sonner';
+    import '$lib/styles/app.css';
+    import { Toaster } from '$lib/components/ui/sonner';
     import { toast } from 'svelte-sonner';
-    import { TooltipProvider } from '../lib/components/ui/tooltip';
-    import { notifications } from '../lib/helpers/classes/Notifications.svelte';
+    import { TooltipProvider } from '$lib/components/ui/tooltip';
+    import { notifications } from '$lib/helpers/classes/Notifications.svelte';
     import { onDestroy, onMount } from 'svelte';
-    import Player from '../lib/components/shared/player/MiniPlayer.svelte';
-    import { userInterface } from '../lib/helpers/classes/UserInterface.svelte';
-    import { player } from '../lib/helpers/classes/Player.svelte';
+    import Player from '@/components/shared/player/MiniPlayer.svelte';
+    import { userInterface } from '$lib/helpers/classes/UserInterface.svelte';
+    import { player } from '$lib/helpers/classes/Player.svelte';
     import { page } from '$app/state';
     import { resolve } from '$app/paths';
     import { ModeWatcher } from 'mode-watcher';

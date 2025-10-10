@@ -2,7 +2,7 @@
     import type { HTMLAttributes } from 'svelte/elements';
     import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
     import { cn } from '$lib/helpers/utils';
-    import { BoltIcon, Maximize2Icon } from '@lucide/svelte';
+    import { BoltIcon, HeartCrackIcon, Maximize2Icon, ScanSearchIcon } from '@lucide/svelte';
     import { Button } from '@/components/ui/button';
     import { player } from '$lib/helpers/classes/Player.svelte';
     import { settings } from '$lib/helpers/classes/Settings.svelte';
@@ -13,6 +13,7 @@
     import LyricsSettings, { lyricsSettingsDialogState } from './LyricsSettings.svelte';
     import type { PlayerTrack } from '$lib/helpers/classes/PlayerTrack.svelte';
     import { fullscreenLyricsDialogState } from '../player/FullscreenLyrics.svelte';
+    import { Empty, EmptyDescription, EmptyTitle, EmptyMedia } from '../../ui/empty';
 
     let {
         track,
@@ -69,10 +70,17 @@
     {:else}
         {@const fetching = track.lyricsType === 'fetching'}
         <CardContent class="relative z-20 text-center flex h-full items-center">
-            <div class="w-full grid">
-                <h3 class="text-3xl md:text-4xl lg:text-5xl font-extrabold">{fetching ? 'Loading...' : 'No lyrics available'}</h3>
-                <p class="text-sm opacity-70 mt-1 font-semibold">{fetching ? 'Looking for the right lyrics' : "You'll have to guess this one"}</p>
-            </div>
+            <Empty class="gap-0">
+                <EmptyMedia>
+                    {#if fetching}
+                        <ScanSearchIcon class="size-20 mx-auto"/>
+                    {:else}
+                        <HeartCrackIcon class="size-20 mx-auto"/>
+                    {/if}
+                </EmptyMedia>
+                <EmptyTitle class="font-bold">{fetching ? 'Loading...' : 'No lyrics available'}</EmptyTitle>
+                <EmptyDescription>{fetching ? 'Looking for the right lyrics' : "You'll have to guess this one"}</EmptyDescription>
+            </Empty>
         </CardContent>
     {/if}
     <div

@@ -9,16 +9,16 @@
     import { player } from '../../../helpers/classes/Player.svelte';
     import CoverBackground from './CoverBackground.svelte';
     import { resolve } from '$app/paths';
-    import { EllipsisIcon, Info, InfoIcon, SettingsIcon, XIcon } from '@lucide/svelte';
+    import { EllipsisIcon, HeartCrackIcon, Info, InfoIcon, ScanSearchIcon, SettingsIcon, XIcon } from '@lucide/svelte';
     import { ScrollArea } from '../../ui/scroll-area';
     import PlayerProgressBar from './PlayerProgressBar.svelte';
     import PlayerControls from './PlayerControls.svelte';
     import SyncedLyrics from '../preview/SyncedLyrics.svelte';
     import { MediaQuery } from 'svelte/reactivity';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../ui/dropdown-menu';
-    import { pl } from 'zod/locales';
     import { goto } from '$app/navigation';
     import { lyricsSettingsDialogState } from '../preview/LyricsSettings.svelte';
+    import { Empty, EmptyDescription, EmptyTitle, EmptyMedia } from '../../ui/empty';
 
     let {
         children
@@ -157,10 +157,17 @@
                 {:else}
                     {@const fetching = player.playing?.lyricsType === 'fetching'}
                     <div class="relative z-20 text-center flex h-full items-center">
-                        <div class="w-full grid">
-                            <h3 class="text-3xl md:text-4xl lg:text-5xl font-extrabold">{fetching ? 'Loading...' : 'No lyrics available'}</h3>
-                            <p class="text-sm opacity-70 mt-1 font-semibold">{fetching ? 'Looking for the right lyrics' : "You'll have to guess this one"}</p>
-                        </div>
+                        <Empty class="gap-0 font-normal">
+                            <EmptyMedia>
+                                {#if fetching}
+                                    <ScanSearchIcon class="size-20 mx-auto"/>
+                                {:else}
+                                    <HeartCrackIcon class="size-20 mx-auto"/>
+                                {/if}
+                            </EmptyMedia>
+                            <EmptyTitle class="font-bold">{fetching ? 'Loading...' : 'No lyrics available'}</EmptyTitle>
+                            <EmptyDescription>{fetching ? 'Looking for the right lyrics' : "You'll have to guess this one"}</EmptyDescription>
+                        </Empty>
                     </div>
                 {/if}
             </div>

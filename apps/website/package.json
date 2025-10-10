@@ -14,7 +14,7 @@
 	"devDependencies": {
 		"@icons-pack/svelte-simple-icons": "^6.4.0",
 		"@internationalized/date": "^3.10.0",
-		"@lucide/svelte": "^0.545.0",
+		"@lucide/svelte": "^0.544.0",
 		"@sveltejs/adapter-auto": "^6.0.2",
 		"@sveltejs/adapter-vercel": "^5.8.2",
 		"@sveltejs/kit": "^2.27.3",
@@ -44,8 +44,6 @@
 		"vite-plugin-devtools-json": "^1.0.0"
 	},
 	"dependencies": {
-		"color2k": "^2.0.3",
-		"fast-average-color": "^9.5.0",
 		"humanize-duration": "^3.33.1",
 		"is-mobile": "^5.0.0",
 		"lrclib.js": "^1.0.0",
@@ -53,7 +51,6 @@
 		"music-metadata": "^11.9.0",
 		"svelte-dnd-action": "^0.9.65",
 		"svelte-meta-tags": "^4.4.1",
-		"svelte-query-params": "^0.2.5",
 		"sveltekit-search-params": "^3.0.0",
 		"zod": "^4.1.12"
 	}

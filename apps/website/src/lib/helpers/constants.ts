@@ -1,5 +1,6 @@
 import { SiBun, SiDeno, SiNpm, SiPnpm, SiYarn } from '@icons-pack/svelte-simple-icons';
 import type { ComponentType } from 'svelte';
+import { resolve } from '$app/paths';
 
 export const links = {
     github: 'https://github.com/catplvsplus/lrclib.js',
@@ -37,3 +38,5 @@ export const installCommands: (Record<'pkgManager'|'command', string> & { icon?:
         command: 'deno install npm:lrclib.js'
     }
 ];
+
+export const defaultCover = resolve('/') + 'cover.png';

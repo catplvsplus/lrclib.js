@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "$app/state";
     import FlyInOut from '../FlyInOut.svelte';
-    import { AlbumIcon, ChartNoAxesGanttIcon, ListMusicIcon, LoaderIcon, SearchIcon, SquareLibraryIcon, TextCursorInputIcon, TextIcon } from '@lucide/svelte';
+    import { AlbumIcon, ChartNoAxesGanttIcon, ListMusicIcon, LoaderIcon, SearchIcon, TextCursorInputIcon, TextIcon } from '@lucide/svelte';
     import { SearchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
     import SearchInput from '../home/SearchInput.svelte';
     import { Input } from '@/components/ui/input';

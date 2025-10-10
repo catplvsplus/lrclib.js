@@ -50,34 +50,19 @@
                 {/key}
             </AspectRatio>
         </div>
-        {#if player.playing}
-            <div class="grid gap-6 h-fit w-full max-w-96 sm:max-w-none" class:dark={!settings.prefersReducedTransparency}>
-                <div class="grid text-center lg:text-start">
-                    <h3 class="text-2xl xl:text-4xl text-foreground font-bold leading-tight truncate whitespace-normal line-clamp-2">{player.playing?.title}</h3>
-                    <p class="text-base xl:text-lg text-foreground/70 truncate whitespace-normal line-clamp-2">{[player.playing?.artist, player.playing?.album].filter(Boolean).join(' • ')}</p>
-                </div>
-                <div class="grid gap-2">
-                    <PlayerProgressBar/>
-                    <div class="flex gap-4 items-center lg:flex-row flex-col">
-                        <PlayerControls class="w-full lg:w-auto justify-center"/>
-                        <QueueLyricsToggle/>
-                    </div>
+        <div class="grid gap-6 h-fit w-full max-w-96 sm:max-w-none" class:dark={!settings.prefersReducedTransparency}>
+            <div class="grid text-center lg:text-start">
+                <h3 class="text-2xl xl:text-4xl text-foreground font-bold leading-tight truncate whitespace-normal line-clamp-2">{player.playing?.title}</h3>
+                <p class="text-base xl:text-lg text-foreground/70 truncate whitespace-normal line-clamp-2">{[player.playing?.artist, player.playing?.album].filter(Boolean).join(' • ')}</p>
+            </div>
+            <div class="grid gap-2">
+                <PlayerProgressBar/>
+                <div class="flex gap-4 items-center lg:flex-row flex-col">
+                    <PlayerControls class="w-full lg:w-auto justify-center"/>
+                    <QueueLyricsToggle/>
                 </div>
             </div>
-        {:else}
-            <div class="flex justify-center items-center h-fit w-full max-w-96 sm:max-w-none min-h-60">
-                <div class="grid text-center h-fit">
-                    <h3 class="text-2xl xl:text-4xl text-foreground font-bold leading-tight">No track playing</h3>
-                    <p class="text-base xl:text-lg text-foreground/70">Add some tracks to the queue and start playing!</p>
-                    <div class="mt-2">
-                        <Button variant="secondary" class="bg-foreground/10! cursor-pointer text-foreground font-semibold" onclick={() => player.filesInput?.click()}>
-                            <CirclePlusIcon/>
-                            Add Track
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        {/if}
+        </div>
     </CardContent>
     <CoverBackground track={player.playing}/>
 </Card>

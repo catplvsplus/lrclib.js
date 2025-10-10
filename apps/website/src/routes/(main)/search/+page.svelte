@@ -9,6 +9,7 @@
     import TrackCard from '@/components/shared/track/TrackCard.svelte';
     import { queryParameters } from 'sveltekit-search-params';
     import TracksSkeleton from '$lib/components/shared/track/TracksSkeleton.svelte';
+    import { Empty, EmptyDescription, EmptyMedia, EmptyTitle } from '@/components/ui/empty/index.js';
 
     const queryParams = queryParameters({
         q: true,
@@ -73,29 +74,27 @@
             {/if}
         </div>
     {:else}
-        <div
+        <Empty
             class={cn(
-                "flex justify-center items-center",
+                "h-full gap-0",
                 isAdvancedSearch.current
                     ? "xl:col-span-2"
                     : "xl:col-span-3 min-h-[500px]"
             )}
         >
-            <div class="grid gap-2 text-muted-foreground">
-                {#if !isEmptyQuery && !searchEngine.tracks.length}
+            {#if !isEmptyQuery && !searchEngine.tracks.length}
+                <EmptyMedia>
                     <HeartCrackIcon class="size-20 mx-auto"/>
-                    <div class="text-center">
-                        <h4 class="font-bold text-lg">No results found</h4>
-                        <p class="text-sm opacity-70">Try searching for another keyword</p>
-                    </div>
-                {:else}
+                </EmptyMedia>
+                <EmptyTitle>No results found</EmptyTitle>
+                <EmptyDescription>Try searching for another keyword</EmptyDescription>
+            {:else}
+                <EmptyMedia>
                     <SearchIcon class="size-20 mx-auto"/>
-                    <div class="text-center">
-                        <h4 class="font-bold text-lg">Search for lyrics</h4>
-                        <p class="text-sm opacity-70">Start typing to search lyrics</p>
-                    </div>
-                {/if}
-            </div>
-        </div>
+                </EmptyMedia>
+                <EmptyTitle class="font-bold">Search for lyrics</EmptyTitle>
+                <EmptyDescription>Start typing to search lyrics</EmptyDescription>
+            {/if}
+        </Empty>
     {/if}
 </div>

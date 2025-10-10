@@ -1,4 +1,5 @@
 <script lang="ts">
+    import '@fontsource-variable/inter';
     import '$lib/styles/app.css';
     import { Toaster } from '$lib/components/ui/sonner';
     import { toast } from 'svelte-sonner';

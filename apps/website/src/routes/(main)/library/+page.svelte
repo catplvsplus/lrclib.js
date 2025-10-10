@@ -12,6 +12,7 @@
     import { savedLyrics, type SavedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
     import TrackErrorCard from '$lib/components/shared/track/TrackErrorCard.svelte';
     import LibraryFilter from '$lib/components/shared/main/LibraryFilter.svelte';
+    import { Empty, EmptyDescription, EmptyMedia, EmptyTitle } from '@/components/ui/empty/index.js';
 
     const queryParams = queryParameters({
         q: true,
@@ -99,29 +100,27 @@
             {/if}
         </div>
     {:else}
-        <div
+        <Empty
             class={cn(
-                "flex justify-center items-center",
+                "h-full gap-0",
                 isAdvancedSearch.current
                     ? "xl:col-span-2"
                     : "xl:col-span-3 min-h-[500px]"
             )}
         >
-            <div class="grid gap-2 text-muted-foreground">
-                {#if !isEmptyQuery && !offlineSearchEngine.tracks.length}
+            {#if !isEmptyQuery && !offlineSearchEngine.tracks.length}
+                <EmptyMedia>
                     <HeartCrackIcon class="size-20 mx-auto"/>
-                    <div class="text-center">
-                        <h4 class="font-bold text-lg">No results found</h4>
-                        <p class="text-sm opacity-70">Try searching for another keyword</p>
-                    </div>
-                {:else}
+                </EmptyMedia>
+                <EmptyTitle>No results found</EmptyTitle>
+                <EmptyDescription>Try searching for another keyword</EmptyDescription>
+            {:else}
+                <EmptyMedia>
                     <LibraryBigIcon class="size-20 mx-auto"/>
-                    <div class="text-center">
-                        <h4 class="font-bold text-lg">Your library is empty</h4>
-                        <p class="text-sm opacity-70">Your saved & liked tracks will appear here</p>
-                    </div>
-                {/if}
-            </div>
-        </div>
+                </EmptyMedia>
+                <EmptyTitle class="font-bold">Your library is empty</EmptyTitle>
+                <EmptyDescription>Your saved & liked tracks will appear here</EmptyDescription>
+            {/if}
+        </Empty>
     {/if}
 </div>

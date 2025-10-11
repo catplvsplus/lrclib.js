@@ -57,7 +57,7 @@
         class={cn(
             "grid gap-4 grid-cols-1 top-0",
             isAdvancedSearch.current
-                ? "xl:col-span-1"
+                ? "xl:col-span-1 h-fit"
                 : "xl:col-span-3 xl:grid-cols-3"
         )}
     >

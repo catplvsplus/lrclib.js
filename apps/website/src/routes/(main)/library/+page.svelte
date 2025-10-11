@@ -106,7 +106,7 @@
                     : "xl:col-span-3 min-h-[500px]"
             )}
         >
-            {#if !isEmptyQuery && !offlineSearchEngine.tracks.length}
+            {#if !isEmptyQuery && !offlineSearchEngine.tracks.length && offlineSearchEngine.status === 'idle'}
                 <EmptyMedia>
                     <HeartCrackIcon class="size-20 mx-auto"/>
                 </EmptyMedia>

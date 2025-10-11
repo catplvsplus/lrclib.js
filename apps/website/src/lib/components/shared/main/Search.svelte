@@ -155,7 +155,7 @@
                     <ListMusicIcon class="size-4"/>
                     <span>Showing {searchEngine.tracks.length} results</span>
                 </FlyInOut>
-            {:else if query && !isQueryEmpty(query)}
+            {:else if query && !isQueryEmpty(query) && searchEngine.status === 'idle'}
                 <FlyInOut class="flex items-center gap-1">
                     <ChartNoAxesGanttIcon class="size-4"/>
                     <span>No results found</span>

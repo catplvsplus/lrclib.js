@@ -1,5 +1,6 @@
 import lrclib, { type APIOptions, type Track } from 'lrclib.js';
 import { useDebounce } from 'runed';
+import { isQueryEmpty } from '../utils';
 
 
 export class SearchEngine {
@@ -9,16 +10,23 @@ export class SearchEngine {
 
     private _search = useDebounce(
         (query: APIOptions.Get.Search) => {
+            const isEmpty = isQueryEmpty(query);
+
+            if (isEmpty) {
+                this.status = null;
+                return Promise.resolve(this.tracks = []);
+            }
+
             return lrclib
                 .search(query)
                 .then(tracks => {
                     this.tracks = tracks;
-                    this.status = null;
+                    this.status = 'idle';
                     return tracks;
                 })
                 .catch(err => {
                     this.tracks = [];
-                    this.status = null;
+                    this.status = 'idle';
                     throw err;
                 })
         },
@@ -44,7 +52,7 @@ export class SearchEngine {
 }
 
 export namespace SearchEngine {
-    export type Status = 'searching';
+    export type Status = 'searching'|'idle';
 }
 
 export const searchEngine = new SearchEngine();

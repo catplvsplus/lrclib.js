@@ -80,7 +80,7 @@
                     : "xl:col-span-3 min-h-[500px]"
             )}
         >
-            {#if !isEmptyQuery && !searchEngine.tracks.length}
+            {#if !isEmptyQuery && !searchEngine.tracks.length && searchEngine.status === 'idle'}
                 <EmptyMedia>
                     <HeartCrackIcon class="size-20 mx-auto"/>
                 </EmptyMedia>

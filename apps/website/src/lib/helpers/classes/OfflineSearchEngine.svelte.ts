@@ -1,6 +1,7 @@
 import { type APIOptions, type Track } from 'lrclib.js';
 import { useDebounce } from 'runed';
 import { savedLyrics } from './SavedLyrics.svelte';
+import { isQueryEmpty } from '../utils';
 
 export class OfflineSearchEngine {
     public tracks: Track[] = $state([]);
@@ -9,16 +10,23 @@ export class OfflineSearchEngine {
 
     private _search = useDebounce(
         (query: APIOptions.Get.Search) => {
+            const isEmpty = isQueryEmpty(query);
+
+            if (isEmpty) {
+                this.status = null;
+                return Promise.resolve(this.tracks = []);
+            }
+
             return savedLyrics
                 .search(query, true)
                 .then(tracks => {
                     this.tracks = tracks;
-                    this.status = null;
+                    this.status = 'idle';
                     return tracks;
                 })
                 .catch(err => {
                     this.tracks = [];
-                    this.status = null;
+                    this.status = 'idle';
                     throw err;
                 })
         },
@@ -44,7 +52,7 @@ export class OfflineSearchEngine {
 }
 
 export namespace OfflineSearchEngine {
-    export type Status = 'searching';
+    export type Status = 'searching'|'idle';
 }
 
 export const offlineSearchEngine = new OfflineSearchEngine();

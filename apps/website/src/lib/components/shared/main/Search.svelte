@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "$app/state";
     import FlyInOut from '../FlyInOut.svelte';
-    import { AlbumIcon, ChartNoAxesGanttIcon, ListMusicIcon, LoaderIcon, SearchIcon, TextCursorInputIcon, TextIcon } from '@lucide/svelte';
+    import { AlbumIcon, ChartNoAxesGanttIcon, ListMusicIcon, LoaderIcon, SearchIcon, TextCursorIcon, TextCursorInputIcon, TextIcon } from '@lucide/svelte';
     import { SearchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
     import SearchInput from '../home/SearchInput.svelte';
     import { Input } from '@/components/ui/input';
@@ -11,23 +11,21 @@
     import ImportMetadata from '../publish/ImportMetadata.svelte';
     import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
     import { settings } from '$lib/helpers/classes/Settings.svelte';
-    import type { queryParameters } from 'sveltekit-search-params';
-    import { isQueryEmpty, isTrackSignatureSearch, parseQuery, stringifyQuery } from '$lib/helpers/utils';
+    import { isQueryEmpty, stringifyQuery } from '$lib/helpers/utils';
     import type { APIOptions } from 'lrclib.js';
     import { OfflineSearchEngine } from '$lib/helpers/classes/OfflineSearchEngine.svelte';
-    import { savedLyrics } from '../../../helpers/classes/SavedLyrics.svelte';
+    import { savedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
 
     let {
-        queryParams,
+        query = $bindable(),
         isAdvanced = $bindable(false),
         searchEngine
     }: {
-        queryParams: ReturnType<typeof queryParameters<{ q: true; track_name: true; artist_name: true; album_name: true; }>>;
+        query: APIOptions.Get.Search;
         isAdvanced?: boolean;
         searchEngine: SearchEngine|OfflineSearchEngine;
     } = $props();
 
-    let query = $derived(parseQuery($queryParams));
     let queryString = $derived(query ? stringifyQuery(query) : '');
 
     function search(options?: typeof query) {
@@ -37,25 +35,13 @@
     function setSearchMode(newMode: boolean) {
         isAdvanced = newMode;
 
-        search(fixURLQueryParams(query, newMode));
+        search(convertQuery(newMode));
     }
 
-    function fixURLQueryParams(query: APIOptions.Get.Search|null, isAdvanced: boolean) {
-        const isTrackSignatureQuery = query && isTrackSignatureSearch(query);
-
-        const newData = {
-            q: !isAdvanced && isTrackSignatureQuery
-                ? queryString
-                : null,
-            track_name: isAdvanced && !isTrackSignatureQuery
-                ? queryString
-                : null,
-            album_name: null,
-            artist_name: null
-        };
-
-        queryParams.set(newData);
-        return parseQuery(newData);
+    function convertQuery(isAdvanced: boolean): APIOptions.Get.Search {
+        return query = isAdvanced
+            ? { track_name: queryString }
+            : { q: queryString };
     }
 </script>
 
@@ -73,19 +59,16 @@
                     >
                         <ImportMetadata
                             disabled={searchEngine.status === 'searching'}
-                            setMetadata={async metadata => {
-                                search(parseQuery($queryParams = {
-                                    q: null,
-                                    track_name: metadata.trackName ?? null,
-                                    artist_name: metadata.artistName ?? null,
-                                    album_name: metadata.albumName ?? null
-                                }));
+                            setMetadata={async metadata => query = {
+                                track_name: metadata.trackName ?? '',
+                                album_name: metadata.albumName,
+                                artist_name: metadata.artistName
                             }}
                         />
                         <Card>
                             <CardHeader>
                                 <CardTitle class="flex items-center gap-1">
-                                    <TextIcon class="text-primary size-5"/>
+                                    <TextCursorIcon class="text-primary size-5"/>
                                     Advanced Search
                                 </CardTitle>
                                 <CardDescription>
@@ -98,11 +81,11 @@
                                     <Input
                                         id="track_name"
                                         bind:value={
-                                            () => $queryParams.track_name,
-                                            v => search(parseQuery($queryParams = {
-                                                ...$queryParams,
+                                            () => 'track_name' in query ? query.track_name : '',
+                                            v => query = {
+                                                ...query,
                                                 track_name: v
-                                            }))
+                                            }
                                         }
                                         placeholder="Some song (ft. some artist)"
                                     />
@@ -112,11 +95,11 @@
                                     <Input
                                         id="artist_name"
                                         bind:value={
-                                            () => $queryParams.artist_name,
-                                            v => search(parseQuery($queryParams = {
-                                                ...$queryParams,
+                                            () => 'artist_name' in query ? query.artist_name : '',
+                                            v => query = {
+                                                ...query,
                                                 artist_name: v
-                                            }))
+                                            }
                                         }
                                         placeholder="Some artist"
                                     />
@@ -126,11 +109,11 @@
                                     <Input
                                         id="album_name"
                                         bind:value={
-                                            () => $queryParams.album_name,
-                                            v => search(parseQuery($queryParams = {
-                                                ...$queryParams,
+                                            () => 'album_name' in query ? query.album_name : '',
+                                            v => query = {
+                                                ...query,
                                                 album_name: v
-                                            }))
+                                            }
                                         }
                                         placeholder="Some album"
                                     />
@@ -148,14 +131,7 @@
                     <SearchInput
                         bind:value={
                             () => queryString,
-                            v => {
-                                search(parseQuery($queryParams = {
-                                    q: v,
-                                    track_name: null,
-                                    artist_name: null,
-                                    album_name: null
-                                }))
-                            }
+                            v => query = { q: v }
                         }
                         placeholder="Search..."
                         onSubmit={event => {

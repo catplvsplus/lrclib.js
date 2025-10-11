@@ -1,12 +1,11 @@
 <script lang="ts">
-    import { cn, isQueryEmpty, parseQuery, stringifyQuery, isTrackSignatureSearch } from '$lib/helpers/utils.js';
+    import { cn, isQueryEmpty, stringifyQuery, isTrackSignatureSearch } from '$lib/helpers/utils.js';
     import { MetaTags } from 'svelte-meta-tags';
     import { onMount, untrack } from 'svelte';
     import Search from '$lib/components/shared/main/Search.svelte';
     import { PersistedState } from 'runed';
     import { HeartCrackIcon, LibraryBigIcon } from '@lucide/svelte';
     import TrackCard from '@/components/shared/track/TrackCard.svelte';
-    import { queryParameters } from 'sveltekit-search-params';
     import { offlineSearchEngine } from '$lib/helpers/classes/OfflineSearchEngine.svelte';
     import TracksSkeleton from '$lib/components/shared/track/TracksSkeleton.svelte';
     import { savedLyrics, type SavedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
@@ -14,14 +13,9 @@
     import LibraryFilter from '$lib/components/shared/main/LibraryFilter.svelte';
     import { Empty, EmptyDescription, EmptyMedia, EmptyTitle } from '@/components/ui/empty/index.js';
 
-    const queryParams = queryParameters({
-        q: true,
-        track_name: true,
-        artist_name: true,
-        album_name: true
-    });
+    let { data } = $props();
 
-    let query = $derived(parseQuery($queryParams));
+    let query = $derived(data.query);
     let queryString = $derived(query ? stringifyQuery(query) : '');
     let isEmptyQuery = $derived(isQueryEmpty(query ?? {}));
     let filter: (keyof SavedLyrics.FetchLibraryOptions)[] = $state([]);
@@ -67,7 +61,11 @@
                 : "xl:col-span-3 xl:grid-cols-3"
         )}
     >
-        <Search {queryParams} searchEngine={offlineSearchEngine} bind:isAdvanced={isAdvancedSearch.current}/>
+        <Search
+            bind:query={() => query ?? { q: '' }, v => query = v}
+            searchEngine={offlineSearchEngine}
+            bind:isAdvanced={isAdvancedSearch.current}
+        />
         <LibraryFilter bind:filter/>
     </div>
     {#if offlineSearchEngine.tracks.length || savedLyrics.size || offlineSearchEngine.status === 'searching'}

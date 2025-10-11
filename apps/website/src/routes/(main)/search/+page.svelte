@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { cn, isQueryEmpty, parseQuery, stringifyQuery, isTrackSignatureSearch } from '$lib/helpers/utils.js';
+    import { cn, isQueryEmpty, stringifyQuery, isTrackSignatureSearch } from '$lib/helpers/utils.js';
     import { MetaTags } from 'svelte-meta-tags';
     import { searchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
     import { onMount, untrack } from 'svelte';
@@ -7,18 +7,12 @@
     import { PersistedState } from 'runed';
     import { HeartCrackIcon, SearchIcon } from '@lucide/svelte';
     import TrackCard from '@/components/shared/track/TrackCard.svelte';
-    import { queryParameters } from 'sveltekit-search-params';
     import TracksSkeleton from '$lib/components/shared/track/TracksSkeleton.svelte';
     import { Empty, EmptyDescription, EmptyMedia, EmptyTitle } from '@/components/ui/empty/index.js';
 
-    const queryParams = queryParameters({
-        q: true,
-        track_name: true,
-        artist_name: true,
-        album_name: true
-    });
+    let { data } = $props();
 
-    let query = $derived(parseQuery($queryParams));
+    let query = $derived(data.query);
     let queryString = $derived(query ? stringifyQuery(query) : '');
     let isEmptyQuery = $derived(isQueryEmpty(query ?? {}));
     let isAdvancedSearch = new PersistedState('lrclib-advanced-search', false);
@@ -54,7 +48,11 @@
                 : "xl:col-span-3 xl:grid-cols-3"
         )}
     >
-        <Search {queryParams} searchEngine={searchEngine} bind:isAdvanced={isAdvancedSearch.current}/>
+        <Search
+            bind:query={() => query ?? { q: '' }, v => query = v}
+            searchEngine={searchEngine}
+            bind:isAdvanced={isAdvancedSearch.current}
+        />
     </div>
     {#if searchEngine.tracks.length || searchEngine.status === 'searching'}
         <div

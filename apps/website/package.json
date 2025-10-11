@@ -14,7 +14,7 @@
 	"devDependencies": {
 		"@icons-pack/svelte-simple-icons": "^6.4.0",
 		"@internationalized/date": "^3.10.0",
-		"@lucide/svelte": "^0.544.0",
+		"@lucide/svelte": "^0.545.0",
 		"@sveltejs/adapter-auto": "^6.0.2",
 		"@sveltejs/adapter-vercel": "^5.8.2",
 		"@sveltejs/kit": "^2.27.3",
@@ -23,7 +23,7 @@
 		"@types/humanize-duration": "^3.27.4",
 		"@types/luxon": "^3.7.1",
 		"@vite-pwa/assets-generator": "^1.0.1",
-		"bits-ui": "^2.11.4",
+		"bits-ui": "^2.11.5",
 		"clsx": "^2.1.1",
 		"formsnap": "^2.0.1",
 		"mode-watcher": "^1.1.0",
@@ -52,7 +52,6 @@
 		"music-metadata": "^11.9.0",
 		"svelte-dnd-action": "^0.9.65",
 		"svelte-meta-tags": "^4.4.1",
-		"sveltekit-search-params": "^3.0.0",
 		"zod": "^4.1.12"
 	}
 }

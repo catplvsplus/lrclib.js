@@ -63,18 +63,6 @@ export function stringifyQuery(query: APIOptions.Get.Search): string {
         : query.q ?? '';
 }
 
-export function parseQuery(query: PartialNull<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): APIOptions.Get.Search|null {
-    if ('track_name' in query && query.track_name !== undefined && query.track_name !== null) return {
-        track_name: query.track_name,
-        artist_name: query.artist_name ?? undefined,
-        album_name: query.album_name ?? undefined
-    }
-
-    if ('q' in query && query.q !== undefined && query.q !== null) return { q: query.q };
-
-    return null;
-}
-
 export function isQueryEmpty(query: Partial<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): boolean {
     if ('track_name' in query) {
         return !query.track_name?.trim() && !query.artist_name?.trim() && !query.album_name?.trim();

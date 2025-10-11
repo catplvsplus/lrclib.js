@@ -1,32 +1,22 @@
-import lrclib, { type APIOptions, type Track } from 'lrclib.js';
+import lrclib, { type APIOptions } from 'lrclib.js';
 import { useDebounce } from 'runed';
-import { isQueryEmpty } from '../utils';
+import { BaseSearchEngine } from './BaseSearchEngine.svelte';
 
 
-export class SearchEngine {
-    public tracks: Track[] = $state([]);
-    public status: SearchEngine.Status|null = $state(null);
-    public debounceWait = $state(1000);
-
-    private _search = useDebounce(
+export class SearchEngine extends BaseSearchEngine {
+    protected _search = useDebounce(
         (query: APIOptions.Get.Search) => {
-            const isEmpty = isQueryEmpty(query);
-
-            if (isEmpty) {
-                this.status = null;
-                return Promise.resolve(this.tracks = []);
-            }
 
             return lrclib
                 .search(query)
                 .then(tracks => {
                     this.tracks = tracks;
-                    this.status = 'idle';
+                    this.status = null;
                     return tracks;
                 })
                 .catch(err => {
                     this.tracks = [];
-                    this.status = 'idle';
+                    this.status = null;
                     throw err;
                 })
         },
@@ -34,25 +24,10 @@ export class SearchEngine {
     )
 
     constructor() {
+        super();
+
         this._search = this._search.bind(this);
-        this.search = this.search.bind(this);
-        this.clear = this.clear.bind(this);
     }
-
-    public async search(query: APIOptions.Get.Search|null): Promise<Track[]> {
-        this.status = 'searching';
-
-        return this._search(query ?? { q: '' });
-    }
-
-    public clear() {
-        this.tracks = [];
-        this.status = null;
-    }
-}
-
-export namespace SearchEngine {
-    export type Status = 'searching'|'idle';
 }
 
 export const searchEngine = new SearchEngine();

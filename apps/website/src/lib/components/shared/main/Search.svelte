@@ -28,7 +28,8 @@
 
     let queryString = $derived(query ? stringifyQuery(query) : '');
 
-    function search(options?: typeof query) {
+    function search(options?: APIOptions.Get.Search|null) {
+        console.log('search', options);
         searchEngine.search(options ?? query);
     }
 
@@ -59,11 +60,11 @@
                     >
                         <ImportMetadata
                             disabled={searchEngine.status === 'searching'}
-                            setMetadata={async metadata => query = {
+                            setMetadata={async metadata => search(query = {
                                 track_name: metadata.trackName ?? '',
                                 album_name: metadata.albumName,
                                 artist_name: metadata.artistName
-                            }}
+                            })}
                         />
                         <Card>
                             <CardHeader>
@@ -82,10 +83,10 @@
                                         id="track_name"
                                         bind:value={
                                             () => 'track_name' in query ? query.track_name : '',
-                                            v => query = {
+                                            v => search(query = {
                                                 ...query,
                                                 track_name: v
-                                            }
+                                            })
                                         }
                                         placeholder="Some song (ft. some artist)"
                                     />
@@ -96,10 +97,10 @@
                                         id="artist_name"
                                         bind:value={
                                             () => 'artist_name' in query ? query.artist_name : '',
-                                            v => query = {
+                                            v => search(query = {
                                                 ...query,
                                                 artist_name: v
-                                            }
+                                            })
                                         }
                                         placeholder="Some artist"
                                     />
@@ -110,10 +111,10 @@
                                         id="album_name"
                                         bind:value={
                                             () => 'album_name' in query ? query.album_name : '',
-                                            v => query = {
+                                            v => search(query = {
                                                 ...query,
                                                 album_name: v
-                                            }
+                                            })
                                         }
                                         placeholder="Some album"
                                     />
@@ -131,7 +132,7 @@
                     <SearchInput
                         bind:value={
                             () => queryString,
-                            v => query = { q: v }
+                            v => search(query = { q: v })
                         }
                         placeholder="Search..."
                         onSubmit={event => {
@@ -155,7 +156,7 @@
                     <ListMusicIcon class="size-4"/>
                     <span>Showing {searchEngine.tracks.length} results</span>
                 </FlyInOut>
-            {:else if query && !isQueryEmpty(query) && searchEngine.status === 'idle'}
+            {:else if query && !isQueryEmpty(query)}
                 <FlyInOut class="flex items-center gap-1">
                     <ChartNoAxesGanttIcon class="size-4"/>
                     <span>No results found</span>

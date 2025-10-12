@@ -23,6 +23,7 @@
 
 <MetaTags
     title="Lrclib.js | {player.playing ? `Now playing ${player.playing.title}` : 'Player'}"
+    description="Preview and play audio files with synced lyrics"
 />
 
 {#if !fullscreenLyricsDialogState.isOpen}

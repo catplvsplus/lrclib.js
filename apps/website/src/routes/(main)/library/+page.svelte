@@ -45,6 +45,7 @@
 <MetaTags
     title={queryString || 'all'}
     titleTemplate="Lrclib.js | Library %s"
+    description="Manage your library of liked and saved tracks"
 />
 
 <div

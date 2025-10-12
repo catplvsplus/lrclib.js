@@ -1,4 +1,5 @@
 {
+  "exclude": ["tsup.config.ts"],
   "compilerOptions": {
     "module": "esnext",
     "target": "esnext",

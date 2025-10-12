@@ -1,6 +1,6 @@
 <script lang="ts">
     import { resolve } from "$app/paths";
-    import { CirclePlayIcon, EqualIcon, GitBranchIcon, HouseIcon, UsersIcon, XIcon } from '@lucide/svelte';
+    import { CirclePlayIcon, EqualIcon, GitBranchIcon, GithubIcon, HouseIcon, UsersIcon, XIcon } from '@lucide/svelte';
     import Logo from '../svg/logo.svelte';
     import { Button, buttonVariants } from '$lib/components/ui/button';
     import ModeSwitcher from './ModeSwitcher.svelte';
@@ -31,8 +31,8 @@
         Contact
     </a>
     <a class={className} href={links.github} target="_blank" onclick={() => menuState.close()}>
-        <GitBranchIcon class={!showIcons ? 'hidden' : ''}/>
-        Contribute
+        <GithubIcon class={!showIcons ? 'hidden' : ''}/>
+        GitHub
     </a>
 {/snippet}
 

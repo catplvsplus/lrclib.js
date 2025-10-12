@@ -15,15 +15,20 @@
     import type { APIOptions } from 'lrclib.js';
     import { OfflineSearchEngine } from '$lib/helpers/classes/OfflineSearchEngine.svelte';
     import { savedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
+    import { onDestroy, onMount } from 'svelte';
+    import { SvelteURLSearchParams } from 'svelte/reactivity';
+    import { goto } from '$app/navigation';
 
     let {
         query = $bindable(),
         isAdvanced = $bindable(false),
-        searchEngine
+        searchEngine,
+        updateSearchParams = true
     }: {
         query: APIOptions.Get.Search;
         isAdvanced?: boolean;
         searchEngine: SearchEngine|OfflineSearchEngine;
+        updateSearchParams?: boolean;
     } = $props();
 
     let queryString = $derived(query ? stringifyQuery(query) : '');
@@ -44,6 +49,26 @@
             ? { track_name: queryString }
             : { q: queryString };
     }
+
+    function setSearchParams(): void {
+        if (!updateSearchParams) return;
+
+        let params = '';
+
+        for (const key of Object.keys(query)) {
+            params += `${key}=${encodeURIComponent(query[key as keyof APIOptions.Get.Search])}`
+        }
+
+        goto(`?${params}`, { keepFocus: true });
+    }
+
+    onMount(() => {
+        searchEngine.onSearch = () => setSearchParams();
+    });
+
+    onDestroy(() => {
+        searchEngine.onSearch = null;
+    })
 </script>
 
 <div class="grid gap-2 h-fit">

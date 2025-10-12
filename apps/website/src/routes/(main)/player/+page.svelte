@@ -8,7 +8,7 @@
     import PreviewCard from '$lib/components/shared/preview/PreviewCard.svelte';
     import { MetaTags } from 'svelte-meta-tags';
     import { fullscreenLyricsDialogState } from '@/components/shared/player/FullscreenLyrics.svelte';
-    import { Empty, EmptyContent, EmptyDescription, EmptyMedia, EmptyTitle } from '@/components/ui/empty/index.js';
+    import { Empty, EmptyContent, EmptyDescription, EmptyMedia, EmptyTitle, EmptyHeader } from '@/components/ui/empty/index.js';
     import { BoomBoxIcon, CirclePlusIcon, MusicIcon } from '@lucide/svelte';
     import { Button } from '../../../lib/components/ui/button';
 
@@ -43,12 +43,14 @@
             />
         </div>
     {:else}
-        <Empty class="h-full gap-0">
-            <EmptyMedia>
-                <BoomBoxIcon class="size-20 mx-auto"/>
-            </EmptyMedia>
-            <EmptyTitle class="font-bold">Queue is empty</EmptyTitle>
-            <EmptyDescription>Add audio files to the queue to start playing</EmptyDescription>
+        <Empty class="h-full">
+            <EmptyHeader>
+                <EmptyMedia variant="icon">
+                    <BoomBoxIcon/>
+                </EmptyMedia>
+                <EmptyTitle class="font-bold">Queue is empty</EmptyTitle>
+                <EmptyDescription>Add audio files to the queue to start playing</EmptyDescription>
+            </EmptyHeader>
             <EmptyContent class="mt-4">
                 <Button variant="secondary" onclick={() => player.filesInput?.click()}>
                     <CirclePlusIcon/>

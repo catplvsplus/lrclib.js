@@ -11,7 +11,7 @@
     import { savedLyrics, type SavedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
     import TrackErrorCard from '$lib/components/shared/track/TrackErrorCard.svelte';
     import LibraryFilter from '$lib/components/shared/main/LibraryFilter.svelte';
-    import { Empty, EmptyDescription, EmptyMedia, EmptyTitle } from '@/components/ui/empty/index.js';
+    import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty/index.js';
 
     let { data } = $props();
 
@@ -100,25 +100,27 @@
     {:else}
         <Empty
             class={cn(
-                "h-full gap-0",
+                "h-full",
                 isAdvancedSearch.current
                     ? "xl:col-span-2"
                     : "xl:col-span-3 min-h-[500px]"
             )}
         >
-            {#if !isEmptyQuery && !offlineSearchEngine.tracks.length && offlineSearchEngine.status === 'idle'}
-                <EmptyMedia>
-                    <HeartCrackIcon class="size-20 mx-auto"/>
-                </EmptyMedia>
-                <EmptyTitle>No results found</EmptyTitle>
-                <EmptyDescription>Try searching for another keyword</EmptyDescription>
-            {:else}
-                <EmptyMedia>
-                    <LibraryBigIcon class="size-20 mx-auto"/>
-                </EmptyMedia>
-                <EmptyTitle class="font-bold">Your library is empty</EmptyTitle>
-                <EmptyDescription>Your saved & liked tracks will appear here</EmptyDescription>
-            {/if}
+            <EmptyHeader>
+                {#if !isEmptyQuery && !offlineSearchEngine.tracks.length && offlineSearchEngine.status === 'idle'}
+                    <EmptyMedia variant="icon">
+                        <HeartCrackIcon/>
+                    </EmptyMedia>
+                    <EmptyTitle>No results found</EmptyTitle>
+                    <EmptyDescription>Try searching for another keyword</EmptyDescription>
+                {:else}
+                    <EmptyMedia variant="icon">
+                        <LibraryBigIcon/>
+                    </EmptyMedia>
+                    <EmptyTitle class="font-bold">Your library is empty</EmptyTitle>
+                    <EmptyDescription>Your saved & liked tracks will appear here</EmptyDescription>
+                {/if}
+            </EmptyHeader>
         </Empty>
     {/if}
 </div>

@@ -18,7 +18,7 @@
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../ui/dropdown-menu';
     import { goto } from '$app/navigation';
     import { lyricsSettingsDialogState } from '../preview/LyricsSettings.svelte';
-    import { Empty, EmptyDescription, EmptyTitle, EmptyMedia } from '../../ui/empty';
+    import { Empty, EmptyDescription, EmptyTitle, EmptyMedia, EmptyHeader } from '../../ui/empty';
 
     let {
         children
@@ -157,16 +157,18 @@
                 {:else}
                     {@const fetching = player.playing?.lyricsType === 'fetching'}
                     <div class="relative z-20 text-center flex h-full items-center">
-                        <Empty class="gap-0 font-normal">
-                            <EmptyMedia>
-                                {#if fetching}
-                                    <ScanSearchIcon class="size-20 mx-auto"/>
-                                {:else}
-                                    <HeartCrackIcon class="size-20 mx-auto"/>
-                                {/if}
-                            </EmptyMedia>
-                            <EmptyTitle class="font-bold">{fetching ? 'Loading...' : 'No lyrics available'}</EmptyTitle>
-                            <EmptyDescription>{fetching ? 'Looking for the right lyrics' : "You'll have to guess this one"}</EmptyDescription>
+                        <Empty class="font-normal">
+                            <EmptyHeader>
+                                <EmptyMedia variant="icon">
+                                    {#if fetching}
+                                        <ScanSearchIcon/>
+                                    {:else}
+                                        <HeartCrackIcon/>
+                                    {/if}
+                                </EmptyMedia>
+                                <EmptyTitle class="font-bold">{fetching ? 'Loading...' : 'No lyrics available'}</EmptyTitle>
+                                <EmptyDescription>{fetching ? 'Looking for the right lyrics' : "You'll have to guess this one"}</EmptyDescription>
+                            </EmptyHeader>
                         </Empty>
                     </div>
                 {/if}

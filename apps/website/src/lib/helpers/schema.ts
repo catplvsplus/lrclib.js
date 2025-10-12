@@ -16,3 +16,15 @@ export const publishTrackSchema = z.object({
 });
 
 export type PublishTrackSchema = z.infer<typeof publishTrackSchema>;
+
+export const searchTrackQuerySchema = z.object({
+    q: z.string().min(1).default(''),
+});
+
+export const searchTrackSignatureSchema = z.object({
+    track_name: z.string().min(1).default(''),
+    artist_name: z.string().min(1).optional(),
+    album_name: z.string().min(1).optional(),
+});
+
+export const searchTrackSchema = z.union([searchTrackQuerySchema, searchTrackSignatureSchema]);

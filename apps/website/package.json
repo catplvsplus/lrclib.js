@@ -49,7 +49,7 @@
 		"is-mobile": "^5.0.0",
 		"lrclib.js": "^1.0.0",
 		"luxon": "^3.7.2",
-		"music-metadata": "^11.9.0",
+		"music-metadata": "^11.8.3",
 		"svelte-dnd-action": "^0.9.65",
 		"svelte-meta-tags": "^4.4.1",
 		"zod": "^4.1.12"

@@ -13,7 +13,7 @@
     import LyricsSettings, { lyricsSettingsDialogState } from './LyricsSettings.svelte';
     import type { PlayerTrack } from '$lib/helpers/classes/PlayerTrack.svelte';
     import { fullscreenLyricsDialogState } from '../player/FullscreenLyrics.svelte';
-    import { Empty, EmptyDescription, EmptyTitle, EmptyMedia } from '../../ui/empty';
+    import { Empty, EmptyDescription, EmptyTitle, EmptyMedia, EmptyHeader } from '../../ui/empty';
 
     let {
         track,
@@ -70,16 +70,18 @@
     {:else}
         {@const fetching = track.lyricsType === 'fetching'}
         <CardContent class="relative z-20 text-center flex h-full items-center">
-            <Empty class="gap-0">
-                <EmptyMedia>
-                    {#if fetching}
-                        <ScanSearchIcon class="size-20 mx-auto"/>
-                    {:else}
-                        <HeartCrackIcon class="size-20 mx-auto"/>
-                    {/if}
-                </EmptyMedia>
-                <EmptyTitle class="font-bold">{fetching ? 'Loading...' : 'No lyrics available'}</EmptyTitle>
-                <EmptyDescription>{fetching ? 'Looking for the right lyrics' : "You'll have to guess this one"}</EmptyDescription>
+            <Empty>
+                <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                        {#if fetching}
+                            <ScanSearchIcon/>
+                        {:else}
+                            <HeartCrackIcon/>
+                        {/if}
+                    </EmptyMedia>
+                    <EmptyTitle class="font-bold">{fetching ? 'Loading...' : 'No lyrics available'}</EmptyTitle>
+                    <EmptyDescription>{fetching ? 'Looking for the right lyrics' : "You'll have to guess this one"}</EmptyDescription>
+                </EmptyHeader>
             </Empty>
         </CardContent>
     {/if}

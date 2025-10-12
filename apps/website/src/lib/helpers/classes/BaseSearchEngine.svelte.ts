@@ -7,6 +7,8 @@ export abstract class BaseSearchEngine {
     public status: BaseSearchEngine.Status|null = $state(null);
     public debounceWait = $state(500);
 
+    public onSearch: ((query: APIOptions.Get.Search|null) => void)|null = null;
+
     constructor() {
         this.search = this.search.bind(this);
         this.clear = this.clear.bind(this);

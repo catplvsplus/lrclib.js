@@ -8,7 +8,7 @@
     import { HeartCrackIcon, SearchIcon } from '@lucide/svelte';
     import TrackCard from '@/components/shared/track/TrackCard.svelte';
     import TracksSkeleton from '$lib/components/shared/track/TracksSkeleton.svelte';
-    import { Empty, EmptyDescription, EmptyMedia, EmptyTitle } from '@/components/ui/empty/index.js';
+    import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty/index.js';
 
     let { data } = $props();
 
@@ -74,25 +74,27 @@
     {:else}
         <Empty
             class={cn(
-                "h-full gap-0",
+                "h-full",
                 isAdvancedSearch.current
                     ? "xl:col-span-2"
                     : "xl:col-span-3 min-h-[500px]"
             )}
         >
-            {#if !isEmptyQuery && !searchEngine.tracks.length && searchEngine.status === 'idle'}
-                <EmptyMedia>
-                    <HeartCrackIcon class="size-20 mx-auto"/>
-                </EmptyMedia>
-                <EmptyTitle>No results found</EmptyTitle>
-                <EmptyDescription>Try searching for another keyword</EmptyDescription>
-            {:else}
-                <EmptyMedia>
-                    <SearchIcon class="size-20 mx-auto"/>
-                </EmptyMedia>
-                <EmptyTitle class="font-bold">Search for lyrics</EmptyTitle>
-                <EmptyDescription>Start typing to search lyrics</EmptyDescription>
-            {/if}
+            <EmptyHeader>
+                {#if !isEmptyQuery && !searchEngine.tracks.length && searchEngine.status === 'idle'}
+                    <EmptyMedia variant="icon">
+                        <HeartCrackIcon/>
+                    </EmptyMedia>
+                    <EmptyTitle>No results found</EmptyTitle>
+                    <EmptyDescription>Try searching for another keyword</EmptyDescription>
+                {:else}
+                    <EmptyMedia variant="icon">
+                        <SearchIcon/>
+                    </EmptyMedia>
+                    <EmptyTitle class="font-bold">Search for lyrics</EmptyTitle>
+                    <EmptyDescription>Start typing to search lyrics</EmptyDescription>
+                {/if}
+            </EmptyHeader>
         </Empty>
     {/if}
 </div>

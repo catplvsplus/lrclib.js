@@ -19,6 +19,7 @@ export class OfflineSearchEngine extends BaseSearchEngine {
                 .then(tracks => {
                     this.tracks = tracks;
                     this.status = null;
+                    this.onSearch?.(query);
                     return tracks;
                 })
                 .catch(err => {

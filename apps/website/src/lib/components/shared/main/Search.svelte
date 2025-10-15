@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "$app/state";
     import FlyInOut from '../FlyInOut.svelte';
-    import { AlbumIcon, ChartNoAxesGanttIcon, ListMusicIcon, LoaderIcon, SearchIcon, TextCursorIcon, TextCursorInputIcon, TextIcon } from '@lucide/svelte';
+    import { AlbumIcon, ChartNoAxesGanttIcon, ListMusicIcon, LoaderIcon, SearchIcon, TextCursorIcon, TextCursorInputIcon } from '@lucide/svelte';
     import { SearchEngine } from '$lib/helpers/classes/SearchEngine.svelte';
     import SearchInput from '../home/SearchInput.svelte';
     import { Input } from '@/components/ui/input';
@@ -53,13 +53,15 @@
     function setSearchParams(): void {
         if (!updateSearchParams) return;
 
-        let params = '';
+        let params: string[] = [];
 
         for (const key of Object.keys(query)) {
-            params += `${key}=${encodeURIComponent(query[key as keyof APIOptions.Get.Search])}`
+            const value = query[key as keyof APIOptions.Get.Search];
+
+            if (value) params.push(`${key}=${encodeURIComponent(value)}`);
         }
 
-        goto(`?${params}`, { keepFocus: true });
+        goto(`?${params.join('&')}`, { keepFocus: true });
     }
 
     onMount(() => {

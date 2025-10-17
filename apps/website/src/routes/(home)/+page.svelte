@@ -2,10 +2,12 @@
     import { links } from '$lib/helpers/constants';
     import InstallCommand from '$lib/components/shared/home/InstallCommand.svelte';
     import SearchInput from '$lib/components/shared/home/SearchInput.svelte';
-    import LibUsageCode from '$lib/components/shared/home/LibUsageCode.svelte';
+    import CodeBlock from '@/components/shared/home/CodeBlock.svelte';
     import { Button } from '$lib/components/ui/button';
     import { resolve } from '$app/paths';
     import { MetaTags } from 'svelte-meta-tags';
+
+    let { data } = $props();
 
     let metatags = {
         title: 'Lrclib.js',
@@ -33,7 +35,9 @@
         <InstallCommand/>
     </div>
 </div>
+{#await data.code then code}
 <div class="text-center pb-10">
     <h1 class="sm:text-3xl text-2xl font-bold tracking-wide text-foreground/80 text-shadow-current/20">Library Usage</h1>
-    <LibUsageCode class="mt-5 w-full max-w-4xl mx-auto rounded-xl"/>
+    <CodeBlock {code} class="mt-5 w-full max-w-4xl mx-auto rounded-xl"/>
 </div>
+{/await}

@@ -1,5 +1,5 @@
 import { superValidate, message } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { publishTrackSchema } from '$lib/helpers/schema.js';
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
@@ -7,7 +7,7 @@ import { REST, Routes } from 'lrclib.js';
 
 export const actions: Actions = {
     default: async event => {
-        const form = await superValidate(event.request, zod(publishTrackSchema));
+        const form = await superValidate(event.request, zod4(publishTrackSchema));
 
         if (!form.data.token) return fail(400, { form, message: 'Missing publish token' });
         if (!form.valid) return fail(400, { form });

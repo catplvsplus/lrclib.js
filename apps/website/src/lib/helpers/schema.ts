@@ -1,5 +1,5 @@
 import { LRC } from 'lrclib.js';
-import z from 'zod/v3';
+import z from 'zod';
 
 export const publishTrackSchema = z.object({
     trackName: z.string().min(1).default(''),

@@ -10,7 +10,6 @@
     import { toast } from 'svelte-sonner';
     import FlyInOut from '../FlyInOut.svelte';
     import { cn } from '../../../helpers/utils';
-    import { tr } from 'zod/locales';
 
     let {
         track

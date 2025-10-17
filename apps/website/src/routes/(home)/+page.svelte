@@ -6,13 +6,18 @@
     import { Button } from '$lib/components/ui/button';
     import { resolve } from '$app/paths';
     import { MetaTags } from 'svelte-meta-tags';
+
+    let metatags = {
+        title: 'Lrclib.js',
+        description: 'A library interacting with lrclib.net API'
+    };
 </script>
 
 <svelte:head>
     <title>Lrclib.js</title>
 </svelte:head>
 
-<MetaTags title="Lrclib.js" description="A library interacting with lrclib.net API"/>
+<MetaTags {...metatags} openGraph={metatags}/>
 
 <div class="text-center pt-24 pb-18">
     <Button size="sm" variant="outline" href={resolve('/(main)/player')} class="rounded-full font-bold text-foreground/70 mb-2 text-xs">

@@ -3,9 +3,9 @@
     import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '$lib/components/ui/card';
     import { InfoIcon, LoaderIcon, ClockIcon, BadgeCheckIcon, SquarePenIcon, KeyIcon, CircleAlertIcon } from '@lucide/svelte';
     import { Input } from '$lib/components/ui/input';
-    import { Button, FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
+    import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
     import { superForm } from 'sveltekit-superforms';
-    import { zodClient } from 'sveltekit-superforms/adapters';
+    import { zod4Client } from 'sveltekit-superforms/adapters';
     import { publishTrackSchema } from '$lib/helpers/schema';
     import { toast } from 'svelte-sonner';
     import { formatDurationString, formatNumberString } from '$lib/helpers/utils';
@@ -19,13 +19,14 @@
     import { tokenSolver } from '$lib/helpers/classes/TokenSolver.svelte.js';
     import { publishDraft } from '$lib/helpers/classes/PublishDraft.svelte.js';
     import { MetaTags } from 'svelte-meta-tags';
+    import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '../../../lib/components/ui/input-group/index.js';
 
     let { data } = $props();
 
     let submitStatus: string|undefined = $state();
 
     const form = superForm(data.form, {
-        validators: zodClient(publishTrackSchema),
+        validators: zod4Client(publishTrackSchema),
         validationMethod: 'auto',
         dataType: 'json',
         taintedMessage: true,
@@ -92,7 +93,7 @@
             });
 
             publishDraft.set({});
-            formData.set({}, { taint: 'untaint-form' });
+            formData.update({}, { taint: 'untaint-form' });
             submitStatus = undefined;
         }
     });
@@ -205,51 +206,53 @@
                     <FormControl>
                         {#snippet children({ props })}
                             <FormLabel>Token</FormLabel>
-                            <div class="flex gap-2 sm:flex-row flex-col">
-                                <Input {...props} bind:value={$formData.token} disabled={$submitting || isGeneratingToken} placeholder="Your publish token"/>
-                                <Button
-                                    variant="secondary"
-                                    type="button"
-                                    class="overflow-hidden relative"
-                                    disabled={$submitting || isGeneratingToken || !!$formData.token}
-                                    onclick={async () => {
-                                        resetToken();
-                                        isGeneratingToken = true;
+                            <InputGroup class="flex gap-2 sm:flex-row flex-col">
+                                <InputGroupInput {...props} bind:value={$formData.token} disabled={$submitting || isGeneratingToken} placeholder="Your publish token"/>
+                                <InputGroupAddon align="inline-end">
+                                    <InputGroupButton
+                                        variant="secondary"
+                                        type="button"
+                                        class="overflow-hidden relative text-sm"
+                                        disabled={$submitting || isGeneratingToken || !!$formData.token}
+                                        onclick={async () => {
+                                            resetToken();
+                                            isGeneratingToken = true;
 
-                                        const challenge = await lrclib.requestChallenge();
+                                            const challenge = await lrclib.requestChallenge();
 
-                                        tokenSolver.onAbort = () => {
-                                            toast.error('Challenge solving aborted');
-                                        }
+                                            tokenSolver.onAbort = () => {
+                                                toast.error('Challenge solving aborted');
+                                            }
 
-                                        tokenSolver.solve(challenge)
-                                            .then(() => {
-                                                $formData.token = tokenSolver.solver?.token ?? '';
-                                                toast.success('Challenge solved, token generated');
-                                            }).catch(err => {
-                                                if (err.message === 'Challenge solving aborted') return;
-                                                console.error(err);
-                                                toast.error('Failed to solve challenge');
-                                            });
-                                    }}
-                                >
-                                    {#if isGeneratingToken}
-                                        <FlyInOut class="flex gap-2" inY={30} outY={-30}>
-                                            <LoaderIcon class="animate-spin"/>
-                                            <span>Generating</span>
-                                        </FlyInOut>
-                                    {:else}
-                                        <FlyInOut class="flex gap-2" inY={30} outY={-30}>
-                                            <KeyIcon/>
-                                            <span>Generate</span>
-                                        </FlyInOut>
-                                    {/if}
-                                    <div class="flex gap-2 opacity-0">
-                                        <KeyIcon/>
-                                        <span>{tokenSolver.status === 'solving' ? 'Generating' : 'Generate'}</span>
-                                    </div>
-                                </Button>
-                            </div>
+                                            tokenSolver.solve(challenge)
+                                                .then(() => {
+                                                    $formData.token = tokenSolver.solver?.token ?? '';
+                                                    toast.success('Challenge solved, token generated');
+                                                }).catch(err => {
+                                                    if (err.message === 'Challenge solving aborted') return;
+                                                    console.error(err);
+                                                    toast.error('Failed to solve challenge');
+                                                });
+                                        }}
+                                    >
+                                        {#if !isGeneratingToken}
+                                            <FlyInOut class="flex gap-1 items-center" inY={30} outY={-30}>
+                                                <LoaderIcon class="animate-spin size-3.5"/>
+                                                <span>Loading</span>
+                                            </FlyInOut>
+                                        {:else}
+                                            <FlyInOut class="flex gap-1 items-center" inY={30} outY={-30}>
+                                                <KeyIcon class=" size-3.5"/>
+                                                <span>Generate</span>
+                                            </FlyInOut>
+                                        {/if}
+                                        <div class="flex gap-1 opacity-0 items-center">
+                                            <KeyIcon class="size-3.5"/>
+                                            <span>{tokenSolver.status === 'solving' ? 'Loading' : 'Generate'}</span>
+                                        </div>
+                                    </InputGroupButton>
+                                </InputGroupAddon>
+                            </InputGroup>
                         {/snippet}
                     </FormControl>
                     <FormFieldErrors/>

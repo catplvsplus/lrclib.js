@@ -5,7 +5,7 @@
     import { Input } from '$lib/components/ui/input';
     import { FormButton, FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
     import { superForm } from 'sveltekit-superforms';
-    import { zod4Client } from 'sveltekit-superforms/adapters';
+    import { zodClient } from 'sveltekit-superforms/adapters';
     import { publishTrackSchema } from '$lib/helpers/schema';
     import { toast } from 'svelte-sonner';
     import { formatDurationString, formatNumberString } from '$lib/helpers/utils';
@@ -26,7 +26,7 @@
     let submitStatus: string|undefined = $state();
 
     const form = superForm(data.form, {
-        validators: zod4Client(publishTrackSchema),
+        validators: zodClient(publishTrackSchema),
         validationMethod: 'auto',
         dataType: 'json',
         taintedMessage: true,
@@ -93,7 +93,14 @@
             });
 
             publishDraft.set({});
-            formData.update({}, { taint: 'untaint-form' });
+            formData.set({
+                trackName: '',
+                albumName: '',
+                artistName: '',
+                duration: 0,
+                plainLyrics: '',
+                syncedLyrics: '',
+            }, { taint: 'untaint-form' });
             submitStatus = undefined;
         }
     });

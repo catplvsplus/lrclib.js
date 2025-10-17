@@ -11,7 +11,7 @@
     let {
         form
     }: {
-        form: SuperForm<Partial<PublishTrackSchema>>;
+        form: SuperForm<PublishTrackSchema>;
     } = $props();
 
     const { form: formData, submitting } = form;

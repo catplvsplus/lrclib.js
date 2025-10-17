@@ -213,7 +213,7 @@
                     <FormControl>
                         {#snippet children({ props })}
                             <FormLabel>Token</FormLabel>
-                            <InputGroup class="flex gap-2 sm:flex-row flex-col">
+                            <InputGroup class="flex">
                                 <InputGroupInput {...props} bind:value={$formData.token} disabled={$submitting || isGeneratingToken} placeholder="Your publish token"/>
                                 <InputGroupAddon align="inline-end">
                                     <InputGroupButton
@@ -232,8 +232,8 @@
                                             }
 
                                             tokenSolver.solve(challenge)
-                                                .then(() => {
-                                                    $formData.token = tokenSolver.solver?.token ?? '';
+                                                .then(data => {
+                                                    $formData.token = data.token;
                                                     toast.success('Challenge solved, token generated');
                                                 }).catch(err => {
                                                     if (err.message === 'Challenge solving aborted') return;
@@ -242,7 +242,7 @@
                                                 });
                                         }}
                                     >
-                                        {#if !isGeneratingToken}
+                                        {#if isGeneratingToken}
                                             <FlyInOut class="flex gap-1 items-center" inY={30} outY={-30}>
                                                 <LoaderIcon class="animate-spin size-3.5"/>
                                                 <span>Loading</span>

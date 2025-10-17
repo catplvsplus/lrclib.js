@@ -11,43 +11,57 @@
     import ImportMetadata from '../publish/ImportMetadata.svelte';
     import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
     import { settings } from '$lib/helpers/classes/Settings.svelte';
-    import { isQueryEmpty, stringifyQuery } from '$lib/helpers/utils';
+    import { isQueryEmpty, isTrackSignatureSearch, stringifyQuery } from '$lib/helpers/utils';
     import type { APIOptions } from 'lrclib.js';
     import { OfflineSearchEngine } from '$lib/helpers/classes/OfflineSearchEngine.svelte';
     import { savedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
     import { onDestroy, onMount } from 'svelte';
-    import { SvelteURLSearchParams } from 'svelte/reactivity';
     import { goto } from '$app/navigation';
 
     let {
         query = $bindable(),
         isAdvanced = $bindable(false),
         searchEngine,
+        trackNameRequired = false,
         updateSearchParams = true
     }: {
         query: APIOptions.Get.Search;
         isAdvanced?: boolean;
         searchEngine: SearchEngine|OfflineSearchEngine;
+        trackNameRequired?: boolean;
         updateSearchParams?: boolean;
     } = $props();
 
     let queryString = $derived(query ? stringifyQuery(query) : '');
 
     function search(options?: APIOptions.Get.Search|null) {
-        console.log('search', options);
-        searchEngine.search(options ?? query);
+        options = convertQuery(isAdvanced, options ?? query);
+
+        searchEngine.search(options);
     }
 
-    function setSearchMode(newMode: boolean) {
-        isAdvanced = newMode;
+    function setSearchMode(advanced: boolean) {
+        isAdvanced = advanced;
 
-        search(convertQuery(newMode));
+        search(convertQuery(advanced));
     }
 
-    function convertQuery(isAdvanced: boolean): APIOptions.Get.Search {
-        return query = isAdvanced
-            ? { track_name: queryString }
-            : { q: queryString };
+    function convertQuery(isAdvanced: boolean, data?: APIOptions.Get.Search): APIOptions.Get.Search {
+        data ??= query;
+
+        if (isAdvanced) {
+            if (isTrackSignatureSearch(data)) {
+                return query = {
+                    track_name: (data as APIOptions.Get.SearchTrackSignature).track_name ?? '',
+                    artist_name: (data as APIOptions.Get.SearchTrackSignature).artist_name,
+                    album_name: (data as APIOptions.Get.SearchTrackSignature).album_name
+                };
+            }
+
+            return query = { track_name: stringifyQuery(data) };
+        } else {
+            return query = { q: 'q' in data ? data.q : stringifyQuery(data) }
+        }
     }
 
     function setSearchParams(): void {
@@ -58,11 +72,13 @@
         for (const key of Object.keys(query)) {
             const value = query[key as keyof APIOptions.Get.Search];
 
-            if (value) params.push(`${key}=${encodeURIComponent(value)}`);
+            if (value !== undefined) params.push(`${key}=${encodeURIComponent(value)}`);
         }
 
         goto(`?${params.join('&')}`, { keepFocus: true });
     }
+
+    $inspect(query);
 
     onMount(() => {
         searchEngine.onSearch = () => setSearchParams();
@@ -122,6 +138,7 @@
                                     <Label for="artist_name" class="text-sm text-foreground/70 font-semibold">Artist name</Label>
                                     <Input
                                         id="artist_name"
+                                        disabled={trackNameRequired && (!('track_name' in query) || !query.track_name)}
                                         bind:value={
                                             () => 'artist_name' in query ? query.artist_name : '',
                                             v => search(query = {
@@ -136,6 +153,7 @@
                                     <Label for="album_name" class="text-sm text-foreground/70 font-semibold">Album name</Label>
                                     <Input
                                         id="album_name"
+                                        disabled={trackNameRequired && (!('track_name' in query) || !query.track_name)}
                                         bind:value={
                                             () => 'album_name' in query ? query.album_name : '',
                                             v => search(query = {

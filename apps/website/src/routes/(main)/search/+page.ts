@@ -11,8 +11,8 @@ export async function load({ url }) {
 
     let query: APIOptions.Get.Search|null = null;
 
-    if (track_name) {
-        query = { track_name, artist_name, album_name };
+    if (track_name || artist_name || album_name) {
+        query = { track_name: track_name ?? '', artist_name, album_name };
     } else if (q) {
         query = { q };
     }

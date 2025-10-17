@@ -12,8 +12,6 @@ export const actions: Actions = {
         if (!form.data.token) return fail(400, { form, message: 'Missing publish token' });
         if (!form.valid) return fail(400, { form });
 
-        console.log(form.data.token);
-
         return REST.post(Routes['/api/publish'](), {
             json: form.data,
             headers: {

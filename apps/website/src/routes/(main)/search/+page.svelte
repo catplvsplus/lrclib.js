@@ -52,6 +52,7 @@
             bind:query={() => query ?? { q: '' }, v => query = v}
             searchEngine={searchEngine}
             bind:isAdvanced={isAdvancedSearch.current}
+            trackNameRequired={true}
         />
     </div>
     {#if searchEngine.tracks.length || searchEngine.status === 'searching'}

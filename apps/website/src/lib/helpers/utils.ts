@@ -58,13 +58,13 @@ export const formatDurationString = humanizeDuration.humanizer({
 });
 
 export function stringifyQuery(query: APIOptions.Get.Search): string {
-    return 'track_name' in query
+    return ((q: APIOptions.Get.Search): q is APIOptions.Get.SearchTrackSignature => !!isTrackSignatureSearch(q))(query)
         ? `${query.track_name}${query.artist_name ? ` ${query.artist_name}` : ''}`
         : query.q ?? '';
 }
 
 export function isQueryEmpty(query: Partial<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): boolean {
-    if ('track_name' in query) {
+    if (isTrackSignatureSearch(query)) {
         return !query.track_name?.trim() && !query.artist_name?.trim() && !query.album_name?.trim();
     }
 
@@ -74,7 +74,7 @@ export function isQueryEmpty(query: Partial<APIOptions.Get.SearchQuery & APIOpti
 }
 
 export function isTrackSignatureSearch(query: Partial<APIOptions.Get.SearchQuery & APIOptions.Get.SearchTrackSignature>): boolean|null {
-    if ('track_name' in query) return true;
+    if ('track_name' in query || 'artist_name' in query || 'album_name' in query) return true;
     if ('q' in query) return false;
     return null;
 }

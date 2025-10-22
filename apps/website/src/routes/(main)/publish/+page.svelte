@@ -43,6 +43,11 @@
         onSubmit: async data => {
             saveToDraft();
 
+            const cancel = () => {
+                data.cancel();
+                throw new Error('Challenge solving terminated');
+            };
+
             if (notifications.permission === 'default') {
                 toast(`Enable notification to get notified when track is published`, {
                     action: {
@@ -53,25 +58,22 @@
             }
 
             if (!$formData.token) {
-                tokenSolver.onAbort = () => {
-                    data.cancel();
-                    throw new Error('Challenge solving aborted');
-                }
+                tokenSolver.onTerminatedEvent = cancel;
 
                 if (tokenSolver.status === 'solving') {
                     submitStatus = 'Solving challenge';
 
-                    await tokenSolver.onSolved.catch(tokenSolver.onAbort);
-                } else if (!tokenSolver.status || tokenSolver.status === 'aborted') {
+                    await tokenSolver.onSolved.catch(cancel);
+                } else if (!tokenSolver.status) {
                     submitStatus = 'Fetching challenge';
 
                     const challenge = await lrclib.requestChallenge();
 
                     submitStatus = 'Solving challenge';
-                    await tokenSolver.solve(challenge).catch(tokenSolver.onAbort);
+                    await tokenSolver.solve(challenge).catch(cancel);
                 }
 
-                $formData.token = tokenSolver.solver?.token;
+                $formData.token = tokenSolver.token ?? '';
             }
 
             submitStatus = 'Publishing';
@@ -124,7 +126,8 @@
 
     function resetToken() {
         $formData.token = '';
-        tokenSolver.reset(true);
+        tokenSolver.terminate();
+        tokenSolver.reset();
     }
 
     $effect(() => {
@@ -137,7 +140,7 @@
                 action: {
                     label: 'Abort',
                     onClick: async () => {
-                        await tokenSolver.abort();
+                        await tokenSolver.terminate();
                         toast.success('Challenge solving aborted');
                     }
                 }
@@ -227,13 +230,13 @@
 
                                             const challenge = await lrclib.requestChallenge();
 
-                                            tokenSolver.onAbort = () => {
+                                            tokenSolver.onTerminatedEvent = () => {
                                                 toast.error('Challenge solving aborted');
-                                            }
+                                            };
 
                                             tokenSolver.solve(challenge)
                                                 .then(data => {
-                                                    $formData.token = data.token;
+                                                    $formData.token = data;
                                                     toast.success('Challenge solved, token generated');
                                                 }).catch(err => {
                                                     if (err.message === 'Challenge solving aborted') return;
@@ -313,7 +316,7 @@
                             {#if tokenSolver.status === 'solving' && $submitting}
                                 <FlyInOut class={sharedClass}>
                                     {#key tokenSolver.attempts}
-                                        <span>{formatDurationString(Date.now() - (tokenSolver.solver?.solveStartTime ?? Date.now()))} • {formatNumberString(tokenSolver.attempts ?? 0)} hash attempts</span>
+                                        <span>{formatDurationString(Date.now() - (tokenSolver.start ?? Date.now()))} • {formatNumberString(tokenSolver.attempts ?? 0)} hash attempts</span>
                                     {/key}
                                 </FlyInOut>
                             {:else if tokenSolver.status === 'solved' && !$submitting}
@@ -340,7 +343,7 @@
                         </div>
                     {/if}
                     {#if tokenSolver.status === 'solving' && $submitting}
-                        <FormButton type="button" variant="secondary" onclick={tokenSolver.abort}>
+                        <FormButton type="button" variant="secondary" onclick={() => tokenSolver.terminate()}>
                             Cancel
                         </FormButton>
                     {/if}

@@ -1,86 +1,121 @@
-import { ChallengeSolver, type APIResponse } from 'lrclib.js';
+import ChallengeSolver from '$lib/workers/challengeSolver?worker';
+import lrclib, { type APIResponse } from 'lrclib.js';
+import type { Events, Responses } from '../workers';
 
 // TODO: Use faster method for solving proof-of-work challenge like https://lrclibup.boidu.dev/
 export class TokenSolver {
-    private _onSolved: ((err?: Error) => void)[] = [];
+    private onSolvedEvents: ((token: string) => void)[] = [];
 
+    public solver: InstanceType<typeof ChallengeSolver>|null = $state(null);
+    public status: TokenSolver.State = $state(null);
     public attempts: number|null = $state(null);
-    public solver: ChallengeSolver|null = $state(null);
-    public status: TokenSolver.State|null = $state(null);
+    public nonce: number|null = $state(null);
+    public token: string|null = $state(null);
 
-    public onAbort: (() => void)|null = $state(null);
+    public start: number|null = $state(null);
+    public end: number|null = $state(null);
 
-    public constructor() {
+    public onTerminatedEvent: (() => void)|null = null;
+
+    constructor() {
         this.solve = this.solve.bind(this);
-        this.abort = this.abort.bind(this);
+        this.postMessage = this.postMessage.bind(this);
+        this.onMessage = this.onMessage.bind(this);
     }
 
-    get onSolved(): Promise<ChallengeSolver> {
+    get onSolved(): Promise<string> {
         return new Promise((resolve, reject) => {
-            if (this.status !== 'solving') return reject(new Error('Token solver is not solving'));
-
-            this._onSolved.push((err) => err ? reject(err) : resolve(this.solver!));
-        });
-    }
-
-    public async solve(challenge: APIResponse.Post.RequestChallenge): Promise<ChallengeSolver> {
-        if (this.status === 'solving') throw new Error('Token solver is already solving');
-
-        this.solver = new ChallengeSolver(challenge, {
-            onAttempt: () => {
-                this.attempts = this.solver?.attempts ?? null;
-                this.status = 'solving';
+            if (this.status !== 'solving' && this.status !== 'idle') {
+                reject(new Error('Token solver is not solving a challenge'));
+                return;
             }
+
+            this.onSolvedEvents.push(resolve);
+        });
+    }
+
+    public async solve(challenge?: APIResponse.Post.RequestChallenge): Promise<string> {
+        if (this.status !== null) throw new Error('Token solver is already solving a challenge');
+
+        challenge ??= await lrclib.requestChallenge();
+
+        this.attempts = null;
+        this.nonce = null;
+        this.status = 'idle';
+
+        this.solver = new ChallengeSolver();
+
+        this.solver.addEventListener('message', this.onMessage);
+
+        this.postMessage({
+            type: 'CHALLENGE',
+            data: challenge
         });
 
-        this.solver.abortController?.signal.addEventListener('abort', () => {
-            this.status = 'aborted';
-            this.attempts = null;
-
-            this.onAbort?.();
-        });;
-
-        await this.solver.solve()
-            .then(() => {
-                this.status = 'solved';
-                this._onSolved.forEach(solve => solve());
-                this._onSolved = [];
-            })
-            .catch(err => {
-                console.error(err);
-                this.abort();
-
-                this._onSolved.forEach(solve => solve(err));
-                this._onSolved = [];
-
-                throw err;
-            });
-
-        return this.solver;
+        return this.onSolved;
     }
 
-    public reset(andAbort?: boolean): void {
-        if (andAbort === false && this.status === 'solving') {
-            throw new Error('Token solver is still solving');
-        }
+    public async terminate(emitEvent: boolean = true) {
+        this.solver?.terminate();
+        this.solver?.removeEventListener('message', this.onMessage);
 
-        this.abort();
-        this._onSolved = [];
+        if (emitEvent) this.onTerminatedEvent?.();
+    }
+
+    public reset() {
+        this.solver = null;
         this.status = null;
+        this.attempts = null;
+        this.nonce = null;
+        this.token = null;
+
+        this.start = null;
+        this.end = null;
     }
 
-    public async abort(): Promise<void> {
-        this.status = 'aborted';
-        this.attempts = null;
+    private postMessage(message: Events.ChallengeSolver.Any) {
+        if (this.solver) this.solver.postMessage(message);
+    }
 
-        if (this.solver && !this.solver.aborted) {
-            this.solver?.abort();
+    private onMessage(event: MessageEvent<Responses.ChallengeSolver.Any>) {
+        const data = event.data;
+
+        switch (data.type) {
+            case 'READY':
+                this.status = 'idle';
+                break;
+            case 'ATTEMPT':
+                this.status = 'solving';
+                this.attempts = data.attempts;
+                this.nonce = data.nonce;
+
+                if (this.start === null) {
+                    this.start = Date.now();
+                }
+
+                break;
+            case 'COMPLETE':
+                this.status = 'solved';
+                this.token = data.token;
+                this.onSolvedEvents.forEach(cb => cb(data.token));
+
+                this.end = Date.now();
+                break;
+            case 'ERROR':
+                console.error(data.message);
+                this.status = 'idle';
+                this.terminate(true);
+                break;
+            case 'EXIT':
+                this.terminate(false);
+                this.status = 'idle';
+                break;
         }
     }
 }
 
 export namespace TokenSolver {
-    export type State = 'solving'|'solved'|'aborted';
+    export type State = 'solving'|'solved'|'idle'|null;
 }
 
 export const tokenSolver = new TokenSolver();

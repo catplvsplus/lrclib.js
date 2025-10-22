@@ -87,7 +87,7 @@
                 return;
             }
 
-            resetToken();
+            resetToken(false);
 
             notifications.send('Lyrics published!', {
                 body: `Published track ${$formData.trackName}`,
@@ -124,9 +124,13 @@
         formData.update(() => $formData, { taint: 'untaint-form' });
     }
 
-    function resetToken() {
+    function resetToken(terminate = true) {
         $formData.token = '';
-        tokenSolver.terminate();
+
+        if (terminate) {
+            tokenSolver.terminate();
+        }
+
         tokenSolver.reset();
     }
 

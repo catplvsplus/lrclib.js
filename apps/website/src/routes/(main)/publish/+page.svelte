@@ -145,7 +145,7 @@
                     label: 'Abort',
                     onClick: async () => {
                         await tokenSolver.terminate();
-                        toast.success('Challenge solving aborted');
+                        toast.success('Challenge solving terminated');
                     }
                 }
             });
@@ -159,7 +159,7 @@
         if (!leave) navigate.cancel();
     });
 
-    let isGeneratingToken = $derived(tokenSolver.status === 'solving' || tokenSolver.status === 'idle');
+    let isGeneratingToken = $derived(tokenSolver.status === 'solving' || tokenSolver.status === 'preparing');
 
     export const snapshot = { capture, restore };
 </script>
@@ -231,22 +231,20 @@
                                         onclick={async () => {
                                             resetToken();
 
-                                            const challenge = await lrclib.requestChallenge();
-
                                             tokenSolver.onTerminatedEvent = () => {
-                                                toast.error('Challenge solving aborted');
+                                                toast.error('Challenge solving terminated');
                                             };
 
-                                            tokenSolver.solve(challenge)
+                                            $formData.token = await tokenSolver.solve()
                                                 .then(data => {
-                                                    $formData.token = data;
                                                     tokenSolver.onTerminatedEvent = null;
                                                     toast.success('Challenge solved, token generated');
+                                                    return data;
                                                 }).catch(err => {
-                                                    if (err.message === 'Challenge solving aborted') return;
+                                                    if (err.message === 'Challenge solving terminated') return;
                                                     console.error(err);
                                                     toast.error('Failed to solve challenge');
-                                                });
+                                                }) ?? '';
                                         }}
                                     >
                                         {#if isGeneratingToken}

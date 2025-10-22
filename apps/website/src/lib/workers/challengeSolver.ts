@@ -24,11 +24,13 @@ async function solveChallenge() {
     if (!challenge) error('No challenge to solve');
 
     solver = new ChallengeSolver(challenge, {
-        onAttempt: data => post({
-            type: 'ATTEMPT',
-            attempts: data.attempts,
-            nonce: data.nonce
-        })
+        onAttempt: data => {
+            post({
+                type: 'ATTEMPT',
+                attempts: data.attempts,
+                nonce: data.nonce
+            });
+        }
     });
 
     try {
@@ -43,6 +45,7 @@ async function solveChallenge() {
 
 function post(message: Responses.ChallengeSolver.Any) {
     self.postMessage(message);
+    console.log(`Challenge Worker: ${message.type}`, message);
 }
 
 function error(message: string): never {

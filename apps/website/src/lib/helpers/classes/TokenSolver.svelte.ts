@@ -4,8 +4,6 @@ import type { Events, Responses } from '../workers';
 
 // TODO: Use faster method for solving proof-of-work challenge like https://lrclibup.boidu.dev/
 export class TokenSolver {
-    private onSolvedEvents: ((token: string) => void)[] = [];
-
     public solver: InstanceType<typeof ChallengeSolver>|null = $state(null);
     public status: TokenSolver.State = $state(null);
     public attempts: number|null = $state(null);
@@ -15,6 +13,7 @@ export class TokenSolver {
     public start: number|null = $state(null);
     public end: number|null = $state(null);
 
+    public onSolvedEvent: ((token: string) => void)|null = null;
     public onTerminatedEvent: (() => void)|null = null;
 
     constructor() {
@@ -25,24 +24,23 @@ export class TokenSolver {
 
     get onSolved(): Promise<string> {
         return new Promise((resolve, reject) => {
-            if (this.status !== 'solving' && this.status !== 'idle') {
+            if (this.status === null) {
                 reject(new Error('Token solver is not solving a challenge'));
                 return;
             }
 
-            this.onSolvedEvents.push(resolve);
+            this.onSolvedEvent = resolve;
         });
     }
 
     public async solve(challenge?: APIResponse.Post.RequestChallenge): Promise<string> {
         if (this.status !== null) throw new Error('Token solver is already solving a challenge');
 
-        challenge ??= await lrclib.requestChallenge();
-
         this.attempts = null;
         this.nonce = null;
-        this.status = 'idle';
+        this.status = 'preparing';
 
+        challenge ??= await lrclib.requestChallenge();
         this.solver = new ChallengeSolver();
 
         this.solver.addEventListener('message', this.onMessage);
@@ -58,6 +56,8 @@ export class TokenSolver {
     public async terminate(emitEvent: boolean = true) {
         this.solver?.terminate();
         this.solver?.removeEventListener('message', this.onMessage);
+
+        this.status = null;
 
         if (emitEvent) this.onTerminatedEvent?.();
     }
@@ -82,7 +82,7 @@ export class TokenSolver {
 
         switch (data.type) {
             case 'READY':
-                this.status = 'idle';
+                this.status = 'preparing';
                 break;
             case 'ATTEMPT':
                 this.status = 'solving';
@@ -97,25 +97,25 @@ export class TokenSolver {
             case 'COMPLETE':
                 this.status = 'solved';
                 this.token = data.token;
-                this.onSolvedEvents.forEach(cb => cb(data.token));
+                this.onSolvedEvent?.(data.token);
 
                 this.end = Date.now();
                 break;
             case 'ERROR':
                 console.error(data.message);
-                this.status = 'idle';
+                this.status = null;
                 this.terminate(true);
                 break;
             case 'EXIT':
+                this.status = null;
                 this.terminate(false);
-                this.status = 'idle';
                 break;
         }
     }
 }
 
 export namespace TokenSolver {
-    export type State = 'solving'|'solved'|'idle'|null;
+    export type State = 'solving'|'solved'|'preparing'|null;
 }
 
 export const tokenSolver = new TokenSolver();

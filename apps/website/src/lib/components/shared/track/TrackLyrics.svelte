@@ -53,7 +53,7 @@
     }
 </script>
 
-<Tabs bind:value={preferredTab.current} class="bg-card rounded-lg border-card shadow min-h-96">
+<Tabs bind:value={preferredTab.current} class="bg-card rounded-lg border-card shadow min-h-[500px]">
     <div class="flex gap-2 mb-0 p-2 pb-2 items-center border-b">
         <TabsList class="w-full h-10 bg-muted/90 p-0">
             <TabsTrigger value="synced-lyrics" class="text-sm font-semibold text-foreground! rounded-lg border-0 shadow-none! data-[state=active]:text-primary! bg-transparent! hover:bg-black/5! dark:hover:bg-secondary/80! data-[state=active]:[&_span]:w-8! data-[state=active]:[&_span]:opacity-100! relative" disabled={!track.syncedLyrics}>

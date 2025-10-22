@@ -78,8 +78,6 @@
         goto(`?${params.join('&')}`, { keepFocus: true });
     }
 
-    $inspect(query);
-
     onMount(() => {
         searchEngine.onSearch = () => setSearchParams();
     });

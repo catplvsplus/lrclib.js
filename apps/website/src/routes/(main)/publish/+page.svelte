@@ -63,17 +63,17 @@
                 if (tokenSolver.status === 'solving') {
                     submitStatus = 'Solving challenge';
 
-                    await tokenSolver.onSolved.catch(cancel);
+                    $formData.token = await tokenSolver.onSolved.catch(cancel);
                 } else if (!tokenSolver.status) {
                     submitStatus = 'Fetching challenge';
 
                     const challenge = await lrclib.requestChallenge();
 
                     submitStatus = 'Solving challenge';
-                    await tokenSolver.solve(challenge).catch(cancel);
+                    $formData.token = await tokenSolver.solve(challenge).catch(cancel);
                 }
 
-                $formData.token = tokenSolver.token ?? '';
+                tokenSolver.onTerminatedEvent = null;
             }
 
             submitStatus = 'Publishing';
@@ -159,7 +159,7 @@
         if (!leave) navigate.cancel();
     });
 
-    let isGeneratingToken = $derived(tokenSolver.status === 'solving');
+    let isGeneratingToken = $derived(tokenSolver.status === 'solving' || tokenSolver.status === 'idle');
 
     export const snapshot = { capture, restore };
 </script>
@@ -230,7 +230,6 @@
                                         disabled={$submitting || isGeneratingToken || !!$formData.token}
                                         onclick={async () => {
                                             resetToken();
-                                            isGeneratingToken = true;
 
                                             const challenge = await lrclib.requestChallenge();
 
@@ -241,6 +240,7 @@
                                             tokenSolver.solve(challenge)
                                                 .then(data => {
                                                     $formData.token = data;
+                                                    tokenSolver.onTerminatedEvent = null;
                                                     toast.success('Challenge solved, token generated');
                                                 }).catch(err => {
                                                     if (err.message === 'Challenge solving aborted') return;

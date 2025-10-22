@@ -10,6 +10,7 @@
     import { toast } from 'svelte-sonner';
     import FlyInOut from '../FlyInOut.svelte';
     import { cn } from '../../../helpers/utils';
+    import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../ui/empty';
 
     let {
         track
@@ -52,7 +53,7 @@
     }
 </script>
 
-<Tabs bind:value={preferredTab.current} class="bg-card rounded-lg border-card shadow">
+<Tabs bind:value={preferredTab.current} class="bg-card rounded-lg border-card shadow min-h-96">
     <div class="flex gap-2 mb-0 p-2 pb-2 items-center border-b">
         <TabsList class="w-full h-10 bg-muted/90 p-0">
             <TabsTrigger value="synced-lyrics" class="text-sm font-semibold text-foreground! rounded-lg border-0 shadow-none! data-[state=active]:text-primary! bg-transparent! hover:bg-black/5! dark:hover:bg-secondary/80! data-[state=active]:[&_span]:w-8! data-[state=active]:[&_span]:opacity-100! relative" disabled={!track.syncedLyrics}>
@@ -99,7 +100,7 @@
                     ref => preferredTab.current === 'synced-lyrics' ? valueContainer = ref : null
                 }
                 readonly
-                class="text-base font-mono p-5 pt-2 rounded-t-none resize-none shadow-none border-0 bg-transparent!"
+                class="text-base min-h-full font-mono p-5 pt-2 rounded-t-none resize-none shadow-none border-0 bg-transparent!"
             />
         </TabsContent>
         <TabsContent value="plain-lyrics">
@@ -110,18 +111,18 @@
                     ref => preferredTab.current === 'plain-lyrics' ? valueContainer = ref : null
                 }
                 readonly
-                class="text-base font-mono p-5 pt-2 rounded-t-none resize-none shadow-none border-0 bg-transparent!"
+                class="text-base min-h-full font-mono p-5 pt-2 rounded-t-none resize-none shadow-none border-0 bg-transparent!"
             />
         </TabsContent>
     {:else}
-        <div class="py-10 flex items-center justify-center">
-            <div class="grid gap-2 text-muted-foreground">
-                <DrumIcon class="size-20 mx-auto"/>
-                <div class="text-center">
-                    <h4 class="font-bold text-lg">Lyrics unavailable</h4>
-                    <p class="text-sm opacity-70">This track is an instrumental</p>
-                </div>
-            </div>
-        </div>
+        <Empty>
+            <EmptyHeader>
+                <EmptyMedia variant="icon">
+                    <DrumIcon/>
+                </EmptyMedia>
+                <EmptyTitle class="font-bold">Lyrics unavailable</EmptyTitle>
+                <EmptyDescription>This track is an instrumental</EmptyDescription>
+            </EmptyHeader>
+        </Empty>
     {/if}
 </Tabs>

@@ -180,6 +180,35 @@
         text-decoration: var(--shiki-light-text-decoration);
     }
 
+    .rangeSlider {
+        /* Light theme base colors */
+        --slider-accent: var(--foreground);
+        --slider-accent-100: var(--foreground);
+        --slider-base: var(--slider-accent);
+        --slider-base-100: var(--slider-accent-100);
+        --slider-bg: color-mix(in oklab, var(--foreground) 10%, transparent);
+        --slider-fg: var(--foreground);
+
+        --slider-dark-accent: var(--slider-accent);
+        --slider-dark-accent-100: var(--slider-accent-100);
+        --slider-dark-base: var(--slider-base);
+        --slider-dark-base-100: var(--slider-base-100);
+        --slider-dark-bg: var(--slider-bg);
+        --slider-dark-fg: var(--slider-fg);
+
+        /* Component-specific colors with fallbacks */
+        --slider: var(--range-slider, var(--slider-bg));
+        --handle-inactive: var(--range-handle-inactive, var(--slider-base));
+        --handle: var(--range-handle, var(--slider-accent-100));
+        --handle-focus: var(--range-handle-focus, var(--slider-accent));
+        --handle-border: var(--range-handle-border, var(--handle));
+        --range-inactive: var(--range-range-inactive, var(--handle-inactive));
+        --range: var(--range-range, var(--handle-focus));
+        --range-limit: var(--range-range-limit, var(--slider-base-100));
+        --range-hover: var(--range-range-hover, var(--handle-border));
+        --range-press: var(--range-range-press, var(--handle-border));
+    }
+
     &.dark {
         .shiki,
         .shiki span {

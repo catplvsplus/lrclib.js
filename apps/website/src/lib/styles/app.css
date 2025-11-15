@@ -181,12 +181,14 @@
     }
 
     .rangeSlider {
+        margin: 1rem 0 0.4rem 0 !important;
+
         /* Light theme base colors */
         --slider-accent: var(--foreground);
         --slider-accent-100: var(--foreground);
         --slider-base: var(--slider-accent);
         --slider-base-100: var(--slider-accent-100);
-        --slider-bg: color-mix(in oklab, var(--foreground) 10%, transparent);
+        --slider-bg: color-mix(in oklab, var(--foreground) 20%, transparent);
         --slider-fg: var(--foreground);
 
         --slider-dark-accent: var(--slider-accent);
@@ -207,6 +209,9 @@
         --range-limit: var(--range-range-limit, var(--slider-base-100));
         --range-hover: var(--range-range-hover, var(--handle-border));
         --range-press: var(--range-range-press, var(--handle-border));
+        --float-inactive: var(--range-float-inactive, var(--handle-inactive));
+        --float: var(--range-float, var(--handle-focus));
+        --float-text: var(--range-float-text, white);
     }
 
     &.dark {

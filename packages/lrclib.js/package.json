@@ -16,8 +16,7 @@
     "dist"
   ],
   "scripts": {
-    "clean": "rimraf dist",
-    "build": "tsup",
+    "build": "tsdown --config-loader unrun",
     "prepack": "npm run build"
   },
   "dependencies": {

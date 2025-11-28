@@ -2,7 +2,7 @@ export namespace Utils {
     /**
      * The version of the library
      */
-    export const version: string = '[VI]{{inject}}[/VI]';
+    export const version: string = process.env.LRCLIB_VERSION;
 
     export interface JSONEncodable<T> {
         toJSON(): T;

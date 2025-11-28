@@ -6,8 +6,7 @@ const packageJson = await import(`file://${path.join(process.cwd(), 'package.jso
 
 export default defineConfig({
     entry: ['src/index.ts'],
-    external: [],
-    noExternal: [],
+    external: ['lrclib.js', '@lrclib.js/api-types', '@lrclib.js/challenge-solver'],
     platform: 'browser',
     format: ['esm'],
     skipNodeModulesBundle: true,

@@ -1,4 +1,5 @@
 import type { APIPublishTokenData, APIResponse } from '@lrclib.js/api-types';
+import { subtle } from 'uncrypto';
 
 export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
     private _nonce: number = 0;
@@ -11,13 +12,10 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
 
     public readonly prefix: string;
     public readonly target: string;
-    public readonly method: ChallengeSolver.Method = ChallengeSolver.isNode() ? 'node' : 'web';
 
     constructor(data: APIResponse.Post.RequestChallenge, public readonly options?: ChallengeSolver.Options) {
         this.prefix = data.prefix;
         this.target = data.target;
-
-        if (options?.method) this.method = options.method;
     }
 
     get nonce(): number { return this._nonce; }
@@ -55,7 +53,7 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
             this.options?.onAttempt?.(this);
 
             const input = `${this.prefix}${this._nonce}`;
-            const hashed = await ChallengeSolver.sha256(input, this.method);
+            const hashed = await ChallengeSolver.sha256(input);
 
             if (ChallengeSolver.verifyNonce(hashed, target)) break;
 
@@ -81,44 +79,19 @@ export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
 }
 
 export namespace ChallengeSolver {
-    let nodeCrypto: typeof import('node:crypto')|null = null;
-
-    export type Method = 'node'|'web';
-
     export class AbortError extends Error {}
 
     export interface Options {
         onAttempt?: (solver: ChallengeSolver) => void;
-        method?: Method;
     }
-
-    export async function resolveNodeCrypto(): Promise<typeof import('node:crypto')> {
-        return nodeCrypto ??= await import('node:crypto');
-    }
-
-    export async function nodeSHA256(input: string): Promise<Uint8Array> {
-        const crypto = await resolveNodeCrypto();
-        const hash = crypto.createHash('sha256');
-        hash.update(input);
-        return Uint8Array.from(hash.digest());
-    }
-
-    export async function webSHA256(input: string): Promise<Uint8Array> {
-        const Uint8 = new TextEncoder().encode(input);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', Uint8);
-        return new Uint8Array(hashBuffer);
-    }
-
     export function isNode(): boolean {
        return typeof process !== 'undefined' && !!process.versions && !!process.versions.node;
     }
 
-    export async function sha256(input: string, method?: Method): Promise<Uint8Array> {
-        method ??= ChallengeSolver.isNode() ? 'node' : 'web';
-
-        return method === 'node'
-            ? ChallengeSolver.nodeSHA256(input)
-            : ChallengeSolver.webSHA256(input);
+    export async function sha256(input: string): Promise<Uint8Array> {
+        const Uint8 = new TextEncoder().encode(input);
+        const hashBuffer = await subtle.digest('SHA-256', Uint8);
+        return new Uint8Array(hashBuffer);
     }
 
     export function decodeHex(hex: string): Uint8Array {

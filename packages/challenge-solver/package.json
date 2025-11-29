@@ -26,7 +26,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "1026f3ef52d5662e99f29f4fad76958b2878efc0",
+  "gitHead": "bb1d176030b922b5f8681cc5c882d683794987bf",
   "dependencies": {
     "uncrypto": "^0.1.3"
   }

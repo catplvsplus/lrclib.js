@@ -2,7 +2,7 @@ export namespace Utils {
     /**
      * The version of the library
      */
-    export const version: string = process.env.LRCLIB_VERSION;
+    export const version: string = process.env.LIB_VERSION;
 
     export interface JSONEncodable<T> {
         toJSON(): T;

@@ -1,1 +1,3 @@
-export * from '../lrclib.js/tsdown.config.ts';
+import config from '../lrclib.js/tsdown.config.ts';
+
+export default config;

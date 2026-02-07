@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { savedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte';
     import { MetaTags } from 'svelte-meta-tags';
     import { Card, CardHeader, CardTitle, CardDescription, CardFooter, CardAction } from '../../../../lib/components/ui/card';
     import TrackActions from '$lib/components/shared/track/TrackActions.svelte';
@@ -10,9 +9,6 @@
     import TrackLabels from '$lib/components/shared/track/TrackLabels.svelte';
 
     let { data } = $props();
-
-    let isSaved = $derived(savedLyrics.isSaved(data.track));
-    let isLiked = $derived(savedLyrics.isLiked(data.track));
 </script>
 
 <MetaTags

@@ -1,6 +1,7 @@
 {
   "name": "Lrclib.js",
   "short_name": "Lrclib.js",
+  "description": "A JavaScript library for interacting with lrclib.net API",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fcf5f7",

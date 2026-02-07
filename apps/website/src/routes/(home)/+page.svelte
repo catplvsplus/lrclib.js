@@ -11,7 +11,7 @@
 
     let metatags = {
         title: 'Lrclib.js',
-        description: 'A library interacting with lrclib.net API'
+        description: 'A JavaScript library for interacting with lrclib.net API'
     };
 </script>
 

@@ -8,16 +8,14 @@
     "dev": "lerna run dev"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
+    "@types/node": "^25.2.1",
     "lerna": "^9.0.3",
     "rolldown": "^1.0.0-beta.52",
+    "tsdown": "^0.20.3",
     "typescript": "^5.9.3"
   },
   "workspaces": [
     "packages/*",
     "apps/*"
-  ],
-  "dependencies": {
-    "tsdown": "^0.16.8"
-  }
+  ]
 }

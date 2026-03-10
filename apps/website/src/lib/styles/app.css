@@ -181,7 +181,7 @@
     }
 
     .rangeSlider {
-        margin: 1rem 0 0.4rem 0 !important;
+        /* margin: 1rem 0 0.4rem 0 !important; */
 
         /* Light theme base colors */
         --slider-accent: var(--foreground);

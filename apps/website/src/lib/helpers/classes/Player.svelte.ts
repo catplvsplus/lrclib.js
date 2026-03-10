@@ -12,8 +12,9 @@ export class Player {
 
     public skippable: boolean = $derived(!!this.queue.length && !!this.player);
     public previousable: boolean = $derived(!!this.history.length && !!this.player);
+
     public progress: number = $derived.by(() => {
-        return this.player && this.playing ? (this.currentTime / this.player.duration) * 100 : 0;
+        return this.player && this.playing ? (this.currentTime / this.duration) * 100 : 0;
     });
 
     public filesParsing: File[] = $state([]);
@@ -21,6 +22,18 @@ export class Player {
 
     get tracks() {
         return [this.queue, this.playing ? [this.playing] : [], this.history].flat();
+    }
+
+    get duration() {
+        if (this.player && Number.isFinite(this.player.duration)) {
+            return this.player.duration;
+        }
+
+        if (this.playing?.duration) {
+            return this.playing.duration;
+        }
+
+        return 0;
     }
 
     public async initialize(audio?: HTMLAudioElement) {

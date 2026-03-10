@@ -4,7 +4,9 @@
     import { DateTime } from 'luxon';
 
     let currentProgressFormatted = $derived(player.playing ? DateTime.fromSeconds(player.currentTime).toFormat('mm:ss') : '---:--');
-    let durationFormatted = $derived(player.playing ? DateTime.fromSeconds(player.playing?.duration ?? 0).toFormat('mm:ss') : '---:--');
+    let durationFormatted = $derived(player.playing ? DateTime.fromSeconds(player.duration).toFormat('mm:ss') : '---:--');
+
+    $inspect(player.duration);
 </script>
 
 <div class="flex items-center text-xs font-semibold text-foreground/80 gap-2 flex-col lg:flex-row">
@@ -23,9 +25,10 @@
             bind:value={player.currentTime}
             step={0.5}
             range={'min'}
-            max={player.playing?.duration ?? 0}
+            max={player.duration}
             springValues={{ stiffness: 0.3, damping: 0.9 }}
             disabled={!player.player || !player.playing}
+            class="m-0!"
         />
     </div>
     <span class="shrink-0 w-8 text-end hidden lg:block">{durationFormatted}</span>

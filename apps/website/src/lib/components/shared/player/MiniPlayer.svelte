@@ -1,7 +1,7 @@
 <script lang="ts">
     import { untrack } from 'svelte';
     import { player } from '$lib/helpers/classes/Player.svelte';
-    import { blur, fade, fly, scale } from 'svelte/transition';
+    import { blur, fade, fly } from 'svelte/transition';
     import { resolve } from '$app/paths';
     import { Button } from '@/components/ui/button';
     import { PlayIcon, PauseIcon } from '@lucide/svelte';
@@ -90,7 +90,7 @@
             case 'ArrowRight':
                 event.preventDefault();
 
-                const newTimeForward = Math.min(player.currentTime + 5, player.player.duration);
+                const newTimeForward = Math.min(player.currentTime + 5, player.duration);
                 player.player.currentTime = newTimeForward;
                 break;
             case 'ArrowLeft':

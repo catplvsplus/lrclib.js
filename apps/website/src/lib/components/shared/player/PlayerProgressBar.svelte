@@ -5,8 +5,6 @@
 
     let currentProgressFormatted = $derived(player.playing ? DateTime.fromSeconds(player.currentTime).toFormat('mm:ss') : '---:--');
     let durationFormatted = $derived(player.playing ? DateTime.fromSeconds(player.duration).toFormat('mm:ss') : '---:--');
-
-    $inspect(player.duration);
 </script>
 
 <div class="flex items-center text-xs font-semibold text-foreground/80 gap-2 flex-col lg:flex-row">

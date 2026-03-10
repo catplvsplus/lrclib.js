@@ -9,6 +9,7 @@ export class Player {
     public player: HTMLAudioElement|null = $state(null);
     public status: Player.Status|null = $state(null);
     public currentTime: number = $state(0);
+    public duration: number = $state(0);
 
     public skippable: boolean = $derived(!!this.queue.length && !!this.player);
     public previousable: boolean = $derived(!!this.history.length && !!this.player);
@@ -22,18 +23,6 @@ export class Player {
 
     get tracks() {
         return [this.queue, this.playing ? [this.playing] : [], this.history].flat();
-    }
-
-    get duration() {
-        if (this.player && Number.isFinite(this.player.duration)) {
-            return this.player.duration;
-        }
-
-        if (this.playing?.duration) {
-            return this.playing.duration;
-        }
-
-        return 0;
     }
 
     public async initialize(audio?: HTMLAudioElement) {
@@ -72,7 +61,26 @@ export class Player {
 
         this.player.addEventListener('error', () => endOrSkip());
         this.player.addEventListener('ended', () => endOrSkip());
-        this.player.addEventListener('timeupdate', () => this.currentTime = this.player?.currentTime ?? 0);
+
+        this.player.addEventListener('durationchange', () => {
+            this.duration = this.getDuration();
+        });
+
+        this.player.addEventListener('timeupdate', () => {
+            this.currentTime = this.player?.currentTime ?? 0;
+        });
+    }
+
+    public getDuration() {
+        if (this.player && Number.isFinite(this.player.duration)) {
+            return this.player.duration;
+        }
+
+        if (this.playing?.duration) {
+            return this.playing.duration;
+        }
+
+        return 0;
     }
 
     public async destroy() {

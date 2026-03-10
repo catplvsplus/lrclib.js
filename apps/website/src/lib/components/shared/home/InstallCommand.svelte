@@ -3,13 +3,11 @@
     import { Tabs, TabsList, TabsTrigger } from '../../ui/tabs';
     import TabsContent from '../../ui/tabs/tabs-content.svelte';
     import { cn } from '../../../helpers/utils';
-    import { CheckIcon, ClipboardCheckIcon, ClipboardCopyIcon, ClipboardIcon } from '@lucide/svelte';
+    import { CheckIcon, ClipboardIcon } from '@lucide/svelte';
     import { installCommands } from '../../../helpers/constants';
     import { Button } from '../../ui/button';
     import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/tooltip';
     import { copyText } from '../../../helpers/clipboard';
-    import { fly } from 'svelte/transition';
-    import { settings } from '../../../helpers/classes/Settings.svelte';
     import { toast } from 'svelte-sonner';
     import FlyInOut from '../FlyInOut.svelte';
 
@@ -41,7 +39,7 @@
 
 {#snippet InstallCommandContainer(data: typeof installCommands[0])}
     <div class="p-1 text-start text-sm flex items-center gap-2 relative whitespace-nowrap">
-        <a href="/" class="[&_*]:select-all w-full px-2.5 overflow-auto" onclick={copyToClipboard}>
+        <a href="/" class="**:select-all w-full px-2.5 overflow-auto" onclick={copyToClipboard}>
             {#if data.pkgManager === currentValue?.pkgManager}
                 <code bind:this={valueContainer}>{data.command}</code>
             {:else}

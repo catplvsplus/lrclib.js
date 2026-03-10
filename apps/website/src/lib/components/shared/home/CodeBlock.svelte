@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { resolve } from '$app/paths';
     import { ScrollArea } from '../../ui/scroll-area';
     import { codeToHtml } from 'shiki';
     import type { ScrollAreaRootProps } from 'bits-ui';
@@ -8,7 +7,7 @@
     let { code, isHTML = false, ...props}: { code: string; isHTML?: boolean; } & Omit<ScrollAreaRootProps, 'orientation'> = $props();
 </script>
 
-<ScrollArea {...props} orientation="both" class={cn("w-full border overflow-hidden rounded-lg mt-2 text-start text-sm [&_pre]:p-4 [&_*]:select-text", props.class)}>
+<ScrollArea {...props} orientation="both" class={cn("w-full border overflow-hidden rounded-lg mt-2 text-start text-sm [&_pre]:p-4 **:select-text", props.class)}>
     {#if isHTML}
         {@html code}
     {:else}

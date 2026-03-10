@@ -18,7 +18,10 @@
     let isAdvancedSearch = new PersistedState('lrclib-advanced-search', false);
 
     onMount(async () => {
-        if (query) searchEngine.search(query);
+        if (query) {
+            searchEngine.search(query);
+            searchEngine.showResultsNow();
+        }
 
         const isTrackSignatureQuery = untrack(() => isTrackSignatureSearch(query ?? {}));
         if (isTrackSignatureQuery !== null) isAdvancedSearch.current = isTrackSignatureQuery;

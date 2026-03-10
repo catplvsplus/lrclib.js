@@ -44,6 +44,7 @@
         isAdvanced = advanced;
 
         search(convertQuery(advanced));
+        searchEngine.showResultsNow();
     }
 
     function convertQuery(isAdvanced: boolean, data?: APIOptions.Get.Search): APIOptions.Get.Search {
@@ -97,6 +98,7 @@
                         onsubmit={event => {
                             event.preventDefault();
                             search();
+                            searchEngine.showResultsNow();
                         }}
                     >
                         <ImportMetadata

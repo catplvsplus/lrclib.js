@@ -6,7 +6,7 @@ declare global {
 		// interface Locals {}
 		// interface PageData {}
 		interface PageState {
-            activeDialogs?: string[];
+            dialogs?: string[];
         }
 		// interface Platform {}
 	}

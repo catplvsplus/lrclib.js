@@ -1,5 +1,5 @@
 import { SiBun, SiDeno, SiNpm, SiPnpm, SiYarn } from '@icons-pack/svelte-simple-icons';
-import type { ComponentType } from 'svelte';
+import type { Component } from 'svelte';
 import { resolve } from '$app/paths';
 
 export const links = {
@@ -11,7 +11,7 @@ export const links = {
 
 export const publishNote = `Please be mindful, your contributions help build a reliable and comprehensive database by ensuring the accuracy and quality of the lyrics you submit.`;
 
-export const installCommands: (Record<'pkgManager'|'command', string> & { icon?: ComponentType; })[] = [
+export const installCommands: (Record<'pkgManager'|'command', string> & { icon?: Component; })[] = [
     {
         icon: SiNpm,
         pkgManager: 'npm',

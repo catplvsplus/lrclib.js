@@ -1,37 +1,55 @@
+import { pushState, replaceState } from '$app/navigation';
 import { page } from '$app/state';
-import { addActiveDialog, removeActiveDialog } from '../pageState';
 
 export class DialogState {
     public id?: string;
-    public mode: 'push'|'replace' = 'push';
-    public dialogUrl?: string;
+    public dialogURL?: string;
 
     public isOpen: boolean = $state(false);
-    public isActive: boolean = $derived(this.id ? page.state.activeDialogs?.at(-1) === this.id : false);
+    public isActive: boolean = $derived(
+        !!this.id &&
+        !!page.state.dialogs?.length &&
+        page.state.dialogs.at(-1) === this.id
+    );
+
+    public mode: Record<'open'|'close', DialogState.ActionMode> = {
+        open: 'push',
+        close: 'replace'
+    };
 
     constructor(options?: DialogState.Options) {
-        if (options?.id) this.id = options.id;
-        if (options?.mode) this.mode = options.mode;
-        if (options?.dialogUrl) this.dialogUrl = options.dialogUrl;
+        Object.assign(this, options);
+
+        this.mode = typeof options?.mode == 'string'
+            ? { open: options.mode, close: options.mode }
+            : options?.mode ?? this.mode;
 
         this.open = this.open.bind(this);
         this.close = this.close.bind(this);
         this.toggle = this.toggle.bind(this);
     }
 
-    public open() {
+    public open(options?: Partial<Omit<DialogState.SetDialogsOptions, 'dialogs'>>) {
         this.isOpen = true;
 
         if (this.id && !this.isActive) {
-            addActiveDialog(this.id, { type: this.mode, url: this.dialogUrl });
+            DialogState.addDialog(this.id, {
+                mode: this.mode.open,
+                url: this.dialogURL,
+                ...options
+            });
         }
     }
 
-    public close() {
+    public close(options?: Partial<Omit<DialogState.SetDialogsOptions, 'dialogs'>>) {
         this.isOpen = false;
 
         if (this.id && this.isActive) {
-            removeActiveDialog(this.id, { type: this.mode, url: this.dialogUrl });
+            DialogState.removeDialog(this.id, {
+                mode: this.mode.close,
+                url: this.dialogURL,
+                ...options
+            });
         }
     }
 
@@ -47,9 +65,51 @@ export class DialogState {
 }
 
 export namespace DialogState {
+    export type ActionMode = 'push'|'replace';
+
     export interface Options {
         id?: string;
-        mode?: 'push'|'replace';
-        dialogUrl?: string;
+        open?: boolean;
+        dialogURL?: string;
+        mode?: ActionMode|Record<'open'|'close', ActionMode>;
+    }
+
+    export interface SetDialogsOptions {
+        dialogs: string[];
+        mode: ActionMode;
+        url?: string;
+    }
+
+    export function addDialog(id: string,  options: Omit<SetDialogsOptions, 'dialogs'>): void {
+        const { dialogs } = page.state;
+
+        if (dialogs?.includes(id)) return;
+
+        setDialogs({
+            dialogs: [...(dialogs ?? []), id],
+            ...options
+        });
+    }
+
+    export function removeDialog(id: string, options: Omit<SetDialogsOptions, 'dialogs'>): void {
+        const { dialogs } = page.state;
+
+        if (!dialogs?.includes(id)) return;
+
+        setDialogs({
+            dialogs: dialogs.filter(dialog => dialog !== id),
+            ...options
+        });
+    }
+
+    export function setDialogs(options: SetDialogsOptions): void {
+        const { dialogs, mode, url } = options;
+
+        switch (mode) {
+            case 'push':
+                return pushState(url ?? '', { ...page.state, dialogs });
+            case 'replace':
+                return replaceState(url ?? '', { ...page.state, dialogs });
+        }
     }
 }

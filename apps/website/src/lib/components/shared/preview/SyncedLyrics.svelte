@@ -168,6 +168,7 @@
                                 active && "blur-none opacity-100"
                             )}
                             style={!settings.prefersReducedMotion && active ? `transition-delay: ${i * 40}ms;` : ""}
+                            style:content-visibility="auto"
                         >
                             {word}
                         </span>

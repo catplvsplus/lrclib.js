@@ -21,10 +21,17 @@
     const sw = useRegisterSW({
         immediate: true,
         onRegistered(r) {
-            console.log(`SW Registered: ${r}`)
+            if (!r) return;
+
+            console.log(`SW Registered: ${r}`);
+
+            setInterval(() => {
+                console.log('Checking for sw update');
+                r.update();
+            }, 20000);
         },
         onRegisterError(error) {
-            console.log('SW registration error', error)
+            console.log('SW registration error', error);
         },
         onNeedRefresh() {
             console.log('SW needs to be updated');

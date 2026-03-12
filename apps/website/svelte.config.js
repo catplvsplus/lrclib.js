@@ -10,6 +10,9 @@ const config = {
         adapter: adapter(),
         alias: {
             "@/*": "./src/lib"
+        },
+        serviceWorker: {
+            register: false
         }
     }
 };

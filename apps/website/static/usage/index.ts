@@ -32,4 +32,4 @@ await lrclib.publishTrack({
     duration: 261,
     plainLyrics: '...',
     syncedLyrics: '...',
-}, await challengeSolver.solve());
+}, await challengeSolver.solve().then(data => data.token));

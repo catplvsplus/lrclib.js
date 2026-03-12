@@ -8,7 +8,6 @@ export default defineConfig({
         tailwindcss(),
         sveltekit(),
         SvelteKitPWA({
-            includeAssets: 'static',
             kit: {
                 includeVersionFile: true
             }

@@ -28,10 +28,10 @@
     </div>
 </div>
 {#await data.code then code}
-<div class="text-center pb-10">
-    <h1 class="sm:text-3xl text-2xl font-bold tracking-wide text-foreground/80 text-shadow-current/20">Library Usage</h1>
     {#if code}
-        <CodeBlock {code} isHTML class="mt-5 w-full max-w-4xl mx-auto rounded-xl"/>
+        <div class="text-center pb-10">
+            <h1 class="sm:text-3xl text-2xl font-bold tracking-wide text-foreground/80 text-shadow-current/20">Library Usage</h1>
+                <CodeBlock {code} isHTML class="mt-5 w-full max-w-4xl mx-auto rounded-xl"/>
+        </div>
     {/if}
-</div>
 {/await}

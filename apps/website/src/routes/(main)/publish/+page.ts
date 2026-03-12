@@ -4,6 +4,9 @@ import { publishTrackSchema } from '$lib/helpers/schema';
 import { publishDraft } from '$lib/helpers/classes/PublishDraft.svelte';
 import { definePageMetaTags } from 'svelte-meta-tags';
 
+export const prerender = false;
+export const ssr = true;
+
 export async function load() {
     const metatags = {
         title: 'Lrclib.js Publish',

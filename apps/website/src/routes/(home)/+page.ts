@@ -1,8 +1,11 @@
 import { codeToHtml } from 'shiki';
 
 export async function load({ url, fetch }) {
+    const code = await (await fetch(`${url.origin}/usage/index.ts`)).text().catch(() => null);
+
     return {
-        code: codeToHtml(await (await fetch(`${url.origin}/usage/index.ts`)).text(), {
+        code: code
+        ? codeToHtml(code, {
             lang: 'typescript',
             themes: {
                 light: 'light-plus',
@@ -10,5 +13,6 @@ export async function load({ url, fetch }) {
             },
             defaultColor: false
         })
+        : null
     };
 }

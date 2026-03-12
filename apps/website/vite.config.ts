@@ -7,7 +7,12 @@ export default defineConfig({
 	plugins: [
         tailwindcss(),
         sveltekit(),
-        SvelteKitPWA()
+        SvelteKitPWA({
+            includeAssets: 'static',
+            kit: {
+                includeVersionFile: true
+            }
+        })
     ],
     worker: {
         format: 'es'

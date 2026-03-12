@@ -1,5 +1,8 @@
 import { defineBaseMetaTags } from 'svelte-meta-tags';
 
+export const prerender = true;
+export const ssr = false;
+
 export async function load({ url }) {
     const canonical = new URL(url.pathname, url.origin).toString();
 

@@ -1,9 +1,6 @@
 import { type APIOptions } from 'lrclib.js';
 import { definePageMetaTags } from 'svelte-meta-tags';
 
-export const prerender = true;
-export const ssr = false;
-
 export async function load({ url }) {
     const q = url.searchParams.get('q') ?? undefined;
     const track_name = url.searchParams.get('track_name') ?? undefined;

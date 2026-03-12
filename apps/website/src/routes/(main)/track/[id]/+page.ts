@@ -3,6 +3,9 @@ import { savedLyrics } from '$lib/helpers/classes/SavedLyrics.svelte.js';
 import { error } from '@sveltejs/kit';
 import { definePageMetaTags } from 'svelte-meta-tags';
 
+export const prerender = false;
+export const ssr = true;
+
 export async function load({ params, fetch }) {
     const id = params.id;
 

@@ -12,43 +12,40 @@
     import { resolve } from '$app/paths';
     import { ModeWatcher } from 'mode-watcher';
     import { pwaInfo } from 'virtual:pwa-info';
-    import { useRegisterSW } from 'virtual:pwa-register/svelte';
     import { deepMerge, MetaTags } from 'svelte-meta-tags';
     import { toast } from 'svelte-sonner';
 
 	let { children, data } = $props();
 
-    const sw = useRegisterSW({
-        immediate: true,
-        onRegistered(r) {
-            if (!r) return;
+    onMount(async () => {
+        const { useRegisterSW } = await import('virtual:pwa-register/svelte');
 
-            console.log(`SW Registered: ${r}`);
+        const sw = useRegisterSW({
+            immediate: true,
+            onRegistered(r) {
+                if (!r) return;
 
-            setInterval(() => {
-                console.log('Checking for sw update');
-                r.update();
-            }, 20000);
-        },
-        onRegisterError(error) {
-            console.log('SW registration error', error);
-        },
-        onNeedRefresh() {
-            console.log('SW needs to be updated');
-            toast.info('New update available! Would you like to reload?', {
-                action: {
-                    label: 'Reload',
-                    onClick: () => sw.updateServiceWorker(true)
-                }
-            });
-        },
-        onOfflineReady() {
-            console.log('SW is offline ready');
-            toast.info('App is ready for offline use!');
-        }
-    });
+                console.log(`SW Registered: ${r}`);
+            },
+            onRegisterError(error) {
+                console.log('SW registration error', error);
+            },
+            onNeedRefresh() {
+                console.log('SW needs to be updated');
+                toast.info('New update available! Would you like to reload?', {
+                    action: {
+                        label: 'Reload',
+                        onClick: () => sw.updateServiceWorker(true)
+                    }
+                });
+            },
+            onOfflineReady() {
+                if (!sw.offlineReady) return;
+                console.log('SW is offline ready');
+                toast.info('App is ready for offline use!');
+            }
+        });
 
-    onMount(() => {
         player.initialize();
     });
 
@@ -56,7 +53,9 @@
         player.destroy();
     });
 
-    let webmanifest = $derived(pwaInfo ? pwaInfo.webManifest : '');
+    let webmanifest = $derived(pwaInfo ? pwaInfo.webManifest.linkTag : '');
+
+    $inspect(webmanifest);
 </script>
 
 <svelte:head>

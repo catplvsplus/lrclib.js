@@ -27,6 +27,7 @@
             console.log('SW registration error', error)
         },
         onNeedRefresh() {
+            console.log('SW needs to be updated');
             toast.info('New update available! Would you like to reload?', {
                 action: {
                     label: 'Reload',
@@ -35,7 +36,8 @@
             });
         },
         onOfflineReady() {
-            toast.info('App is ready for offline use!')
+            console.log('SW is offline ready');
+            toast.info('App is ready for offline use!');
         }
     });
 
@@ -51,7 +53,7 @@
 </script>
 
 <svelte:head>
-    <link rel="search" type="application/opensearchdescription+xml" title="Lrclib.js Lyrics" href="{page.url.origin}{resolve('/(main)/search/search.xml')}" />
+    <link rel="search" type="application/opensearchdescription+xml" title="Lrclib.js Lyrics" href="{resolve('/(main)/search/search.xml')}" />
     {@html webmanifest}
 </svelte:head>
 <svelte:document

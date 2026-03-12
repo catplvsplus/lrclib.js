@@ -17,5 +17,9 @@ export async function load({ url }) {
         query = { q };
     }
 
-    return { query };
+    return {
+        query,
+        title: 'Lrclib.js Search',
+        description: 'Search for song lyrics with Lrclib.js'
+    };
 }

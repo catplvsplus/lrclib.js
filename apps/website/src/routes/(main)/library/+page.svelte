@@ -1,6 +1,5 @@
 <script lang="ts">
     import { cn, isQueryEmpty, stringifyQuery, isTrackSignatureSearch } from '$lib/helpers/utils.js';
-    import { MetaTags } from 'svelte-meta-tags';
     import { onMount, untrack } from 'svelte';
     import Search from '$lib/components/shared/main/Search.svelte';
     import { PersistedState } from 'runed';
@@ -41,12 +40,6 @@
         }
     });
 </script>
-
-<MetaTags
-    title={queryString || 'all'}
-    titleTemplate="Lrclib.js | Library %s"
-    description="Manage your library of liked and saved tracks"
-/>
 
 <div
     class={cn(

@@ -1,4 +1,5 @@
 import { type APIOptions } from 'lrclib.js';
+import { definePageMetaTags } from 'svelte-meta-tags';
 
 export const prerender = true;
 export const ssr = false;
@@ -17,5 +18,16 @@ export async function load({ url }) {
         query = { q };
     }
 
-    return { query };
+    const metatags = {
+        title: 'Lrclib.js Library',
+        description: 'Manage your library of song lyrics with Lrclib.js',
+    };
+
+    return {
+        query,
+        ...definePageMetaTags({
+            ...metatags,
+            openGraph: metatags
+        })
+    };
 }

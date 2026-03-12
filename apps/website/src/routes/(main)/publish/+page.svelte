@@ -18,7 +18,6 @@
     import LyricsTextareaFields from '$lib/components/shared/publish/LyricsTextareaFields.svelte';
     import { tokenSolver } from '$lib/helpers/classes/TokenSolver.svelte.js';
     import { publishDraft } from '$lib/helpers/classes/PublishDraft.svelte.js';
-    import { MetaTags } from 'svelte-meta-tags';
     import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '../../../lib/components/ui/input-group/index.js';
 
     let { data } = $props();
@@ -179,12 +178,6 @@
             saveToDraft({ notify: true, instant: true });
         }
     }}
-/>
-
-<MetaTags
-    title="Publish"
-    titleTemplate="Lrclib.js | %s"
-    description="Publish lyrics to Lrclib.js"
 />
 
 <div class="sm:pt-0 pt-16 w-full mx-auto grid gap-5">

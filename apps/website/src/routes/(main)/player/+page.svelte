@@ -6,10 +6,9 @@
     import { cn } from '$lib/helpers/utils';
     import { player } from '$lib/helpers/classes/Player.svelte';
     import PreviewCard from '$lib/components/shared/preview/PreviewCard.svelte';
-    import { MetaTags } from 'svelte-meta-tags';
     import { fullscreenLyricsDialogState } from '@/components/shared/player/FullscreenLyrics.svelte';
     import { Empty, EmptyContent, EmptyDescription, EmptyMedia, EmptyTitle, EmptyHeader } from '@/components/ui/empty/index.js';
-    import { BoomBoxIcon, CirclePlusIcon, MusicIcon } from '@lucide/svelte';
+    import { BoomBoxIcon, CirclePlusIcon } from '@lucide/svelte';
     import { Button } from '../../../lib/components/ui/button';
 
     onMount(() => {
@@ -20,11 +19,6 @@
         };
     });
 </script>
-
-<MetaTags
-    title="Lrclib.js | {player.playing ? `Now playing ${player.playing.title}` : 'Player'}"
-    description="Preview and play audio files with synced lyrics"
-/>
 
 {#if !fullscreenLyricsDialogState.isOpen}
     {#if player.playing}

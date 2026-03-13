@@ -18,14 +18,16 @@
 	let { children, data } = $props();
 
     onMount(async () => {
-        const { useRegisterSW } = await import('virtual:pwa-register/svelte');
+        const useRegisterSW = await import('virtual:pwa-register/svelte')
+            .then(r => r.default.useRegisterSW)
+            .catch(() => null);
 
-        const sw = useRegisterSW({
+        const sw = useRegisterSW?.({
             immediate: true,
             onRegistered(r) {
                 if (!r) return;
 
-                console.log(`SW Registered: ${r}`);
+                console.log(`SW Registered:`, r);
             },
             onRegisterError(error) {
                 console.log('SW registration error', error);
@@ -35,12 +37,12 @@
                 toast.info('New update available! Would you like to reload?', {
                     action: {
                         label: 'Reload',
-                        onClick: () => sw.updateServiceWorker(true)
+                        onClick: () => sw?.updateServiceWorker(true)
                     }
                 });
             },
             onOfflineReady() {
-                if (!sw.offlineReady) return;
+                if (!sw?.offlineReady) return;
                 console.log('SW is offline ready');
                 toast.info('App is ready for offline use!');
             }

@@ -10,6 +10,9 @@ export default defineConfig({
         SvelteKitPWA({
             kit: {
                 includeVersionFile: true
+            },
+            workbox: {
+                cleanupOutdatedCaches: true
             }
         })
     ],

@@ -17,7 +17,7 @@ export abstract class BaseSearchEngine {
     protected abstract _search: ReturnType<typeof useDebounce<[query: APIOptions.Get.Search], Promise<Track[]>>>;
 
     public async showResultsNow(): Promise<void> {
-        return this._search?.runScheduledNow();
+        return this._search?.runScheduledNow?.();
     }
 
     public async search(query: APIOptions.Get.Search|null): Promise<Track[]> {

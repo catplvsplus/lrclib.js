@@ -19,20 +19,20 @@
   "scripts": {
     "build:wasm": "cd wasm && go build -o ../dist/challenge-solver.wasm",
     "build": "tsdown --config-loader unrun",
-    "prepack": "npm run build"
+    "prepack": "bun run build"
   },
   "files": [
     "dist",
     "build"
   ],
+  "dependencies": {
+    "uncrypto": "^0.1.3"
+  },
   "devDependencies": {
     "@lrclib.js/api-types": "^1.1.0"
   },
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "bb1d176030b922b5f8681cc5c882d683794987bf",
-  "dependencies": {
-    "uncrypto": "^0.1.3"
-  }
+  "gitHead": "bb1d176030b922b5f8681cc5c882d683794987bf"
 }

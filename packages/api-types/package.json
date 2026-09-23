@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "tsdown --config-loader unrun",
-    "prepack": "npm run build"
+    "prepack": "bun run build"
   },
   "files": [
     "dist"

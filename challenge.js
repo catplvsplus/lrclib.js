@@ -13,7 +13,7 @@ console.log('Chalenge:', challenge);
 console.log('Solving...');
 
 const solver = new ChallengeSolver(challenge, {
-    onAttempt: console.log,
+    onAttempt: c => console.log(`Attempt: (${c.attempts}) ${c.nonce}`),
 });
 
 await solver.solve();

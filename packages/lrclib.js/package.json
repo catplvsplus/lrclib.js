@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "tsdown --config-loader unrun",
-    "prepack": "npm run build"
+    "prepack": "bun run build"
   },
   "dependencies": {
     "@discordjs/collection": "^2.1.1",

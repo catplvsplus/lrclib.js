@@ -24,7 +24,11 @@ export class REST implements RESTOptions {
         if (options?.fetch) this.fetch = options.fetch;
     }
 
-    public async get<T extends keyof Routes.Metadata>(route: T, options?: REST.Options<Routes.Metadata[T][0]>, fetchClient: typeof fetch = this.fetch): Promise<REST.JSONResponse<Routes.Metadata[T][1]>> {
+    public async get<T extends keyof Routes.Metadata>(
+        route: T,
+        options?: REST.Options<Routes.Metadata[T][0]>,
+        fetchClient: typeof fetch = this.fetch
+    ): Promise<REST.JSONResponse<Routes.Metadata[T][1]>> {
         return REST.get<T>(route, {
             headers: {
                 ...this.headers,
@@ -34,7 +38,11 @@ export class REST implements RESTOptions {
         }, fetchClient);
     }
 
-    public async post<T extends keyof Routes.Metadata>(route: T, options?: REST.Options<Routes.Metadata[T][0]>, fetchClient: typeof fetch = this.fetch): Promise<REST.JSONResponse<Routes.Metadata[T][1]>> {
+    public async post<T extends keyof Routes.Metadata>(
+        route: T,
+        options?: REST.Options<Routes.Metadata[T][0]>,
+        fetchClient: typeof fetch = this.fetch
+    ): Promise<REST.JSONResponse<Routes.Metadata[T][1]>> {
         return REST.post<T>(route, {
             headers: {
                 ...this.headers,
@@ -44,7 +52,11 @@ export class REST implements RESTOptions {
         }, fetchClient);
     }
 
-    public static async get<T extends keyof Routes.Metadata>(route: T, options?: REST.Options<Routes.Metadata[T][0]>, fetchClient: typeof fetch = fetch): Promise<REST.JSONResponse<Routes.Metadata[T][1]>> {
+    public static async get<T extends keyof Routes.Metadata>(
+        route: T,
+        options?: REST.Options<Routes.Metadata[T][0]>,
+        fetchClient: typeof fetch = fetch
+    ): Promise<REST.JSONResponse<Routes.Metadata[T][1]>> {
         const request = REST.parseOption(`${this.baseURL}${String(route)}`, {
             method: 'GET',
             headers: {
@@ -57,14 +69,18 @@ export class REST implements RESTOptions {
         return fetchClient(`${this.baseURL}${String(route)}`, request);
     }
 
-    public static async post<T extends keyof Routes.Metadata>(route: T, options?: REST.Options<Routes.Metadata[T][0]>, fetchClient: typeof fetch = fetch): Promise<REST.JSONResponse<Routes.Metadata[T][1]>> {
+    public static async post<T extends keyof Routes.Metadata>(
+        route: T,
+        options?: REST.Options<Routes.Metadata[T][0]>,
+        fetchClient: typeof fetch = fetch
+    ): Promise<REST.JSONResponse<Routes.Metadata[T][1]>> {
         const request = REST.parseOption(`${this.baseURL}${String(route)}`, {
             method: 'POST',
             headers: {
                 ...this.headers,
                 ...options?.headers
             },
-            ...options,
+            ...options
         });
 
         return fetchClient(request);

@@ -23,7 +23,7 @@
     "@discordjs/collection": "^2.1.1",
     "@lrclib.js/api-types": "^1.1.0",
     "@lrclib.js/challenge-solver": "^1.1.0",
-    "clrc": "^3.1.4"
+    "yaml": "^2.9.1"
   },
   "publishConfig": {
     "access": "public"

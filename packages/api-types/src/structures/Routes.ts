@@ -19,6 +19,10 @@ export class Routes {
         return `/api/publish`;
     }
 
+    public static [`/api/flag`](): `/api/flag` {
+        return `/api/flag`;
+    }
+
     public static [`/api/request-challenge`](): `/api/request-challenge` {
         return `/api/request-challenge`;
     }
@@ -42,6 +46,7 @@ export namespace Routes {
         [`/api/get/{id}`]: [APIOptions.Get.TrackById, APIResponse.Get.TrackById];
         [`/api/search`]: [APIOptions.Get.Search, APIResponse.Get.SearchQuery];
         [`/api/publish`]: [APIOptions.Post.Publish, APIResponse.Post.Publish];
+        [`/api/flag`]: [APIOptions.Post.Flag, APIResponse.Post.Flag];
         [`/api/request-challenge`]: [APIOptions.Post.RequestChallenge, APIResponse.Post.RequestChallenge];
         [key: string]: [any, any];
     }

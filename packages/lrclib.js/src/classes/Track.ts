@@ -1,9 +1,10 @@
 import type { APIOptions, APIResponse } from '@lrclib.js/api-types';
 import type { Client } from './Client.js';
-import { LRC } from './LRC.js';
+import { Lyricsfile } from './Lyricsfile.js';
 
 export class Track implements APIResponse.Get.TrackSignature {
     public id!: number;
+    public name!: string;
     public trackName!: string;
     public artistName!: string;
     public albumName!: string;
@@ -11,8 +12,10 @@ export class Track implements APIResponse.Get.TrackSignature {
     public plainLyrics!: string;
     public syncedLyrics!: string;
     public duration!: number;
+    public lyricsfile!: string;
 
-    private createdAt: Date = new Date();
+    private _createdAt: Date = new Date();
+    private _lyricsfile: Lyricsfile|null = null;
 
     public constructor(options: APIResponse.Get.TrackSignature, public client?: Client) {
         Track._patch(this, options);
@@ -30,16 +33,8 @@ export class Track implements APIResponse.Get.TrackSignature {
         return this.instrumental === true;
     }
 
-    public parseSyncedLyrics(): LRC.ParsedLine[] {
-        return LRC.parse(this.syncedLyrics);
-    }
-
-    public parseA2SyncedLyrics(): LRC.ParsedEnhancedLine[] {
-        return LRC.parseEnhanced(this.syncedLyrics);
-    }
-
-    public getActiveLyrics(duration: number): (LRC.ParsedLine|LRC.ParsedEnhancedLine)[] {
-        return [];
+    public getLyricsfile(): Lyricsfile {
+        return this._lyricsfile ??= new Lyricsfile(this.lyricsfile);
     }
 
     public toAPIJSON(): APIOptions.Get.TrackSignatureOptions & APIOptions.Get.TrackById {
@@ -55,29 +50,33 @@ export class Track implements APIResponse.Get.TrackSignature {
     public toJSON(): APIResponse.Get.TrackSignature {
         return {
             id: this.id,
+            name: this.name,
             trackName: this.trackName,
             artistName: this.artistName,
             albumName: this.albumName,
             duration: this.duration,
             instrumental: this.instrumental,
             plainLyrics: this.plainLyrics,
-            syncedLyrics: this.syncedLyrics
+            syncedLyrics: this.syncedLyrics,
+            lyricsfile: this.lyricsfile
         };
     }
 
     public static _patch(track: Track, options: APIResponse.Get.TrackSignature): Track {
         track.id = options.id;
+        track.name = options.name;
         track.trackName = options.trackName;
         track.artistName = options.artistName;
         track.albumName = options.albumName;
         track.instrumental = options.instrumental;
-        track.plainLyrics = options.plainLyrics || '';
-        track.syncedLyrics = options.syncedLyrics || '';
         track.duration = options.duration;
+        track.plainLyrics = options.plainLyrics ?? '';
+        track.syncedLyrics = options.syncedLyrics ?? '';
+        track.lyricsfile = options.lyricsfile ?? '';
         return track;
     }
 
     public static getCreatedAt(track: Track): Date {
-        return track.createdAt;
+        return track._createdAt;
     }
 }

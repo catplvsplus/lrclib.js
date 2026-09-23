@@ -1,7 +1,5 @@
 // @ts-check
 import { ChallengeSolver } from 'lrclib.js';
-import { readFile } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
 
 console.log('Starting...');
 
@@ -12,17 +10,12 @@ const challenge = {
 };
 
 console.log('Chalenge:', challenge);
-
-const worker = import.meta.resolve('@lrclib.js/challenge-solver/workers/wasm');
-const wasm = await readFile(fileURLToPath(import.meta.resolve('@lrclib.js/challenge-solver/challenge-solver.wasm')));
-
 console.log('Solving...');
 
-// const solver = await (new GoChallengeSolver(challenge, {
-//     worker: new Worker(worker, { type: 'module' }),
-//     wasmURL: new Uint8Array(wasm).buffer
-// })).solve();
+const solver = new ChallengeSolver(challenge, {
+    onAttempt: console.log,
+});
 
-const solver = await (new ChallengeSolver(challenge)).solve();
+await solver.solve();
 
 console.log(solver.token);

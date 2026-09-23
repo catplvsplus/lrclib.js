@@ -6,9 +6,7 @@ import (
 	"strconv"
 )
 
-func main() {
-
-}
+func main() {}
 
 func SolveChallenge(prefix string, target string) string {
 	var attempts int = 0

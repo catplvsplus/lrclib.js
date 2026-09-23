@@ -5,20 +5,14 @@ import type { APIOptions, APIPublishTokenData, APIResponse } from '@lrclib.js/ap
 import { Routes } from '@lrclib.js/api-types';
 import { Utils } from './Utils.js';
 
-export interface ClientOptions {
-    rest?: RESTOptions|REST;
-    cache?: Collection<number, Track>;
-    cacheMaxAge?: number;
-}
-
-export class Client implements ClientOptions {
+export class Client implements Client.Options {
     public rest: REST = new REST();
     public cache: Collection<number, Track> = new Collection();
     public cacheMaxAge: number = 86400000;
 
     private cacheSweeper?: NodeJS.Timeout;
 
-    public constructor(options?: ClientOptions) {
+    public constructor(options?: Client.Options) {
         if (options?.rest) this.rest = options.rest instanceof REST ? options.rest : new REST(options.rest);
         if (options?.cache) this.cache = options.cache;
 
@@ -30,20 +24,54 @@ export class Client implements ClientOptions {
      * @param track The track to publish
      * @param token The API publish token
      */
-    public async publishTrack(track: APIOptions.Post.Publish|Utils.JSONEncodable<APIOptions.Post.Publish>, token: string|APIPublishTokenData): Promise<void> {
-        await this.rest.post(Routes['/api/publish'](), {
+    public async publishTrack(
+        track: APIOptions.Post.Publish|Utils.JSONEncodable<APIOptions.Post.Publish>,
+        token: string|APIPublishTokenData,
+        options?: Omit<Client.RequestOptions, 'cache'>
+    ): Promise<void> {
+        const response = await this.rest.post(Routes['/api/publish'](), {
             json: Utils.isJSONEncodable(track) ? track.toJSON() : track,
             headers: {
                 'X-Publish-Token': typeof token === 'string' ? token : `${token.prefix}:${token.nonce}`
-            }
+            },
+            signal: options?.signal
         });
+
+        if (!response.ok) {
+            throw new Error(`Failed to publish track (${response.status}): ${response.statusText}`);
+        }
+    }
+
+    /**
+     * Report the currently published lyrics of a track (for example, wrong lyrics, wrong track metadata, or a copyright violation). The flag is recorded against the track's current lyrics.
+     * @param data The flag data
+     * @param token The API publish token
+     * @param options The request options
+     */
+    public async flag(
+        data: APIOptions.Post.Flag|Utils.JSONEncodable<APIOptions.Post.Flag>,
+        token: string|APIPublishTokenData,
+        options?: Omit<Client.RequestOptions, 'cache'>
+    ): Promise<void> {
+        const response = await this.rest.post(Routes['/api/flag'](), {
+            json: Utils.isJSONEncodable(data) ? data.toJSON() : data,
+            headers: {
+                'X-Publish-Token': typeof token === 'string' ? token : `${token.prefix}:${token.nonce}`
+            },
+            signal: options?.signal
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to flag track (${response.status}): ${response.statusText}`);
+        }
     }
 
     /**
      * Request a challenge from the API for publishing
+     * @param options The request options
      */
-    public async requestChallenge(): Promise<APIResponse.Post.RequestChallenge> {
-        return (await this.rest.post(Routes['/api/request-challenge']())).json();
+    public async requestChallenge(options?: Omit<Client.RequestOptions, 'cache'>): Promise<APIResponse.Post.RequestChallenge> {
+        return (await this.rest.post(Routes['/api/request-challenge'](), options)).json();
     }
 
     /**
@@ -52,21 +80,23 @@ export class Client implements ClientOptions {
      * @param cache Whether to cache the results
      * @returns The search results
      */
-    public async search(search: string|APIOptions.Get.Search|Utils.JSONEncodable<APIOptions.Get.Search>, cache: boolean = true): Promise<Track[]> {
+    public async search(
+        search: string|APIOptions.Get.Search|Utils.JSONEncodable<APIOptions.Get.Search>,
+        options?: Client.RequestOptions
+    ): Promise<Track[]> {
         const query = Utils.isJSONEncodable(search) ? search.toJSON() : search;
-        const tracks = await this.rest.get(Routes['/api/search'](
-            typeof query === 'string' ? { q: query } : query
-        )).then(async data => {
-            const tracks = await data.json();
 
-            if (cache) {
-                return this._patchCache(tracks);
-            } else {
-                return tracks.map(t => new Track(t, this));
-            }
-        });
+        return await this.rest
+            .get(Routes['/api/search'](typeof query === 'string' ? { q: query } : query), { ...options, cache: undefined })
+            .then(async data => {
+                const tracks = await data.json();
 
-        return tracks;
+                if (options?.cache ?? true) {
+                    return this._upsertCache(tracks);
+                } else {
+                    return tracks.map(t => new Track(t, this));
+                }
+            });
     }
 
     /**
@@ -76,23 +106,28 @@ export class Client implements ClientOptions {
      * @returns The track
      * @throws Errors if the track is not found
      */
-    public async fetchTrackById(id: number|APIOptions.Get.TrackById, cache: boolean = true): Promise<Track> {
+    public async fetchTrackById(
+        id: number|APIOptions.Get.TrackById,
+        options?: Client.RequestOptions
+    ): Promise<Track> {
         id = typeof id === 'number' ? id : id.id;
 
-        if (cache) {
+        if (options?.cache ?? true) {
             const track = this.cache.get(id);
             if (track) return track;
         }
 
-        return this.rest.get(Routes['/api/get/{id}']({ id })).then(async data => {
-            const track = await data.json();
+        return this.rest
+            .get(Routes['/api/get/{id}']({ id }), { ...options, cache: undefined })
+            .then(async data => {
+                const track = await data.json();
 
-            if (cache) {
-                return this._patchCache([track])[0];
-            } else {
-                return new Track(track, this);
-            }
-        });
+                if (options?.cache ?? true) {
+                    return this._upsertCache([track])[0];
+                } else {
+                    return new Track(track, this);
+                }
+            });
     }
 
     /**
@@ -102,28 +137,34 @@ export class Client implements ClientOptions {
      * @returns The track
      * @throws Errors if the track is not found
      */
-    public async fetchTrack(data: APIOptions.Get.TrackSignatureOptions|Utils.JSONEncodable<APIOptions.Get.TrackSignatureOptions>, cache: boolean = true): Promise<Track> {
+    public async fetchTrack(
+        data: APIOptions.Get.TrackSignatureOptions|Utils.JSONEncodable<APIOptions.Get.TrackSignatureOptions>,
+        options?: Client.RequestOptions
+    ): Promise<Track> {
         data = Utils.isJSONEncodable(data) ? data.toJSON() : data;
 
-        if (cache) {
+        if (options?.cache ?? true) {
             const track = this.cache.find(t =>
                 data.track_name === t.trackName
                 && data.artist_name === t.artistName
                 && data.album_name === t.albumName
                 && (!data.duration || data.duration === t.duration)
             );
+
             if (track) return track;
         }
 
-        return this.rest.get(Routes['/api/get'](data)).then(async data => {
-            const track = await data.json();
+        return this.rest
+            .get(Routes['/api/get'](data), { ...options, cache: undefined })
+            .then(async data => {
+                const track = await data.json();
 
-            if (cache) {
-                return this._patchCache([track])[0];
-            } else {
-                return new Track(track, this);
-            }
-        });
+                if (options?.cache ?? true) {
+                    return this._upsertCache([track])[0];
+                } else {
+                    return new Track(track, this);
+                }
+            });
     }
 
     /**
@@ -139,17 +180,29 @@ export class Client implements ClientOptions {
         this.cacheSweeper = setInterval(() => this.cache.sweep(t => Date.now() - Track.getCreatedAt(t).getTime() > this.cacheMaxAge), 60000).unref?.();
     }
 
-    private _patchCache(data: (Track|APIResponse.Get.TrackSignature)[]): Track[] {
-        return data.map(t => {
-            let track = this.cache.get(t.id);
+    private _upsertCache(data: (Track|APIResponse.Get.TrackSignature)[]): Track[] {
+        return data.map(t => this.cache.getOrInsertComputed(t.id, id => {
+            const track = this.cache.get(id);
 
-            if (!track) {
-                this.cache.set(t.id, track = t instanceof Track ? t : new Track(t, this));
-            } else {
-                Track._patch(track, t);
-            }
+            return track
+                ? Track._patch(track, t instanceof Track ? t.toJSON() : t)
+                : new Track(t instanceof Track ? t.toJSON() : t, this);
+        }));
+    }
+}
 
-            return track;
-        });
+export namespace Client {
+    export interface Options {
+        rest?: RESTOptions|REST;
+        cache?: Collection<number, Track>;
+        cacheMaxAge?: number;
+    }
+
+    export interface RequestOptions {
+        /**
+         * @default true
+         */
+        cache?: boolean;
+        signal?: AbortSignal;
     }
 }

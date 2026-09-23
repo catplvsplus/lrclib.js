@@ -10,13 +10,13 @@ export namespace APIOptions {
              */
             artist_name: string;
             /**
-             * Name of the album
+             * Name of the album (recommended)
              */
             album_name?: string;
             /**
-             * Track's duration in seconds
+             * Track's duration in seconds (must be between 1 and 3600)
              */
-            duration: number;
+            duration?: number;
         }
 
         export interface TrackById {
@@ -52,7 +52,7 @@ export namespace APIOptions {
     }
 
     export namespace Post {
-        export interface Publish {
+        export interface PublishInstrumental {
             /**
              * Title of the track
              */
@@ -69,14 +69,40 @@ export namespace APIOptions {
              * Track's duration
              */
             duration: number;
+        }
+
+        export interface PublishSyncedLyrics extends PublishInstrumental {
+            /**
+             * Synced lyrics for the track
+             */
+            syncedLyrics: string;
+        }
+
+        export interface PublishPlainLyrics extends PublishInstrumental {
             /**
              * Plain lyrics for the track
              */
             plainLyrics: string;
+        }
+
+        export interface PublishLyricsfile extends PublishInstrumental {
             /**
-             * Synchronized lyrics for the track
+             * Raw Lyricsfile YAML for the track.
              */
-            syncedLyrics: string;
+            lyricsfile: string;
+        }
+
+        export type Publish = PublishInstrumental|PublishSyncedLyrics|PublishPlainLyrics|PublishLyricsfile;
+
+        export interface Flag {
+            /**
+             * ID of the track to flag
+             */
+            trackId: number;
+            /**
+             * 	Optional reason for the flag
+             */
+            content?: string;
         }
 
         export interface RequestChallenge {}
@@ -93,6 +119,7 @@ export namespace APIResponse {
     export namespace Get {
         export interface TrackSignature {
             id: number;
+            name: string;
             trackName: string;
             artistName: string;
             albumName: string;
@@ -100,17 +127,17 @@ export namespace APIResponse {
             instrumental: boolean;
             plainLyrics: string|null;
             syncedLyrics: string|null;
+            lyricsfile: string;
         }
 
-        export interface TrackById extends TrackSignature {}
-
-        export interface SearchQuery extends Array<TrackSignature> {}
-
-        export interface SearchTrackSignature extends Array<TrackSignature> {}
+        export type TrackById = TrackSignature;
+        export type SearchQuery = TrackSignature[];
+        export type SearchTrackSignature = TrackSignature[];
     }
 
     export namespace Post {
-        export interface Publish {}
+        export type Publish = void;
+        export type Flag = void;
 
         export interface RequestChallenge {
             prefix: string;

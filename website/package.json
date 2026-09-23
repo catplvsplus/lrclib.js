@@ -13,11 +13,13 @@
 	},
 	"devDependencies": {
 		"@fontsource-variable/inter": "^5.3.0",
+		"@internationalized/date": "^3.12.0",
 		"@lucide/svelte": "^1.47.0",
 		"@sveltejs/adapter-auto": "^7.0.1",
 		"@sveltejs/kit": "^2.63.0",
 		"@sveltejs/vite-plugin-svelte": "^7.1.2",
 		"@tailwindcss/vite": "^4.3.0",
+		"bits-ui": "^2.18.0",
 		"cn": "^0.3.0",
 		"shadcn-svelte": "^1.7.0",
 		"svelte": "^5.56.1",
@@ -26,6 +28,11 @@
 		"tailwindcss": "^4.3.0",
 		"tw-animate-css": "^1.4.0",
 		"typescript": "^6.0.3",
+		"vaul-svelte": "^1.0.0-next.7",
 		"vite": "^8.0.16"
+	},
+	"dependencies": {
+		"@catplvsplus/idb": "^1.0.1",
+		"mode-watcher": "^1.1.0"
 	}
 }

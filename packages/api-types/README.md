@@ -5,6 +5,11 @@
 
 ---
 
+## API Types
+Type definitions for the lrclib.net API. This package is used internally by the `lrclib.js` package.
+
+## Installation
+
 ```
 npm i @lrclib.js/api-types
 ```

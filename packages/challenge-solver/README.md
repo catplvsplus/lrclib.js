@@ -5,6 +5,11 @@
 
 ---
 
+## Challenge Solver
+A Javascript implementation of the proof-of-work challenge solver for lrclib.net API.
+
+## Installation
+
 ```
 npm i @lrclib.js/challenge-solver
 ```

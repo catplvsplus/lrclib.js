@@ -4,7 +4,7 @@
     import { Button } from '$lib/components/ui/button';
     import { resolve } from '$app/paths';
     import { GITHUB_URL } from '$lib/helpers/constants';
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '$lib/components/ui/dropdown-menu';
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
     import { cn } from 'cn';
@@ -39,19 +39,22 @@
                     {/snippet}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent class="w-[calc(100vw-1rem)] mx-2 mt-2">
-                    <DropdownMenuItem onclick={() => goto(resolve('/'))}>
+                    <DropdownMenuItem class="py-2 px-3" onclick={() => goto(resolve('/'))}>
                         <HouseIcon/>
                         Home
                     </DropdownMenuItem>
-                    <DropdownMenuItem onclick={() => goto(resolve('/docs'))}>
+                    <DropdownMenuSeparator/>
+                    <DropdownMenuItem class="py-2 px-3" onclick={() => goto(resolve('/docs'))}>
                         <BookIcon/>
                         Docs
                     </DropdownMenuItem>
-                    <DropdownMenuItem onclick={() => goto(resolve('/player'))}>
+                    <DropdownMenuSeparator/>
+                    <DropdownMenuItem class="py-2 px-3" onclick={() => goto(resolve('/player'))}>
                         <PlayIcon/>
                         Player
                     </DropdownMenuItem>
-                    <DropdownMenuItem onclick={() => window.open(GITHUB_URL, '_blank', 'noopener,noreferrer')}>
+                    <DropdownMenuSeparator/>
+                    <DropdownMenuItem class="py-2 px-3" onclick={() => window.open(GITHUB_URL, '_blank', 'noopener,noreferrer')}>
                         <ExternalLinkIcon/>
                         Github
                     </DropdownMenuItem>

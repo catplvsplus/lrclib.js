@@ -41,6 +41,7 @@
       "version": "0.0.1",
       "dependencies": {
         "@catplvsplus/idb": "^1.0.1",
+        "lrclib.js": "workspace:^",
         "mode-watcher": "^1.1.0",
       },
       "devDependencies": {

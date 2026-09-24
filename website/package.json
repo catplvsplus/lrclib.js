@@ -33,7 +33,8 @@
 	},
 	"dependencies": {
 		"@catplvsplus/idb": "^1.0.1",
+		"lrclib.js": "workspace:^",
 		"mode-watcher": "^1.1.0",
-    "lrclib.js": "workspace:^"
+		"music-metadata": "^11.16.0"
 	}
 }

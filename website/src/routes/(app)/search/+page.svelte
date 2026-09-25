@@ -1,21 +1,190 @@
 <script lang="ts">
     import { InputGroup, InputGroupButton, InputGroupInput } from '$lib/components/ui/input-group';
-    import { SearchIcon } from '@lucide/svelte';
+    import { SearchIcon, LoaderCircleIcon, TextCursorIcon, TextSearchIcon, CircleXIcon, ListIcon } from '@lucide/svelte';
+    import lrclib, { type APIOptions, type Track } from 'lrclib.js';
+    import { PersistedState, resource } from 'runed';
+    import { isSearchEmpty, encodeURISearchQuery } from '$lib/helpers/utils.js';
+    import { goto } from '$app/navigation';
+    import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card';
+    import ImportMetadata from '$lib/components/app/ImportMetadata.svelte';
+    import { Label } from '$lib/components/ui/label';
+    import { Input } from '$lib/components/ui/input';
+    import { Button } from '$lib/components/ui/button';
 
+    let { data } = $props();
+
+    let query: APIOptions.Get.Search|null = $derived(data.query);
+
+    let results = resource(
+        () => query,
+        async (query) => {
+            goto(encodeURISearchQuery(query), { keepFocus: true })
+            return !isSearchEmpty(query) ? lrclib.search(query!) : [] as Track[];
+        },
+        {
+            debounce: 100,
+            lazy: true
+        }
+    );
+
+    const isAdvancedSearch = new PersistedState('advanced-search', false);
 </script>
 
-<div class="grid grid-cols-3">
-    <InputGroup class="rounded-xl ring-primary/20! focus-within:border-primary! hover:border-primary! hover:shadow-lg focus-within:shadow-lg shadow-primary/20 duration-300 transition-all">
-        <InputGroupInput
-            placeholder="Search for a song, artist, or album"
-            type="text"
-            class="placeholder:text-sm px-3"
-        />
-        <InputGroupButton
-            size="icon-sm"
-            class="text-primary! bg-transparent!"
+<form
+    class="grid grid-cols-3"
+    onsubmit={event => {
+        event.preventDefault();
+        results.refetch();
+    }}
+>
+    {#if !isAdvancedSearch.current}
+        <InputGroup class="rounded-xl ring-primary/20! focus-within:border-primary! hover:border-primary! hover:shadow-lg focus-within:shadow-lg shadow-primary/20 duration-300 transition-all">
+            <InputGroupInput
+                type="text"
+                placeholder="Search for a song, artist, or album"
+                class="placeholder:text-sm px-3"
+                bind:value={
+                    () => query && 'q' in query ? query.q : '',
+                    v => query = { q: v }
+                }
+            />
+            <InputGroupButton
+                type="submit"
+                size="icon-sm"
+                class="text-primary! bg-transparent!"
+                disabled={isSearchEmpty(query) || results.loading}
+            >
+                <SearchIcon/>
+            </InputGroupButton>
+        </InputGroup>
+    {:else}
+        <div class="grid gap-3">
+            <ImportMetadata
+                disabled={results.loading}
+                setMetadata={async metadata => {
+                    const data = {
+                        track_name: metadata.trackName!,
+                        artist_name: metadata.artistName,
+                        album_name: metadata.albumName,
+                    };
+
+                    if (!isSearchEmpty(data)) {
+                        query = data;
+                        results.refetch();
+                    }
+                }}
+            />
+            <Card>
+                <CardHeader>
+                    <CardTitle class="flex items-center gap-1">
+                        <TextCursorIcon class="text-primary size-5"/>
+                        Advanced Search
+                    </CardTitle>
+                    <CardDescription>
+                        Enter the track information you want to search
+                    </CardDescription>
+                </CardHeader>
+                <CardContent class="grid gap-3">
+                    <div class="grid gap-0.5">
+                        <Label for="track_name" class="text-sm text-foreground/70 font-semibold">Track name</Label>
+                        <Input
+                            id="track_name"
+                            placeholder="Some song (ft. some artist)"
+                            bind:value={
+                                () => query && 'track_name' in query ? query.track_name : '',
+                                v => query = { ...query, track_name: v }
+                            }
+                        />
+                    </div>
+                    <div class="grid gap-0.5">
+                        <Label for="artist_name" class="text-sm text-foreground/70 font-semibold">Artist name</Label>
+                        <Input
+                            id="artist_name"
+                            placeholder="Some artist"
+                            disabled={query && 'track_name' in query && !query.track_name}
+                            bind:value={
+                                () => query && 'artist_name' in query ? query.artist_name : '',
+                                v => query = {
+                                    ...query,
+                                    track_name: query && 'track_name' in query ? query.track_name : '',
+                                    artist_name: v
+                                }
+                            }
+                        />
+                    </div>
+                    <div class="grid gap-0.5">
+                        <Label for="album_name" class="text-sm text-foreground/70 font-semibold">Album name</Label>
+                        <Input
+                            id="album_name"
+                            placeholder="Some album"
+                            disabled={query && 'track_name' in query && !query.track_name}
+                            bind:value={
+                                () => query && 'album_name' in query ? query.album_name : '',
+                                v => query = {
+                                    ...query,
+                                    track_name: query && 'track_name' in query ? query.track_name : '',
+                                    album_name: v
+                                }
+                            }
+                        />
+                    </div>
+                </CardContent>
+                <CardFooter class="flex sm:justify-end">
+                    <Button
+                        type="submit"
+                        class="w-full sm:w-auto"
+                        disabled={isSearchEmpty(query) || results.loading}
+                    >
+                        <SearchIcon/>
+                        <span class="hidden sm:inline">Search</span>
+                    </Button>
+                </CardFooter>
+            </Card>
+        </div>
+    {/if}
+</form>
+<div class="grid grid-cols-3 mt-1">
+    <div class="flex items-center justify-between gap-2">
+        <p class="text-xs text-muted-foreground flex items-center gap-1">
+            {#if results.loading}
+                <LoaderCircleIcon class="animate-spin size-4"/>
+                <span>Loading...</span>
+            {:else if results.error}
+                <CircleXIcon class="size-4"/>
+                <span>Error: {results.error.message}</span>
+            {:else if !results.current?.length}
+                <ListIcon class="size-4"/>
+                <span>No results found.</span>
+            {:else}
+                <ListIcon class="size-4"/>
+                <span>{results.current.length} result{results.current.length > 1 ? 's' : ''} found.</span>
+            {/if}
+        </p>
+        <Button
+            size="xs"
+            variant="outline"
+            class="rounded-lg bg-input/50!"
+            onclick={() => {
+                isAdvancedSearch.current = !isAdvancedSearch.current;
+
+                if (!isAdvancedSearch.current) {
+                    query = { q: query && 'track_name' in query ? query.track_name : '' };
+                } else {
+                    query = {
+                        track_name: query && 'q' in query ? query.q : '',
+                        artist_name: '',
+                        album_name: ''
+                    };
+                }
+            }}
         >
-            <SearchIcon/>
-        </InputGroupButton>
-    </InputGroup>
+            {#if !query || 'q' in query}
+                <TextSearchIcon/>
+                <span class="hidden sm:inline">Advanced Search</span>
+            {:else}
+                <SearchIcon/>
+                <span class="hidden sm:inline">Simple Search</span>
+            {/if}
+        </Button>
+    </div>
 </div>

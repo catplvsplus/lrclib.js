@@ -70,7 +70,7 @@
                 </Button>
             </aside>
         </div>
-        <main class="relative size-full">
+        <main class="relative size-full @container:ee">
             {@render children()}
             <div class="h-20 sm:h-0"></div>
         </main>

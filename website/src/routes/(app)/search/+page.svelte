@@ -12,6 +12,7 @@
     import { Button } from '$lib/components/ui/button';
     import { cn } from 'cn';
     import { Skeleton } from '../../../lib/components/ui/skeleton/index.js';
+    import { onMount } from 'svelte';
 
     let { data } = $props();
 
@@ -29,6 +30,16 @@
     );
 
     const isAdvancedSearch = new PersistedState('advanced-search', false);
+
+    onMount(() => {
+        if (isSearchEmpty(query)) {
+            query = null;
+        } else if ('q' in query) {
+            isAdvancedSearch.current = false;
+        } else {
+            isAdvancedSearch.current = true;
+        }
+    });
 </script>
 
 <div class="grid gap-4 @2xl:grid-cols-2 @3xl:grid-cols-3 grid-cols-1 @2xl:px-0 px-4">

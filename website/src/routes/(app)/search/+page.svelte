@@ -149,7 +149,7 @@
                                 disabled={isSearchEmpty(query) || results.loading}
                             >
                                 <SearchIcon/>
-                                <span class="hidden sm:inline">Search</span>
+                                <span>Search</span>
                             </Button>
                         </CardFooter>
                     </Card>
@@ -202,10 +202,10 @@
                 >
                     {#if !query || 'q' in query}
                         <TextSearchIcon/>
-                        <span class="hidden sm:inline">Advanced Search</span>
+                        <span>Advanced Search</span>
                     {:else}
                         <SearchIcon/>
-                        <span class="hidden sm:inline">Simple Search</span>
+                        <span>Simple Search</span>
                     {/if}
                 </Button>
             </div>

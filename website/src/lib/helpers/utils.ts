@@ -1,5 +1,6 @@
 import type { Lyric } from '@braccato/parsers';
 import type { APIOptions } from 'lrclib.js';
+import { DateTime } from 'luxon';
 
 export { cn } from "cn";
 
@@ -44,4 +45,8 @@ export function isSearchEmpty(query: APIOptions.Get.Search | null): query is nul
 
 export function stringifyLyrics(lyrics: Lyric[]): string {
     return lyrics.map(l => l.words).join('\n');
+}
+
+export function formatDuration(duration: number, format: string = 'mm:ss'): string {
+    return DateTime.fromSeconds(duration).toFormat(format);
 }

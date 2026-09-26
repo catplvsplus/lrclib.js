@@ -68,8 +68,8 @@ export class Track implements APIResponse.Get.TrackSignature {
         track.trackName = options.trackName;
         track.artistName = options.artistName;
         track.albumName = options.albumName;
-        track.instrumental = options.instrumental;
-        track.duration = options.duration;
+        track.instrumental = options.instrumental ?? !(options.plainLyrics?.trim() || options.syncedLyrics?.trim());
+        track.duration = options.duration ?? 0;
         track.plainLyrics = options.plainLyrics ?? '';
         track.syncedLyrics = options.syncedLyrics ?? '';
         track.lyricsfile = options.lyricsfile ?? '';

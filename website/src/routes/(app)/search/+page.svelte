@@ -11,7 +11,7 @@
     import { Input } from '$lib/components/ui/input';
     import { Button } from '$lib/components/ui/button';
     import { cn } from 'cn';
-    import { Skeleton } from '../../../lib/components/ui/skeleton/index.js';
+    import { Skeleton } from '$lib/components/ui/skeleton/index.js';
     import { onMount } from 'svelte';
 
     let { data } = $props();

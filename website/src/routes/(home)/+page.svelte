@@ -130,7 +130,7 @@
                                     variant="ghost"
                                     class={[
                                         "block text-sm w-full line-clamp-2 whitespace-normal text-start h-fit py-1 rounded-xl",
-                                        isSelected ? 'bg-primary/10 text-primary autocomplete-item' : 'text-foreground',
+                                        isSelected ? 'bg-muted! dark:bg-muted/50! text-primary autocomplete-item' : 'text-foreground',
                                     ]}
                                     href={resolve('/(app)/track/[id]', { id: String(result.id) })}
                                 >

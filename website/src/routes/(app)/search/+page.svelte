@@ -10,9 +10,9 @@
     import { Label } from '$lib/components/ui/label';
     import { Input } from '$lib/components/ui/input';
     import { Button } from '$lib/components/ui/button';
-    import { cn } from 'cn';
     import { Skeleton } from '$lib/components/ui/skeleton/index.js';
     import { onMount } from 'svelte';
+    import { cn } from 'cn';
 
     let { data } = $props();
 
@@ -59,7 +59,7 @@
             {#if !isAdvancedSearch.current}
                 <InputGroup
                     class={[
-                        "rounded-xl ring-primary/20! focus-within:border-primary! hover:border-primary! hover:shadow-lg focus-within:shadow-lg shadow-primary/20 duration-300 transition-all",
+                        "rounded-xl ring-primary/20! focus-within:border-primary! hover:border-primary! hover:shadow-lg focus-within:shadow-lg shadow-primary/20 opacity-100! duration-300 transition-all",
                         "@3xl:col-span-1 col-span-full"
                     ]}
                 >

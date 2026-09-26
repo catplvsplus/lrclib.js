@@ -11,9 +11,9 @@
     import { Input } from '$lib/components/ui/input';
     import { Button } from '$lib/components/ui/button';
     import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+    import TrackCard from '$lib/components/app/TrackCard.svelte';
     import { onMount } from 'svelte';
     import { cn } from 'cn';
-    import TrackCard from '$lib/components/app/TrackCard.svelte';
 
     let { data } = $props();
 
@@ -178,7 +178,7 @@
                     </Card>
                 </div>
             {/if}
-            <div class="@3xl:block hidden"></div>
+            <div class={cn(isAdvancedSearch ? "hidden" : "@3xl:block hidden")}></div>
         </form>
         <div class="grid @2xl:grid-cols-2 @3xl:grid-cols-3 grid-cols-1 col-span-full gap-4">
             <div
@@ -232,7 +232,7 @@
                     {/if}
                 </Button>
             </div>
-            <div class="@3xl:block hidden"></div>
+            <div class={cn(isAdvancedSearch ? "hidden" : "@3xl:block hidden")}></div>
         </div>
     </section>
     <div

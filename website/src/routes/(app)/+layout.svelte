@@ -48,9 +48,9 @@
                     class={[
                         "justify-start py-1 px-3 sm:gap-3 gap-1 sm:text-base text-xs",
                         "sm:w-full w-1/4 sm:flex-row flex-col sm:h-fit h-auto sm:rounded-xl rounded-full",
-                        page.route.id == '/(app)' && "text-primary! sm:bg-muted bg-muted/50"
+                        page.route.id == '/(app)/library' && "text-primary! sm:bg-muted bg-muted/50"
                     ]}
-                    href={resolve('/(app)')}
+                    href={resolve('/(app)/library')}
                 >
                     <LibraryIcon class="text-primary size-5"/>
                     <span>Library</span>

@@ -59,7 +59,7 @@
             {#if !isAdvancedSearch.current}
                 <InputGroup
                     class={[
-                        "rounded-xl ring-primary/20! focus-within:border-primary! hover:border-primary! hover:shadow-lg focus-within:shadow-lg shadow-primary/20 opacity-100! duration-300 transition-all",
+                        "h-8.5 rounded-xl bg-input/50! ring-primary/20! focus-within:border-primary! hover:border-primary! hover:shadow-lg focus-within:shadow-lg shadow-primary/20 opacity-100! duration-300 transition-all",
                         "@3xl:col-span-1 col-span-full"
                     ]}
                 >

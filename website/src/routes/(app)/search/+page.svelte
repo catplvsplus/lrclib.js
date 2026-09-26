@@ -1,9 +1,9 @@
 <script lang="ts">
     import { InputGroup, InputGroupButton, InputGroupInput } from '$lib/components/ui/input-group';
-    import { SearchIcon, LoaderCircleIcon, TextCursorIcon, TextSearchIcon, CircleXIcon, ListIcon, TextCursorInputIcon, ClockIcon, MicVocalIcon, TextAlignCenterIcon, Music4, UserRoundIcon, Disc3Icon } from '@lucide/svelte';
+    import { SearchIcon, LoaderCircleIcon, TextCursorIcon, TextSearchIcon, CircleXIcon, ListIcon, TextCursorInputIcon } from '@lucide/svelte';
     import lrclib, { type APIOptions, type Track } from 'lrclib.js';
     import { PersistedState, resource } from 'runed';
-    import { isSearchEmpty, encodeURISearchQuery, formatDuration } from '$lib/helpers/utils.js';
+    import { isSearchEmpty, encodeURISearchQuery } from '$lib/helpers/utils.js';
     import { goto } from '$app/navigation';
     import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card';
     import ImportMetadata from '$lib/components/app/ImportMetadata.svelte';
@@ -13,8 +13,7 @@
     import { Skeleton } from '$lib/components/ui/skeleton/index.js';
     import { onMount } from 'svelte';
     import { cn } from 'cn';
-    import { Badge } from '../../../lib/components/ui/badge/index.js';
-    import { resolve } from '$app/paths';
+    import TrackCard from '$lib/components/app/TrackCard.svelte';
 
     let { data } = $props();
 
@@ -55,7 +54,7 @@
     };
 </script>
 
-<div class="grid gap-4 @2xl:grid-cols-2 @3xl:grid-cols-3 grid-cols-1 sm:pl-0 px-4">
+<div class="grid gap-4 @2xl:grid-cols-2 @3xl:grid-cols-3 grid-cols-1 sm:pl-0 px-4 pb-4">
     <section
         class={cn(
             "grid gap-2 col-span-full",
@@ -247,49 +246,8 @@
                 <Skeleton class="w-full h-32 rounded-xl" style="animation-delay: {index * 0.1}s;"/>
             {/each}
         {:else}
-            {#each results.current as result (result.id)}
-                <Card class="w-full">
-                    <CardHeader>
-                        <CardTitle class="text-sm line-clamp-2">
-                            <a href={resolve('/(app)/track/[id]', { id: String(result.id) })}>
-                                {result.trackName}
-                            </a>
-                        </CardTitle>
-                        <CardDescription class="text-xs text-muted-foreground line-clamp-2">
-                            <span>
-                                <UserRoundIcon class="size-3 inline"/>
-                                {result.artistName}
-                            </span>
-                            ·
-                            <span>
-                                <Disc3Icon class="size-3 inline"/>
-                                {result.albumName}
-                            </span>
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent class="flex gap-1">
-                        <Badge class="bg-green-600/10 text-green-600 dark:bg-green-500/10 dark:text-green-500">
-                            <ClockIcon/>
-                            {formatDuration(result.duration)}
-                        </Badge>
-                        {#if result.isSynced()}
-                            <Badge class="bg-primary/10 text-primary">
-                                <MicVocalIcon/>
-                                Synced
-                            </Badge>
-                        {:else if !result.isInstrumental()}
-                            <Badge class="bg-blue-600/10 text-blue-600 dark:bg-blue-500/5 dark:text-blue-500">
-                                <TextAlignCenterIcon/>
-                                Plain
-                            </Badge>
-                        {:else}
-                            <Badge variant="secondary">
-                                <Music4/>
-                                Instrumental
-                            </Badge>
-                        {/if}
-                    </CardContent>
-                </Card>
+            {#each results.current as track (track.id)}
+                <TrackCard {track}/>
             {/each}
         {/if}
     </div>

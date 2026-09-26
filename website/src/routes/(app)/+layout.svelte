@@ -14,7 +14,7 @@
     <div class="container flex sm:gap-4">
         <div class="sm:w-64 relative shrink-0">
             <aside
-                class="fixed sm:left-auto left-0 sm:bottom-auto bottom-0 flex sm:flex-col sm:gap-2 sm:w-64 w-[calc(100%-2rem)] sm:border-0 border rounded-full sm:rounded-none m-4 sm:m-0 overflow-hidden sm:bg-transparent bg-background/75 sm:backdrop-blur-none backdrop-blur-lg z-50"
+                class="fixed sm:left-auto left-0 sm:bottom-auto bottom-0 flex sm:flex-col sm:gap-2 sm:w-64 w-[calc(100%-2rem)] sm:border-0 border rounded-full sm:rounded-none m-4 sm:m-0 overflow-hidden sm:bg-transparent bg-background/75 sm:backdrop-blur-none backdrop-blur-lg z-50 sm:p-0 p-1"
             >
                 <Button
                     variant="ghost"

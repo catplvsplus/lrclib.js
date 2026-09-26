@@ -42,6 +42,17 @@
             isAdvancedSearch.current = true;
         }
     });
+
+    export const snapshot = {
+        capture: () => ({
+            query,
+            results: results.current
+        }),
+        restore: snapshot => {
+            query = snapshot.query;
+            results.mutate(snapshot.results);
+        }
+    };
 </script>
 
 <div class="grid gap-4 @2xl:grid-cols-2 @3xl:grid-cols-3 grid-cols-1 sm:pl-0 px-4">

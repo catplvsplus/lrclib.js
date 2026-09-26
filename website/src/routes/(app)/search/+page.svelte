@@ -1,6 +1,6 @@
 <script lang="ts">
     import { InputGroup, InputGroupButton, InputGroupInput } from '$lib/components/ui/input-group';
-    import { SearchIcon, LoaderCircleIcon, TextCursorIcon, TextSearchIcon, CircleXIcon, ListIcon, TextCursorInputIcon, ClockIcon, MicVocalIcon, TextAlignCenterIcon, Music4 } from '@lucide/svelte';
+    import { SearchIcon, LoaderCircleIcon, TextCursorIcon, TextSearchIcon, CircleXIcon, ListIcon, TextCursorInputIcon, ClockIcon, MicVocalIcon, TextAlignCenterIcon, Music4, UserRoundIcon, Disc3Icon } from '@lucide/svelte';
     import lrclib, { type APIOptions, type Track } from 'lrclib.js';
     import { PersistedState, resource } from 'runed';
     import { isSearchEmpty, encodeURISearchQuery, formatDuration } from '$lib/helpers/utils.js';
@@ -14,6 +14,7 @@
     import { onMount } from 'svelte';
     import { cn } from 'cn';
     import { Badge } from '../../../lib/components/ui/badge/index.js';
+    import { resolve } from '$app/paths';
 
     let { data } = $props();
 
@@ -238,9 +239,21 @@
             {#each results.current as result (result.id)}
                 <Card class="w-full">
                     <CardHeader>
-                        <CardTitle class="text-sm">{result.trackName}</CardTitle>
-                        <CardDescription class="text-xs text-muted-foreground">
-                            {result.artistName} - {result.albumName}
+                        <CardTitle class="text-sm line-clamp-2">
+                            <a href={resolve('/(app)/track/[id]', { id: String(result.id) })}>
+                                {result.trackName}
+                            </a>
+                        </CardTitle>
+                        <CardDescription class="text-xs text-muted-foreground line-clamp-2">
+                            <span>
+                                <UserRoundIcon class="size-3 inline"/>
+                                {result.artistName}
+                            </span>
+                            ·
+                            <span>
+                                <Disc3Icon class="size-3 inline"/>
+                                {result.albumName}
+                            </span>
                         </CardDescription>
                     </CardHeader>
                     <CardContent class="flex gap-1">

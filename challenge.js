@@ -1,13 +1,9 @@
 // @ts-check
-import { ChallengeSolver } from 'lrclib.js';
+import lrclib, { ChallengeSolver } from 'lrclib.js';
 
 console.log('Starting...');
 
-// const challenge = await lrclib.requestChallenge();
-const challenge = {
-    prefix: '5LvUhe1RHUnIkQDDODq6VU0fCS7DXOjO',
-    target: '000000FF00000000000000000000000000000000000000000000000000000000'
-};
+const challenge = await lrclib.requestChallenge();
 
 console.log('Chalenge:', challenge);
 console.log('Solving...');

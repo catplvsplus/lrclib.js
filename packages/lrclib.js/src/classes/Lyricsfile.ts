@@ -1,4 +1,4 @@
-import { parse } from 'yaml';
+import { parse, stringify } from 'yaml';
 
 export class Lyricsfile implements Lyricsfile.Data {
     public version: string;
@@ -75,6 +75,10 @@ export class Lyricsfile implements Lyricsfile.Data {
             lines: this.lines,
             plain: this.plain
         };
+    }
+
+    public toString(): string {
+        return stringify(this.toJSON());
     }
 
     public static parse(raw: string): Lyricsfile.Data {

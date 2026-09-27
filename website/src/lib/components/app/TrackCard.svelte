@@ -40,24 +40,22 @@
                 {track.albumName}
             </span>
         </CardDescription>
-        {#if isNotSmallScreen.current}
-            <CardAction class="flex gap-2">
-                {#if storage.supported}
-                    <Button
-                        size="icon-sm"
-                        variant="outline"
-                        class={["rounded-xl", isTrackLiked && "text-primary!"]}
-                        onclick={() => storage.setTrackLike(track.id)}
-                    >
-                        <HeartIcon class={isTrackLiked ? "fill-current" : ""}/>
-                    </Button>
-                {/if}
-                <Button size="sm" variant="default" class="rounded-xl">
-                    <PlayIcon class="fill-current"/>
-                    Play
+        <CardAction class="flex gap-2">
+            {#if storage.supported}
+                <Button
+                    size={isNotSmallScreen.current ? "icon-sm" : "icon"}
+                    variant="outline"
+                    class={["rounded-xl", isTrackLiked && "text-primary!"]}
+                    onclick={() => storage.setTrackLike(track.id)}
+                >
+                    <HeartIcon class={isTrackLiked ? "fill-current" : ""}/>
                 </Button>
-            </CardAction>
-        {/if}
+            {/if}
+            <Button size={isNotSmallScreen.current ? "sm" : "icon"} variant="default" class="rounded-xl">
+                <PlayIcon class="fill-current"/>
+                <span class="sm:inline hidden">Play</span>
+            </Button>
+        </CardAction>
     </CardHeader>
     <CardContent class="grid gap-4">
         <div class="flex gap-1">
@@ -82,24 +80,5 @@
                 </Badge>
             {/if}
         </div>
-        {#if !isNotSmallScreen.current}
-            <div class="grid grid-cols-2 gap-2">
-                {#if storage.supported}
-                    <Button
-                        size="default"
-                        variant="outline"
-                        class={["rounded-xl", isTrackLiked && "text-primary!"]}
-                        onclick={() => storage.setTrackLike(track.id)}
-                    >
-                        <HeartIcon/>
-                        Favorite
-                    </Button>
-                {/if}
-                <Button size="default" variant="default" class="rounded-xl">
-                    <PlayIcon class="fill-current"/>
-                    Play
-                </Button>
-            </div>
-        {/if}
     </CardContent>
 </Card>

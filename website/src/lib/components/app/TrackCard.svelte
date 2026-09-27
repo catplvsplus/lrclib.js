@@ -7,10 +7,19 @@
     import { resolve } from '$app/paths';
     import type { Track } from 'lrclib.js';
     import { MediaQuery } from 'svelte/reactivity';
+    import { onMount } from 'svelte';
+    import PersistentStorage from '../../classes/Storage.svelte';
 
     let { track }: { track: Track; } = $props();
 
     const isNotSmallScreen = new MediaQuery('(width >= 40rem)');
+    const storage = PersistentStorage.get();
+
+    let isTrackLiked = $derived(storage.likes.entries().find(v => v[0] === track.id));
+
+    onMount(async () => {
+        await storage.getTrackLike(track.id);
+    });
 </script>
 
 <Card class="w-full">
@@ -33,9 +42,16 @@
         </CardDescription>
         {#if isNotSmallScreen.current}
             <CardAction class="flex gap-2">
-                <Button size="icon-sm" variant="outline" class="rounded-xl">
-                    <HeartIcon/>
-                </Button>
+                {#if storage.supported}
+                    <Button
+                        size="icon-sm"
+                        variant="outline"
+                        class={["rounded-xl", isTrackLiked && "text-primary!"]}
+                        onclick={() => storage.setTrackLike(track.id)}
+                    >
+                        <HeartIcon class={isTrackLiked ? "fill-current" : ""}/>
+                    </Button>
+                {/if}
                 <Button size="sm" variant="default" class="rounded-xl">
                     <PlayIcon class="fill-current"/>
                     Play
@@ -68,10 +84,17 @@
         </div>
         {#if !isNotSmallScreen.current}
             <div class="grid grid-cols-2 gap-2">
-                <Button size="default" variant="outline" class="rounded-xl">
-                    <HeartIcon/>
-                    Favorite
-                </Button>
+                {#if storage.supported}
+                    <Button
+                        size="default"
+                        variant="outline"
+                        class={["rounded-xl", isTrackLiked && "text-primary!"]}
+                        onclick={() => storage.setTrackLike(track.id)}
+                    >
+                        <HeartIcon/>
+                        Favorite
+                    </Button>
+                {/if}
                 <Button size="default" variant="default" class="rounded-xl">
                     <PlayIcon class="fill-current"/>
                     Play

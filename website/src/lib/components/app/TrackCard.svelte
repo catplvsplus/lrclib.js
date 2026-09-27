@@ -45,7 +45,7 @@
                 <Button
                     size={isNotSmallScreen.current ? "icon-sm" : "icon"}
                     variant="outline"
-                    class={["rounded-xl", isTrackLiked && "text-primary!"]}
+                    class={["rounded-xl", isTrackLiked && "text-primary! bg-primary/10! border-primary/20!"]}
                     onclick={() => storage.setTrackLike(track.id)}
                 >
                     <HeartIcon class={isTrackLiked ? "fill-current" : ""}/>

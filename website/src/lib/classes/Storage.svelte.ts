@@ -2,6 +2,7 @@ import { IndexedDB, type IndexedDBSchema } from '@catplvsplus/idb';
 import type { APIResponse } from 'lrclib.js';
 import { getContext, setContext } from 'svelte';
 import { SvelteMap } from 'svelte/reactivity';
+import lrclib from 'lrclib.js';
 
 export class PersistentStorage {
     public idb: IndexedDB<PersistentStorage.Schema>|null = null;
@@ -45,6 +46,7 @@ export class PersistentStorage {
         } else {
             await this.idb.put('likes', { id });
             this.likes.set(id, true);
+            this.setTrack(id).catch(() => null);
             return true;
         }
     }
@@ -56,9 +58,32 @@ export class PersistentStorage {
 
         if (liked) {
             this.likes.set(id, liked);
+            this.setTrack(id).catch(() => null);
         }
 
         return liked;
+    }
+
+    public async setTrack(track: APIResponse.Get.TrackSignature|number, ignoreCache: boolean = false): Promise<void> {
+        if (!this.isSupported() || !ignoreCache && await this.getTrack(track)) {
+            return;
+        }
+
+        await this.idb.put(
+            'tracks',
+            typeof track !== 'number'
+                ? track
+                : await lrclib.fetchTrackById(track).then(t => t.toJSON())
+        );
+    }
+
+    public async getTrack(track: APIResponse.Get.TrackSignature|number): Promise<APIResponse.Get.TrackSignature|null> {
+        if (!this.isSupported()) return null;
+
+        return this.idb.get(
+            'tracks',
+            typeof track === 'number' ? track : track.id
+        ).then(t => t ?? null);
     }
 }
 

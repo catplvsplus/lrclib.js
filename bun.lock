@@ -40,6 +40,7 @@
       "name": "website",
       "version": "0.0.1",
       "dependencies": {
+        "@ariefsn/svelte-use": "^1.1.0",
         "@braccato/parsers": "^0.2.3",
         "@catplvsplus/idb": "^1.0.1",
         "lrclib.js": "workspace:^",
@@ -74,6 +75,8 @@
     },
   },
   "packages": {
+    "@ariefsn/svelte-use": ["@ariefsn/svelte-use@1.1.0", "", { "peerDependencies": { "svelte": "^5.0.0" } }, "sha512-WQR+nJ4EjgeMa2Jtoyda/CSVuvek2GUqG0mmWl+5sZ8vB4pWNZltxkBrTlriLBT98cbSivpp74gwrxIA3jCCsg=="],
+
     "@babel/code-frame": ["@babel/code-frame@7.29.0", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.28.5", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-9NhCeYjq9+3uxgdtp20LSiJXJvN0FeCtNGpJxuMFZ1Kv3cWUNb6DOhJwUvcVCzKGR66cw4njwM6hrJLqgOwbcw=="],
 
     "@babel/helper-validator-identifier": ["@babel/helper-validator-identifier@7.28.5", "", {}, "sha512-qSs4ifwzKJSV39ucNjsvc6WVHs6b7S03sOh2OcHF9UHfVPqWWALUsNUVzhSBiItjRZoLHx7nIarVjqKVusUZ1Q=="],

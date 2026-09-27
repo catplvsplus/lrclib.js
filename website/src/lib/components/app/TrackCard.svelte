@@ -9,8 +9,9 @@
     import { MediaQuery } from 'svelte/reactivity';
     import { onMount } from 'svelte';
     import PersistentStorage from '../../classes/Storage.svelte';
+    import type { ClassValue } from 'cn';
 
-    let { track }: { track: Track; } = $props();
+    let { track, class: className }: { track: Track; class: ClassValue; } = $props();
 
     const isNotSmallScreen = new MediaQuery('(width >= 40rem)');
     const storage = PersistentStorage.get();
@@ -22,7 +23,7 @@
     });
 </script>
 
-<Card class="w-full" style="view-transition-name: track-card-{track.id}">
+<Card class={["w-full", className]} style="view-transition-name: track-card-{track.id}">
     <CardHeader>
         <CardTitle class="text-sm line-clamp-2">
             <a href={resolve('/(app)/track/[id]', { id: String(track.id) })}>

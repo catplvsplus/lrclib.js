@@ -1,26 +1,31 @@
 <script lang="ts">
-    import { useClipboard } from '@ariefsn/svelte-use';
     import { Button, type ButtonProps } from '$lib/components/ui/button/index.js';
     import { CheckIcon, ClipboardIcon } from '@lucide/svelte';
     import FlyInOut from './FlyInOut.svelte';
+    import { Clipboard } from '../../classes/Clipboard.svelte';
 
-    let { text, ...props }: {
+    let {
+        text,
+        clipboard = new Clipboard(),
+        copied = $bindable(clipboard.copied),
+        ...props
+    }: {
         text: string;
+        clipboard?: Clipboard;
+        copied?: boolean;
     } & ButtonProps = $props();
-
-    const clipboard = useClipboard();
 </script>
 
 <Button
     {...props}
     class={[
-        "rounded-xl overflow-hidden",
-        clipboard.copied() && "text-green-500! bg-green-500/10! border-green-500/20!",
+        "rounded-xl overflow-hidden relative",
+        copied && "text-green-500! bg-green-500/10! border-green-500/20!",
         props.class
     ]}
     onclick={() => clipboard.copy(text)}
 >
-    {#if clipboard.copied()}
+    {#if copied}
         <FlyInOut class="flex gap-1 items-center">
             <CheckIcon/>
             <span>Copied</span>
@@ -32,5 +37,5 @@
         </FlyInOut>
     {/if}
     <ClipboardIcon class="opacity-0"/>
-    <span class="opacity-0">{clipboard.copied() ? 'Copied' : 'Copy'}</span>
+    <span class="opacity-0">{copied ? 'Copied' : 'Copy'}</span>
 </Button>

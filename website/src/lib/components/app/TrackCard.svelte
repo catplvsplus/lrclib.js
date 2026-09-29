@@ -23,7 +23,7 @@
     });
 </script>
 
-<Card class={["w-full", className]} style="view-transition-name: track-card-{track.id}">
+<Card class={["w-full", className]}>
     <CardHeader>
         <CardTitle class="text-sm line-clamp-2">
             <a href={resolve('/(app)/track/[id]', { id: String(track.id) })}>

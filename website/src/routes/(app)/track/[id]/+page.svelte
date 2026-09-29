@@ -1,12 +1,16 @@
 <script lang="ts">
     import TrackCard from '$lib/components/app/TrackCard.svelte';
-    import { FileMusicIcon, Music4Icon, TextAlignCenterIcon, TimelineIcon } from '@lucide/svelte';
+    import { DownloadIcon, FileMusicIcon, Music4Icon, TextAlignCenterIcon, TimelineIcon } from '@lucide/svelte';
     import { Tabs, TabsContent, TabsList, TabsTrigger } from '$lib/components/ui/tabs/index.js';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty/index.js';
     import { formatLRCDuration } from '$lib/helpers/metadata.js';
     import { resource } from 'runed';
     import { codeToHtml } from 'shiki';
     import CopyButton from '$lib/components/app/CopyButton.svelte';
+    import { ButtonGroup } from '$lib/components/ui/button-group/index.js';
+    import Button from '$lib/components/ui/button/button.svelte';
+    import { Clipboard } from '$lib/classes/Clipboard.svelte.js';
+    import { slug } from 'github-slugger';
 
     let { data } = $props();
 
@@ -25,6 +29,7 @@
         }
     });
 
+    const clipboard = new Clipboard();
     const lyricsfileContent = resource(
         () => lyricsfile,
         async (lyricsfile) => codeToHtml(lyricsfile.toString(), {
@@ -36,6 +41,32 @@
             defaultColor: false
         })
     );
+
+    function downloadLyrics() {
+        const blob = new Blob([value ?? ''], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+
+        let fileType = 'txt';
+
+        switch (activeTab) {
+            case "synced":
+                fileType = '.lrc';
+                break;
+            case "plain":
+                fileType = '.txt';
+                break;
+            case "lyricsfile":
+                fileType = '.lyricsfile.yaml';
+                break;
+        }
+
+        a.href = url;
+        a.download = `${slug(track.trackName)}${fileType}`;
+        a.click();
+
+        URL.revokeObjectURL(url);
+    }
 </script>
 
 <div class="flex flex-col gap-2 sm:pl-0 px-4 pb-4">
@@ -100,10 +131,16 @@
                     </EmptyHeader>
                 </Empty>
             </TabsContent>
-            <CopyButton
-                class="absolute top-2 right-2"
-                text={value ?? ''}
-            />
+            <ButtonGroup class="absolute top-2 right-2">
+                <CopyButton {clipboard} text={value ?? ''}/>
+                <Button
+                    size="icon"
+                    class={clipboard.copied ? "text-green-500! bg-green-500/10! border-green-500/20!" : ""}
+                    onclick={downloadLyrics}
+                >
+                    <DownloadIcon/>
+                </Button>
+            </ButtonGroup>
         </div>
     </Tabs>
 </div>

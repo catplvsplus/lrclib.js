@@ -28,7 +28,7 @@
             return results;
         },
         {
-            debounce: 500,
+            debounce: 300,
             lazy: true
         }
     );

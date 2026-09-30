@@ -1,4 +1,5 @@
 import { type APIOptions } from 'lrclib.js';
+import { definePageMetaTags } from 'svelte-meta-tags';
 
 export async function load({ url }) {
     const q = url.searchParams.get('q') ?? undefined;
@@ -14,5 +15,11 @@ export async function load({ url }) {
         query = { q };
     }
 
-    return { query };
+    return {
+        query,
+        ...definePageMetaTags({
+            title: 'Lrclib.js Search',
+            description: 'Search for lyrics from lrclib.net'
+        })
+    };
 }

@@ -10,6 +10,8 @@
     import { onMount } from 'svelte';
     import type { ClassValue } from 'cn';
     import storage from '$lib/helpers/storage';
+    import { ACCEPTED_AUDIO_TYPES } from '../../helpers/constants';
+    import player from '../../helpers/player';
 
     let {
         track,
@@ -22,6 +24,7 @@
     const isNotSmallScreen = new MediaQuery('(width >= 40rem)');
 
     let isTrackLiked = $derived(storage.likes.entries().find(v => v[0] === track.id));
+    let fileInput: HTMLInputElement|null = $state(null);
 
     onMount(async () => {
         await storage.getTrackLike(track.id);
@@ -57,10 +60,22 @@
                     <HeartIcon class={isTrackLiked ? "fill-current" : ""}/>
                 </Button>
             {/if}
-            <Button size={isNotSmallScreen.current ? "sm" : "icon"} variant="default" class="rounded-xl">
+            <Button
+                size={isNotSmallScreen.current ? "sm" : "icon"}
+                onclick={() => fileInput?.click()}
+                variant="default"
+                class="rounded-xl"
+            >
                 <PlayIcon class="fill-current"/>
                 <span class="sm:inline hidden">Play</span>
             </Button>
+            <input
+                type="file"
+                class="hidden"
+                accept={ACCEPTED_AUDIO_TYPES.join(',')}
+                bind:this={fileInput}
+                onchange={async e => player.playFiles(Array.from(e.currentTarget.files ?? []), track)}
+            >
         </CardAction>
     </CardHeader>
     <CardContent class="grid gap-4">

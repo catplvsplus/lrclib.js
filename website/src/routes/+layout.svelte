@@ -6,6 +6,7 @@
 	import storage from '$lib/helpers/storage';
 	import { deepMerge, MetaTags } from 'svelte-meta-tags';
 	import { page } from '$app/state';
+	import player from '../lib/helpers/player.js';
 
 	let { children, data } = $props();
 
@@ -13,6 +14,7 @@
 
     onMount(async () => {
         await storage.init();
+        await player.init();
     });
 
     onNavigate(navigation => {

@@ -36,6 +36,7 @@
 		"@ariefsn/svelte-use": "^1.1.0",
 		"@braccato/parsers": "^0.2.3",
 		"@catplvsplus/idb": "^1.0.1",
+		"@groovytune/player": "^0.0.9",
 		"github-slugger": "^2.0.0",
 		"lrclib.js": "workspace:^",
 		"luxon": "^3.7.2",

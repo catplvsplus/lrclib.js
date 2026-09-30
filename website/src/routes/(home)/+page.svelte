@@ -28,8 +28,7 @@
             return results;
         },
         {
-            debounce: 100,
-            throttle: 500,
+            debounce: 500,
             lazy: true
         }
     );
@@ -65,7 +64,7 @@
                     }}
                     onblur={() => {
                         if (focusTimeout) clearTimeout(focusTimeout);
-                        focusTimeout = setTimeout(() => isFocused = false, 100);
+                        focusTimeout = setTimeout(() => isFocused = false, 200);
                     }}
                     onkeydown={e => {
                         switch (e.key) {

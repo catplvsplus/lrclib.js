@@ -4,8 +4,12 @@
 	import { onMount } from 'svelte';
 	import { onNavigate } from '$app/navigation';
 	import storage from '$lib/helpers/storage';
+	import { deepMerge, MetaTags } from 'svelte-meta-tags';
+	import { page } from '$app/state';
 
-	let { children } = $props();
+	let { children, data } = $props();
+
+    let metaTags = $derived(deepMerge(data.baseMetaTags, page.data.pageMetaTags));
 
     onMount(async () => {
         await storage.init();
@@ -34,5 +38,6 @@
     } */
 </style>
 
+<MetaTags {...metaTags}/>
 <ModeWatcher/>
 {@render children()}

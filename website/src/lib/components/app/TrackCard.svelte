@@ -8,13 +8,18 @@
     import type { Track } from 'lrclib.js';
     import { MediaQuery } from 'svelte/reactivity';
     import { onMount } from 'svelte';
-    import PersistentStorage from '../../classes/Storage.svelte';
     import type { ClassValue } from 'cn';
+    import storage from '$lib/helpers/storage';
 
-    let { track, class: className }: { track: Track; class: ClassValue; } = $props();
+    let {
+        track,
+        class: className
+    }: {
+        track: Track;
+        class: ClassValue;
+    } = $props();
 
     const isNotSmallScreen = new MediaQuery('(width >= 40rem)');
-    const storage = PersistentStorage.get();
 
     let isTrackLiked = $derived(storage.likes.entries().find(v => v[0] === track.id));
 

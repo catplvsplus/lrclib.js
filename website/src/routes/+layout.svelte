@@ -1,13 +1,11 @@
 <script lang="ts">
 	import '$lib/styles/layout.css';
 	import { ModeWatcher } from 'mode-watcher';
-	import PersistentStorage from '../lib/classes/Storage.svelte';
 	import { onMount } from 'svelte';
 	import { onNavigate } from '$app/navigation';
+	import storage from '$lib/helpers/storage';
 
 	let { children } = $props();
-
-    const storage = PersistentStorage.set(new PersistentStorage());
 
     onMount(async () => {
         await storage.init();

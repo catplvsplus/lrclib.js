@@ -1,6 +1,5 @@
 import { IndexedDB, type IndexedDBSchema } from '@catplvsplus/idb';
 import type { APIResponse } from 'lrclib.js';
-import { getContext, setContext } from 'svelte';
 import { SvelteMap } from 'svelte/reactivity';
 import lrclib from 'lrclib.js';
 
@@ -91,17 +90,6 @@ export namespace PersistentStorage {
     export interface Schema extends IndexedDBSchema {
         tracks: APIResponse.Get.TrackSignature;
         likes: Pick<APIResponse.Get.TrackSignature, 'id'>;
-    }
-
-    export const contextKey = Symbol('PersistentStorage');
-
-    export function get(): PersistentStorage {
-        return getContext(contextKey);
-    }
-
-    export function set(storage: PersistentStorage): PersistentStorage {
-        setContext(contextKey, storage);
-        return storage;
     }
 }
 

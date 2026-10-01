@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { defineConfig } from "tsdown";
 import { replacePlugin } from "rolldown/plugins";
 import path from 'node:path';
@@ -6,10 +7,8 @@ const packageJson = await import(`file://${path.join(process.cwd(), 'package.jso
 
 export default defineConfig({
     entry: ['src/index.ts'],
-    external: ['lrclib.js', '@lrclib.js/api-types', '@lrclib.js/challenge-solver'],
     platform: 'browser',
     format: ['esm'],
-    skipNodeModulesBundle: true,
     target: 'esnext',
     clean: true,
     minify: false,
@@ -23,4 +22,11 @@ export default defineConfig({
             'process.env.LIB_VERSION': JSON.stringify(packageJson.version),
         })
     ],
-})
+    deps: {
+        neverBundle: [
+            'lrclib.js',
+            '@lrclib.js/api-types',
+            '@lrclib.js/challenge-solver'
+        ]
+    }
+});

@@ -1,13 +1,10 @@
 // @ts-check
-import { ChallengeSolver } from 'lrclib.js';
+import lrclib, { ChallengeSolver } from 'lrclib.js';
 import { solveChallenge } from './packages/challenge-solver/wasm';
 
 console.log('Starting...');
 
-const challenge = {
-  prefix: "XaiuPp6hxDWSWyU1GK3J7NjxK3ytiItd",
-  target: "000000FF00000000000000000000000000000000000000000000000000000000",
-};
+const challenge = await lrclib.requestChallenge();
 
 console.log('Chalenge:', challenge);
 console.log('Solving...');

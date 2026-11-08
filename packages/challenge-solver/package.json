@@ -23,8 +23,7 @@
     "asbuild:debug": "asc asc/index.ts --target debug",
     "asbuild:release": "asc asc/index.ts --target release",
     "asbuild": "bun run asbuild:debug && bun run asbuild:release",
-    "build:wasm": "cd wasm && go build -o ../dist/challenge-solver.wasm",
-    "build": "tsdown --config-loader unrun",
+    "build": "bun run asbuild && tsdown --config-loader unrun",
     "prepack": "bun run build"
   },
   "files": [
@@ -42,5 +41,6 @@
   "publishConfig": {
     "access": "public"
   },
+  
   "gitHead": "bb1d176030b922b5f8681cc5c882d683794987bf"
 }

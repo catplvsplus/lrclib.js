@@ -1,17 +1,25 @@
 // @ts-check
-import lrclib, { ChallengeSolver } from 'lrclib.js';
+import { ChallengeSolver } from 'lrclib.js';
+import { solveChallenge } from './packages/challenge-solver/wasm';
 
 console.log('Starting...');
 
-const challenge = await lrclib.requestChallenge();
+const challenge = {
+  prefix: "XaiuPp6hxDWSWyU1GK3J7NjxK3ytiItd",
+  target: "000000FF00000000000000000000000000000000000000000000000000000000",
+};
 
 console.log('Chalenge:', challenge);
 console.log('Solving...');
 
-const solver = new ChallengeSolver(challenge, {
-    onAttempt: c => console.log(`Attempt: (${c.attempts}) ${c.nonce}`),
-});
+let wasmTime = Date.now();
 
+console.log(`${challenge.prefix}:${solveChallenge(challenge.prefix, challenge.target)}`, `Time taken: ${wasmTime = Date.now() - wasmTime}ms`);
+
+let jsTime = Date.now();
+
+const solver = new ChallengeSolver(challenge);
 await solver.solve();
 
-console.log(solver.token);
+console.log(`${challenge.prefix}:${solver.nonce}`, `Time taken: ${jsTime = Date.now() - jsTime}ms`);
+console.log(wasmTime > jsTime ? 'WASM is slower than JS' : 'WASM is faster than JS');

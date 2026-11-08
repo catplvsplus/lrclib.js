@@ -7,14 +7,21 @@ console.log('Starting...');
 
 let challenge = await lrclib.requestChallenge();
 
-challenge = {
-    prefix: '1cNdiaHCqsE2O0vGzEuuJcbcrznTlWRF',
-    target: '000000FF00000000000000000000000000000000000000000000000000000000',
-};
+// challenge = {
+//     prefix: '1cNdiaHCqsE2O0vGzEuuJcbcrznTlWRF',
+//     target: '000000FF00000000000000000000000000000000000000000000000000000000',
+// };
 
-console.log('Chalenge:', challenge);
 console.log('Solving...');
 
+// Pure wasm solver
+
+let pureWasmTime = Date.now();
+const nonce = solveChallenge(challenge.prefix, challenge.target);
+
+pureWasmTime = Date.now() - pureWasmTime;
+
+// Challenge solvers
 const wasmSolver = new ChallengeSolver(challenge);
 const vanillaSolver = new VanillaChallengeSolver(challenge);
 
@@ -28,11 +35,6 @@ vanillaSolver.on('attempt', (solver) => {
 
 await wasmSolver.solve();
 await vanillaSolver.solve();
-
-let pureWasmTime = Date.now();
-const nonce = solveChallenge(challenge.prefix, challenge.target);
-
-pureWasmTime = Date.now() - pureWasmTime;
 
 if (wasmSolver.nonce !== vanillaSolver.nonce || wasmSolver.nonce !== nonce) {
     console.error('[error] Nonce mismatch between wasm and vanilla solvers');

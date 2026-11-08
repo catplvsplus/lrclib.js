@@ -4,6 +4,9 @@
   "workspaces": {
     "": {
       "name": "@lrclibjs/monorepo",
+      "dependencies": {
+        "@catplvsplus/idb": "1.0.2",
+      },
       "devDependencies": {
         "@types/node": "^26.6.6",
         "lerna": "^10.1.1",
@@ -92,7 +95,7 @@
 
     "@braccato/types": ["@braccato/types@1.1.0", "", {}, "sha512-HqGnKB/nb0usTGfh7xQMRAV/sOrU4wPRHXONDGgDDmoBBJjl4vgedkvZ7QYERVhzYdarOSleLjXJf8Jir4qCdA=="],
 
-    "@catplvsplus/idb": ["@catplvsplus/idb@1.0.1", "", {}, "sha512-bVVLatXYuTX1JpPc4wpJjJlh3FucPPKVVhNUlEMwtEstf9xwp28o9tT4ENlaicX6rKaI2lLaXqobPjFYwXmj/Q=="],
+    "@catplvsplus/idb": ["@catplvsplus/idb@1.0.2", "", {}, "sha512-prNZ0+h/NBnCvKFrMhaTCtNNk4NDBg9aUfAVsUrJlke/Fk/t5IXVpImSfYWgf/jcazt4gEY1AJRSDI9w0ljVTg=="],
 
     "@clack/core": ["@clack/core@1.4.3", "", { "dependencies": { "fast-wrap-ansi": "^0.2.0", "sisteransi": "^1.0.5" } }, "sha512-/kr3UWNtdJfxZtPgDqUOmG2pvwlmcLGheex5yiZKdwbzZJxhV+HMNR9QNmyY5cGwTNV6LrR7Jtp+KjhUAP1qBQ=="],
 

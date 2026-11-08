@@ -18,5 +18,8 @@
   "workspaces": [
     "packages/*",
     "website"
-  ]
+  ],
+  "dependencies": {
+    "@catplvsplus/idb": "1.0.2"
+  }
 }

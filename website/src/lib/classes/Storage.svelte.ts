@@ -1,7 +1,8 @@
 import { IndexedDB, type IndexedDBSchema } from '@catplvsplus/idb';
-import type { APIResponse } from 'lrclib.js';
+import type { APIOptions, APIResponse } from 'lrclib.js';
 import { SvelteMap } from 'svelte/reactivity';
 import lrclib from 'lrclib.js';
+import { trackSatisfiesQuery } from '../helpers/utils';
 
 export class PersistentStorage {
     public idb: IndexedDB<PersistentStorage.Schema>|null = null;
@@ -83,6 +84,33 @@ export class PersistentStorage {
             'tracks',
             typeof track === 'number' ? track : track.id
         ).then(t => t ?? null);
+    }
+
+    public async queryTracks(query: APIOptions.Get.Search): Promise<APIResponse.Get.TrackSignature[]> {
+        if (!this.isSupported()) return [];
+
+        const tracks = await this.idb
+            .transaction({
+                storeNames: ['tracks'],
+                mode: 'readonly'
+            })
+            .objectStore('tracks')
+            .filter(track => trackSatisfiesQuery(track, query), 20);
+            // TODO: Implement a more efficient query mechanism, possibly using indexes or a more advanced filtering strategy.
+
+        return tracks;
+    }
+
+    public async getAllTracks(): Promise<APIResponse.Get.TrackSignature[]> {
+        if (!this.isSupported()) return [];
+
+        return this.idb
+            .transaction({
+                storeNames: ['tracks'],
+                mode: 'readonly'
+            })
+            .objectStore('tracks')
+            .getAll();
     }
 }
 

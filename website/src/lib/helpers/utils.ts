@@ -1,5 +1,5 @@
 import type { Lyric } from '@braccato/parsers';
-import type { APIOptions } from 'lrclib.js';
+import type { APIOptions, APIResponse } from 'lrclib.js';
 import { DateTime } from 'luxon';
 
 export { cn } from "cn";
@@ -49,4 +49,30 @@ export function stringifyLyrics(lyrics: Lyric[]): string {
 
 export function formatDuration(duration: number, format: string = 'mm:ss'): string {
     return DateTime.fromSeconds(duration).toFormat(format);
+}
+
+export function trackSatisfiesQuery(track: APIResponse.Get.TrackSignature, query: APIOptions.Get.Search): boolean {
+    if ('q' in query && query.q) {
+        const q = query.q.toLowerCase();
+
+        return (
+            track.name.toLowerCase().includes(q) ||
+            track.artistName.toLowerCase().includes(q) ||
+            track.albumName.toLowerCase().includes(q)
+        );
+    }
+
+    if ('track_name' in query) {
+        const trackName = query.track_name?.toLowerCase() ?? '';
+        const artistName = query.artist_name?.toLowerCase() ?? '';
+        const albumName = query.album_name?.toLowerCase() ?? '';
+
+        return (
+            (!trackName || track.name.toLowerCase().includes(trackName)) &&
+            (!artistName || track.artistName.toLowerCase().includes(artistName)) &&
+            (!albumName || track.albumName.toLowerCase().includes(albumName))
+        );
+    }
+
+    return false;
 }

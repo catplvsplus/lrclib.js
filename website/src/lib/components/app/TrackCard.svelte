@@ -1,15 +1,15 @@
 <script lang="ts">
-    import { ClockIcon, MicVocalIcon, TextAlignCenterIcon, Music4, UserRoundIcon, Disc3Icon, PlayIcon, HeartIcon } from '@lucide/svelte';
+    import { ClockIcon, MicVocalIcon, TextAlignCenterIcon, UserRoundIcon, Disc3Icon, PlayIcon, HeartIcon, SixteenthNotesIcon } from '@lucide/svelte';
     import { formatDuration } from '#lib/helpers/utils.js';
-    import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '#lib/components/ui/card';
-    import { Button } from '#lib/components/ui/button';
+    import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '#lib/components/ui/card/index.js';
+    import { Button } from '#lib/components/ui/button/index.js';
     import { Badge } from '#lib/components/ui/badge/index.js';
     import { resolve } from '$app/paths';
     import type { Track } from 'lrclib.js';
     import { MediaQuery } from 'svelte/reactivity';
     import { onMount } from 'svelte';
     import type { ClassValue } from 'cn';
-    import storage from '#lib/helpers/storage';
+    import storage from '#lib/helpers/storage.js';
     import { ACCEPTED_AUDIO_TYPES } from '../../helpers/constants';
     import player from '../../helpers/player';
 
@@ -18,7 +18,7 @@
         class: className
     }: {
         track: Track;
-        class: ClassValue;
+        class?: ClassValue;
     } = $props();
 
     const isNotSmallScreen = new MediaQuery('(width >= 40rem)');
@@ -96,7 +96,7 @@
                 </Badge>
             {:else}
                 <Badge variant="secondary">
-                    <Music4/>
+                    <SixteenthNotesIcon/>
                     Instrumental
                 </Badge>
             {/if}

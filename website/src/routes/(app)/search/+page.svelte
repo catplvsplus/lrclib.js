@@ -1,15 +1,15 @@
 <script lang="ts">
-    import { InputGroup, InputGroupButton, InputGroupInput } from '#lib/components/ui/input-group';
+    import { InputGroup, InputGroupButton, InputGroupInput } from '#lib/components/ui/input-group/index.js';
     import { SearchIcon, LoaderCircleIcon, TextCursorIcon, TextSearchIcon, CircleXIcon, ListIcon, TextCursorInputIcon } from '@lucide/svelte';
     import lrclib, { type APIOptions, type Track } from 'lrclib.js';
     import { PersistedState, resource } from 'runed';
     import { isSearchEmpty, encodeURISearchQuery } from '#lib/helpers/utils.js';
     import { goto } from '$app/navigation';
-    import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '#lib/components/ui/card';
+    import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '#lib/components/ui/card/index.js';
     import ImportMetadata from '#lib/components/app/ImportMetadata.svelte';
-    import { Label } from '#lib/components/ui/label';
-    import { Input } from '#lib/components/ui/input';
-    import { Button } from '#lib/components/ui/button';
+    import { Label } from '#lib/components/ui/label/index.js';
+    import { Input } from '#lib/components/ui/input/index.js';
+    import { Button } from '#lib/components/ui/button/index.js';
     import { Skeleton } from '#lib/components/ui/skeleton/index.js';
     import TrackCard from '#lib/components/app/TrackCard.svelte';
     import { onMount } from 'svelte';
@@ -21,12 +21,12 @@
 
     let results = resource(
         () => query,
-        async (query) => {
-            goto(encodeURISearchQuery(query), { keepFocus: true })
-            return !isSearchEmpty(query) ? lrclib.search(query!) : [] as Track[];
+        async (query, prev, { signal }) => {
+            goto(encodeURISearchQuery(query), { reset: false })
+            return !isSearchEmpty(query) ? lrclib.search(query!, { signal }) : [] as Track[];
         },
         {
-            debounce: 300
+            debounce: 300,
         }
     );
 

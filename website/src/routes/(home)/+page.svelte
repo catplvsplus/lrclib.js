@@ -1,12 +1,12 @@
 <script lang="ts">
-    import { InputGroup, InputGroupButton, InputGroupInput } from '#lib/components/ui/input-group';
+    import { InputGroup, InputGroupButton, InputGroupInput } from '#lib/components/ui/input-group/index.js';
     import { ListSortDescendingIcon, LoaderCircleIcon, SearchIcon, TextCursorInputIcon } from '@lucide/svelte';
-    import { AUTHOR_URL } from '#lib/helpers/constants';
+    import { AUTHOR_URL } from '#lib/helpers/constants.js';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import { resource } from 'runed';
     import lrclib from 'lrclib.js';
-    import { Button } from '../../lib/components/ui/button';
+    import { Button } from '#lib/components/ui/button/index.js';
     import { fly } from 'svelte/transition';
 
     let search = $state('');
@@ -15,11 +15,11 @@
     let autocompleteContainer: HTMLDivElement|null = $state(null);
     let results = resource(
         () => search,
-        async (search) => {
+        async (search, prev, { signal }) => {
             if (!search.trim()) return [];
 
             const results = lrclib
-                .search(search.trim())
+                .search(search.trim(), { signal })
                 .then(r => r.splice(0, 5))
                 .catch(() => []);
 

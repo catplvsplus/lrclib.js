@@ -7,7 +7,7 @@
     import { slug } from 'github-slugger';
     import { CodeBlock, CodeBlockActions, CodeBlockContent, CodeBlockCopyButton, CodeBlockHeader, CodeBlockLine, CodeBlockTitle } from '#lib/components/ui/code-block/index.js';
     import { Button } from '#lib/components/ui/button/index.js';
-    import { useHighlightedCode } from '../../../../lib/hooks/use-highlighted-code.svelte.js';
+    import { useHighlightedCode } from '#lib/hooks/use-highlighted-code.svelte.js';
 
     let { data } = $props();
 

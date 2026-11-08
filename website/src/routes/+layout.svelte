@@ -3,10 +3,10 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import { onMount } from 'svelte';
 	import { onNavigate } from '$app/navigation';
-	import storage from '#lib/helpers/storage';
+	import storage from '#lib/helpers/storage.js';
 	import { deepMerge, MetaTags } from 'svelte-meta-tags';
 	import { page } from '$app/state';
-	import player from '../lib/helpers/player.js';
+	import player from '#lib/helpers/player.js';
 
 	let { children, data } = $props();
 

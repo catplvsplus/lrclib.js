@@ -1,10 +1,10 @@
 <script lang="ts">
     import { BookIcon, EqualIcon, ExternalLinkIcon, HouseIcon, MoonIcon, PlayIcon, SunIcon } from '@lucide/svelte';
     import { mode, toggleMode } from 'mode-watcher';
-    import { Button } from '#lib/components/ui/button';
+    import { Button } from '#lib/components/ui/button/index.js';
     import { resolve } from '$app/paths';
-    import { GITHUB_URL } from '#lib/helpers/constants';
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '#lib/components/ui/dropdown-menu';
+    import { GITHUB_URL } from '#lib/helpers/constants.js';
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '#lib/components/ui/dropdown-menu/index.js';
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
     import { cn } from 'cn';
@@ -39,17 +39,17 @@
                     {/snippet}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent class="w-[calc(100vw-1rem)] mx-2 mt-2">
-                    <DropdownMenuItem class="py-2 px-3" onclick={() => goto(resolve('/'))}>
+                    <DropdownMenuItem class="py-2 px-3" onclick={() => goto(resolve('/(home)'))}>
                         <HouseIcon/>
                         Home
                     </DropdownMenuItem>
                     <DropdownMenuSeparator/>
-                    <DropdownMenuItem class="py-2 px-3" onclick={() => goto(resolve('/docs'))}>
+                    <DropdownMenuItem class="py-2 px-3" onclick={() => goto(resolve('/(app)/docs'))}>
                         <BookIcon/>
                         Docs
                     </DropdownMenuItem>
                     <DropdownMenuSeparator/>
-                    <DropdownMenuItem class="py-2 px-3" onclick={() => goto(resolve('/player'))}>
+                    <DropdownMenuItem class="py-2 px-3" onclick={() => goto(resolve('/(app)/player'))}>
                         <PlayIcon/>
                         Player
                     </DropdownMenuItem>
@@ -67,9 +67,9 @@
             </a>
         </h1>
         <nav class="w-1/3 sm:flex hidden justify-center text-sm gap-4 font-medium">
-            <a href={resolve('/')}>Home</a>
-            <a href={resolve('/docs')}>Docs</a>
-            <a href={resolve('/player')}>Player</a>
+            <a href={resolve('/(home)')}>Home</a>
+            <a href={resolve('/(app)/docs')}>Docs</a>
+            <a href={resolve('/(app)/player')}>Player</a>
             <a href={GITHUB_URL}>Github</a>
         </nav>
         <div class="w-1/3 flex justify-end">

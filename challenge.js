@@ -10,35 +10,17 @@ console.log('Chalenge:', challenge);
 console.log('Solving...');
 
 const wasmSolver = new ChallengeSolver(challenge);
+const vanillaSolver = new VanillaChallengeSolver(challenge);
 
 wasmSolver.on('attempt', (solver) => {
     console.log(`[wasm] Attempt #${solver.attempts}`);
 });
 
-wasmSolver.on('solved', (solver) => {
-    console.log(`[wasm] Solved in ${ms((solver.solveEndTime ?? 0) - (solver.solveStartTime ?? 0))}ms with token "${solver.prefix}:${solver.nonce}"`);
-});
-
-wasmSolver.on('abort', (solver) => {
-    console.log('[wasm] Solve aborted');
-});
-
-await wasmSolver.solve();
-
-const vanillaSolver = new VanillaChallengeSolver(challenge);
-
 vanillaSolver.on('attempt', (solver) => {
     console.log(`[vanilla] Attempt #${solver.attempts}`);
 });
 
-vanillaSolver.on('solved', (solver) => {
-    console.log(`[vanilla] Solved in ${ms((solver.solveEndTime ?? 0) - (solver.solveStartTime ?? 0))}ms with token "${solver.prefix}:${solver.nonce}"`);
-});
-
-vanillaSolver.on('abort', (solver) => {
-    console.log('[vanilla] Solve aborted');
-});
-
+await wasmSolver.solve();
 await vanillaSolver.solve();
 
 if (wasmSolver.nonce !== vanillaSolver.nonce) {

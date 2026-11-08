@@ -1,8 +1,8 @@
 import {
-	createHighlighterCore,
-	type GrammarState,
-	type HighlighterCore,
-	type ThemedToken,
+    createHighlighterCore,
+    type GrammarState,
+    type HighlighterCore,
+    type ThemedToken,
 } from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 
@@ -40,7 +40,7 @@ let highlighter: Promise<HighlighterCore> | undefined;
 
 function getHighlighter() {
 	highlighter ??= createHighlighterCore({
-		themes: [import("shiki/themes/github-light.mjs"), import("shiki/themes/github-dark.mjs")],
+		themes: [import("shiki/themes/one-light.mjs"), import("shiki/themes/one-dark-pro.mjs")],
 		langs: [],
 		engine: createJavaScriptRegexEngine({ forgiving: true }),
 	});
@@ -106,7 +106,7 @@ export async function loadHighlighter(language: string) {
 			const tokenize = (text: string) =>
 				shiki.codeToTokens(text, {
 					lang,
-					themes: { light: "github-light", dark: "github-dark" },
+					themes: { light: "one-light", dark: "one-dark-pro" },
 					defaultColor: false,
 					grammarState: state,
 				}).tokens;

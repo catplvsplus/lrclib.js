@@ -1,10 +1,10 @@
-import lrclib from 'lrclib.js';
+import lrclib, { Track } from 'lrclib.js';
 import storage from '#lib/helpers/storage.js';
 import { definePageMetaTags } from 'svelte-meta-tags';
 
 export async function load({ params }) {
     const id = Number(params.id);
-    const track = await storage.getTrack(id) || await lrclib.fetchTrackById(id);
+    const track = await storage.getTrack(id).then(t => t && new Track(t, lrclib)) || await lrclib.fetchTrackById(id);
 
     return {
         track,

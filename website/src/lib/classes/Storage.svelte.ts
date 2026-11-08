@@ -86,7 +86,7 @@ export class PersistentStorage {
         ).then(t => t ?? null);
     }
 
-    public async queryTracks(query: APIOptions.Get.Search): Promise<APIResponse.Get.TrackSignature[]> {
+    public async queryTracks(query: APIOptions.Get.Search, likedOnly: boolean = false): Promise<APIResponse.Get.TrackSignature[]> {
         if (!this.isSupported()) return [];
 
         const tracks = await this.idb
@@ -95,7 +95,16 @@ export class PersistentStorage {
                 mode: 'readonly'
             })
             .objectStore('tracks')
-            .filter(track => trackSatisfiesQuery(track, query), 20);
+            .filter(
+                async track => {
+                    if (likedOnly && !await this.getTrackLike(track.id)) {
+                        return false;
+                    }
+
+                    return trackSatisfiesQuery(track, query);
+                },
+                20
+            );
             // TODO: Implement a more efficient query mechanism, possibly using indexes or a more advanced filtering strategy.
 
         return tracks;

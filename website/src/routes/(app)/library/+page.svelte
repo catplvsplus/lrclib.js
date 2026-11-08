@@ -26,7 +26,7 @@
             if (isSearchEmpty(query)) {
                 tracks.push(...await storage.getAllTracks());
             } else {
-                tracks.push(...await storage.queryTracks(query));
+                tracks.push(...await storage.queryTracks(query, true));
             }
 
             return tracks.map(track => new Track(track));

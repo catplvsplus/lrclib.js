@@ -1,5 +1,5 @@
 import type { APIPublishTokenData, APIResponse } from '@lrclib.js/api-types';
-import { subtle } from 'uncrypto';
+import * as wasm from '$wasm/wasm.js';
 
 export class ChallengeSolver implements APIResponse.Post.RequestChallenge {
     private _nonce: number = 0;
@@ -84,34 +84,21 @@ export namespace ChallengeSolver {
     export interface Options {
         onAttempt?: (solver: ChallengeSolver) => void;
     }
+
     export function isNode(): boolean {
        return typeof process !== 'undefined' && !!process.versions && !!process.versions.node;
     }
 
     export async function sha256(input: string): Promise<Uint8Array> {
-        const Uint8 = new TextEncoder().encode(input);
-        const hashBuffer = await subtle.digest('SHA-256', Uint8);
-        return new Uint8Array(hashBuffer);
+        return wasm.hash(input);
     }
 
     export function decodeHex(hex: string): Uint8Array {
-        return new Uint8Array(
-            Array.from({ length: hex.length / 2 }, (_, i) => parseInt(hex.slice(i * 2, (i + 1) * 2), 16))
-        );
+        return wasm.hex2bin(hex) ?? new Uint8Array();
     }
 
     export function verifyNonce(result: Uint8Array, target: Uint8Array): boolean {
-        if (result.length !== target.length) return false;
-
-        for (let i = 0; i < result.length - 1; i++) {
-            if (result[i] > target[i]) {
-                return false;
-            } else if (result[i] < target[i]) {
-                break;
-            }
-        }
-
-        return true;
+        return wasm.verifyNonce(result, target);
     }
 
     export async function solve(data: APIResponse.Post.RequestChallenge): Promise<ChallengeSolver> {

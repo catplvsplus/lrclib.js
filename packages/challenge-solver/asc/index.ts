@@ -1,25 +1,36 @@
 /// <reference path="../../../node_modules/assemblyscript/dist/assemblyscript.d.ts" />
 
-import { hex2bin, sha256Hash, } from "wasm-crypto/assembly/crypto";
+import { hex2bin as h2b, sha256Hash } from "wasm-crypto/assembly/crypto";
 
-export function solveChallenge(prefix: string, target: string): i32 {
-    let attempts: i32 = 0;
+export function solveChallenge(
+    prefix: string,
+    target: string,
+    onAttempt: (nonce: i32, done: bool) => void
+): void {
     let nonce: i32 = 0;
 
     const targetBytes = hex2bin(target)!;
 
     while (true) {
-        attempts++;
-
         const input = prefix + nonce.toString();
-        const hashed = sha256Hash(stringToBytes(input));
+        const hashed = hash(input);
+
+        onAttempt(nonce, false);
 
         if (verifyNonce(hashed, targetBytes)) break;
 
         nonce++;
     }
 
-    return nonce;
+    onAttempt(nonce, true);
+}
+
+export function hex2bin(hex: string): Uint8Array|null {
+    return h2b(hex);
+}
+
+export function hash(input: string): Uint8Array {
+    return sha256Hash(stringToBytes(input));
 }
 
 export function verifyNonce(hash: Uint8Array, target: Uint8Array): bool {

@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "lerna run build",
+    "build:lib": "lerna run build --ignore website",
     "preview": "lerna run preview",
     "dev": "lerna run dev",
     "dev:host": "lerna run dev:host"

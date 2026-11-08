@@ -1,14 +1,14 @@
 {
   "targets": {
     "debug": {
-      "outFile": "wasm/index.wasm",
-      "textFile": "wasm/index.wat",
+      "outFile": "wasm/wasm.wasm",
+      "textFile": "wasm/wasm.wat",
       "sourceMap": true,
       "debug": true
     },
     "release": {
-      "outFile": "wasm/index.wasm",
-      "textFile": "wasm/index.wat",
+      "outFile": "wasm/wasm.wasm",
+      "textFile": "wasm/wasm.wat",
       "sourceMap": true,
       "optimizeLevel": 3,
       "shrinkLevel": 0,

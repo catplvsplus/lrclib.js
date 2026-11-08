@@ -14,15 +14,14 @@
     },
     "./wasm": {
       "import": {
-        "types": "./dist/wasm/index.d.ts",
-        "default": "./dist/wasm/index.js"
+        "types": "./dist/wasm.d.ts",
+        "default": "./dist/wasm.js"
       }
     }
   },
   "scripts": {
-    "asbuild:debug": "asc asc/index.ts --target debug",
-    "asbuild:release": "asc asc/index.ts --target release",
-    "asbuild": "bun run asbuild:debug && bun run asbuild:release",
+    "asbuild:debug": "asc ./asc/index.ts --target debug",
+    "asbuild": "asc ./asc/index.ts --target release",
     "build": "bun run asbuild && tsdown --config-loader unrun",
     "prepack": "bun run build"
   },
@@ -41,6 +40,5 @@
   "publishConfig": {
     "access": "public"
   },
-  
   "gitHead": "bb1d176030b922b5f8681cc5c882d683794987bf"
 }

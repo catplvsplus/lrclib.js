@@ -8,6 +8,7 @@
     import lrclib from 'lrclib.js';
     import { Button } from '#lib/components/ui/button/index.js';
     import { fly } from 'svelte/transition';
+    import SolveChallenge from '../../lib/components/app/SolveChallenge.svelte';
 
     let search = $state('');
     let isFocused = $state(false);
@@ -140,6 +141,7 @@
                     </div>
                 {/if}
             </InputGroup>
+            <SolveChallenge/>
         </section>
     </main>
     <footer class="flex justify-center-safe items-center-safe p-4 text-muted-foreground text-xs">

@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { InputGroup, InputGroupButton, InputGroupInput } from '$lib/components/ui/input-group';
+    import { InputGroup, InputGroupButton, InputGroupInput } from '#lib/components/ui/input-group';
     import { ListSortDescendingIcon, LoaderCircleIcon, SearchIcon, TextCursorInputIcon } from '@lucide/svelte';
-    import { AUTHOR_URL } from '$lib/helpers/constants';
+    import { AUTHOR_URL } from '#lib/helpers/constants';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import { resource } from 'runed';

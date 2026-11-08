@@ -1,5 +1,5 @@
 import lrclib from 'lrclib.js';
-import storage from '$lib/helpers/storage';
+import storage from '#lib/helpers/storage.js';
 import { definePageMetaTags } from 'svelte-meta-tags';
 
 export async function load({ params }) {

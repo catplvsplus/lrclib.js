@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Dialog as DialogPrimitive } from "bits-ui";
-	import { cn } from "$lib/helpers/utils.js";
+	import { cn } from "#lib/helpers/utils.js";
 
 	let {
 		ref = $bindable(null),

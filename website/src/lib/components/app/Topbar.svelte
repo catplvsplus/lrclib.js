@@ -1,10 +1,10 @@
 <script lang="ts">
     import { BookIcon, EqualIcon, ExternalLinkIcon, HouseIcon, MoonIcon, PlayIcon, SunIcon } from '@lucide/svelte';
     import { mode, toggleMode } from 'mode-watcher';
-    import { Button } from '$lib/components/ui/button';
+    import { Button } from '#lib/components/ui/button';
     import { resolve } from '$app/paths';
-    import { GITHUB_URL } from '$lib/helpers/constants';
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '$lib/components/ui/dropdown-menu';
+    import { GITHUB_URL } from '#lib/helpers/constants';
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '#lib/components/ui/dropdown-menu';
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
     import { cn } from 'cn';

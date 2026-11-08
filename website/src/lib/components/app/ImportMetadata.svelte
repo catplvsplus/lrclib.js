@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
+    import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#lib/components/ui/card';
     import { FileInputIcon, LoaderIcon } from '@lucide/svelte';
-    import { Input } from '$lib/components/ui/input';
+    import { Input } from '#lib/components/ui/input';
     import type { APIResponse } from 'lrclib.js';
     import type { HTMLAttributes } from 'svelte/elements';
-    import type { WithElementRef } from '$lib/helpers/utils';
-    import { parseAudioMetadata } from '$lib/helpers/metadata';
+    import type { WithElementRef } from '#lib/helpers/utils';
+    import { parseAudioMetadata } from '#lib/helpers/metadata';
     import FlyInOut from './FlyInOut.svelte';
 
     let {

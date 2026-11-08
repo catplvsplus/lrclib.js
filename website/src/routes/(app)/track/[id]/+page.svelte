@@ -1,15 +1,15 @@
 <script lang="ts">
-    import TrackCard from '$lib/components/app/TrackCard.svelte';
+    import TrackCard from '#lib/components/app/TrackCard.svelte';
     import { DownloadIcon, FileMusicIcon, Music4Icon, TextAlignCenterIcon, TimelineIcon } from '@lucide/svelte';
-    import { Tabs, TabsContent, TabsList, TabsTrigger } from '$lib/components/ui/tabs/index.js';
-    import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty/index.js';
-    import { formatLRCDuration } from '$lib/helpers/metadata.js';
+    import { Tabs, TabsContent, TabsList, TabsTrigger } from '#lib/components/ui/tabs/index.js';
+    import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '#lib/components/ui/empty/index.js';
+    import { formatLRCDuration } from '#lib/helpers/metadata.js';
     import { resource } from 'runed';
     import { codeToHtml } from 'shiki';
-    import CopyButton from '$lib/components/app/CopyButton.svelte';
-    import { ButtonGroup } from '$lib/components/ui/button-group/index.js';
-    import Button from '$lib/components/ui/button/button.svelte';
-    import { Clipboard } from '$lib/classes/Clipboard.svelte.js';
+    import CopyButton from '#lib/components/app/CopyButton.svelte';
+    import { ButtonGroup } from '#lib/components/ui/button-group/index.js';
+    import Button from '#lib/components/ui/button/button.svelte';
+    import { Clipboard } from '#lib/classes/Clipboard.svelte.js';
     import { slug } from 'github-slugger';
 
     let { data } = $props();

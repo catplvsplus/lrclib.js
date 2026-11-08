@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Button, type ButtonProps } from '$lib/components/ui/button/index.js';
+    import { Button, type ButtonProps } from '#lib/components/ui/button/index.js';
     import { CheckIcon, ClipboardIcon } from '@lucide/svelte';
     import FlyInOut from './FlyInOut.svelte';
     import { Clipboard } from '../../classes/Clipboard.svelte';

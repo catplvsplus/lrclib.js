@@ -1,17 +1,17 @@
 <script lang="ts">
-    import { InputGroup, InputGroupButton, InputGroupInput } from '$lib/components/ui/input-group';
+    import { InputGroup, InputGroupButton, InputGroupInput } from '#lib/components/ui/input-group';
     import { SearchIcon, LoaderCircleIcon, TextCursorIcon, TextSearchIcon, CircleXIcon, ListIcon, TextCursorInputIcon } from '@lucide/svelte';
     import lrclib, { type APIOptions, type Track } from 'lrclib.js';
     import { PersistedState, resource } from 'runed';
-    import { isSearchEmpty, encodeURISearchQuery } from '$lib/helpers/utils.js';
+    import { isSearchEmpty, encodeURISearchQuery } from '#lib/helpers/utils.js';
     import { goto } from '$app/navigation';
-    import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card';
-    import ImportMetadata from '$lib/components/app/ImportMetadata.svelte';
-    import { Label } from '$lib/components/ui/label';
-    import { Input } from '$lib/components/ui/input';
-    import { Button } from '$lib/components/ui/button';
-    import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-    import TrackCard from '$lib/components/app/TrackCard.svelte';
+    import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '#lib/components/ui/card';
+    import ImportMetadata from '#lib/components/app/ImportMetadata.svelte';
+    import { Label } from '#lib/components/ui/label';
+    import { Input } from '#lib/components/ui/input';
+    import { Button } from '#lib/components/ui/button';
+    import { Skeleton } from '#lib/components/ui/skeleton/index.js';
+    import TrackCard from '#lib/components/app/TrackCard.svelte';
     import { onMount } from 'svelte';
     import { cn } from 'cn';
 

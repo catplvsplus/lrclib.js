@@ -89,6 +89,10 @@ export class PersistentStorage {
     public async queryTracks(query: APIOptions.Get.Search, likedOnly: boolean = false): Promise<APIResponse.Get.TrackSignature[]> {
         if (!this.isSupported()) return [];
 
+        if (likedOnly) {
+            await this.getAllLikes();
+        }
+
         const tracks = await this.idb
             .transaction({
                 storeNames: ['tracks'],
@@ -97,7 +101,7 @@ export class PersistentStorage {
             .objectStore('tracks')
             .filter(
                 async track => {
-                    if (likedOnly && !await this.getTrackLike(track.id)) {
+                    if (likedOnly && !this.likes.get(track.id)) {
                         return false;
                     }
 
@@ -108,6 +112,24 @@ export class PersistentStorage {
             // TODO: Implement a more efficient query mechanism, possibly using indexes or a more advanced filtering strategy.
 
         return tracks;
+    }
+
+    public async getAllLikes(): Promise<Pick<APIResponse.Get.TrackSignature, 'id'>[]> {
+        if (!this.isSupported()) return [];
+
+        const likes = await this.idb
+            .transaction({
+                storeNames: ['likes'],
+                mode: 'readonly'
+            })
+            .objectStore('likes')
+            .getAll();
+
+        for (const like of likes) {
+            this.likes.set(like.id, true);
+        }
+
+        return likes;
     }
 
     public async getAllTracks(): Promise<APIResponse.Get.TrackSignature[]> {

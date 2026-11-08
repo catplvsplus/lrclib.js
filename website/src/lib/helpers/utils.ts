@@ -52,6 +52,10 @@ export function formatDuration(duration: number, format: string = 'mm:ss'): stri
 }
 
 export function trackSatisfiesQuery(track: APIResponse.Get.TrackSignature, query: APIOptions.Get.Search): boolean {
+    if (isSearchEmpty(query)) {
+        return true;
+    }
+
     if ('q' in query && query.q) {
         const q = query.q.toLowerCase();
 

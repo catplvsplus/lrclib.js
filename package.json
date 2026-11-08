@@ -20,6 +20,6 @@
     "website"
   ],
   "dependencies": {
-    "@catplvsplus/idb": "1.0.3"
+    "@catplvsplus/idb": "1.0.5"
   }
 }

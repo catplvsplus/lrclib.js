@@ -24,7 +24,7 @@
             const tracks: (Track|APIResponse.Get.TrackSignature)[] = [];
 
             if (isSearchEmpty(query)) {
-                tracks.push(...await storage.getAllTracks());
+                tracks.push(...await storage.queryTracks({ q: '' }, true));
             } else {
                 tracks.push(...await storage.queryTracks(query, true));
             }

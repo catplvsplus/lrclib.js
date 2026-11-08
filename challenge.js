@@ -1,10 +1,16 @@
 // @ts-check
 import lrclib, { ChallengeSolver, VanillaChallengeSolver } from 'lrclib.js';
+import { solveChallenge } from '@lrclib.js/challenge-solver/wasm';
 import ms from 'ms';
 
 console.log('Starting...');
 
-const challenge =  await lrclib.requestChallenge();
+let challenge = await lrclib.requestChallenge();
+
+challenge = {
+    prefix: '1cNdiaHCqsE2O0vGzEuuJcbcrznTlWRF',
+    target: '000000FF00000000000000000000000000000000000000000000000000000000',
+};
 
 console.log('Chalenge:', challenge);
 console.log('Solving...');
@@ -23,7 +29,12 @@ vanillaSolver.on('attempt', (solver) => {
 await wasmSolver.solve();
 await vanillaSolver.solve();
 
-if (wasmSolver.nonce !== vanillaSolver.nonce) {
+let pureWasmTime = Date.now();
+const nonce = solveChallenge(challenge.prefix, challenge.target);
+
+pureWasmTime = Date.now() - pureWasmTime;
+
+if (wasmSolver.nonce !== vanillaSolver.nonce || wasmSolver.nonce !== nonce) {
     console.error('[error] Nonce mismatch between wasm and vanilla solvers');
     process.exit(1);
 }
@@ -31,12 +42,21 @@ if (wasmSolver.nonce !== vanillaSolver.nonce) {
 const wasmTime = (wasmSolver.solveEndTime ?? 0) - (wasmSolver.solveStartTime ?? 0);
 const vanillaTime = (vanillaSolver.solveEndTime ?? 0) - (vanillaSolver.solveStartTime ?? 0);
 
+const sorted = [
+    { name: 'wasm', time: wasmTime },
+    { name: 'vanilla', time: vanillaTime },
+    { name: 'pure wasm', time: pureWasmTime },
+];
+
+sorted.sort((a, b) => a.time - b.time);
+
 console.log('[note] All solvers completed successfully');
 console.log('[note] Token:', wasmSolver.prefix + ':' + wasmSolver.nonce);
-console.log('[note] Time taken (wasm):', ms(wasmTime));
-console.log('[note] Time taken (vanilla):', ms(vanillaTime));
-console.log('[note] Time difference:', ms(Math.abs(wasmTime - vanillaTime)), `(${wasmTime > vanillaTime ? 'vanilla' : 'wasm'} was faster)`);
-console.log('[note] Time ratio (wasm/vanilla):', (wasmTime / vanillaTime).toFixed(2));
-console.log('[note] Time ratio (vanilla/wasm):', (vanillaTime / wasmTime).toFixed(2));
+
+for (const { name, time } of sorted) {
+    console.log(`[note] Time taken (${name}):`, ms(time));
+}
+
+console.log('[note] Time difference:', ms(sorted[1].time - sorted[0].time), `(${sorted[0].name} was faster)`);
 console.log('[note] Challenge prefix:', challenge.prefix);
 console.log('[note] Challenge target:', challenge.target);

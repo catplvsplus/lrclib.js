@@ -5,7 +5,7 @@ import { hex2bin as h2b, sha256Hash } from "wasm-crypto/assembly/crypto";
 export function solveChallenge(
     prefix: string,
     target: string
-): void {
+): i32 {
     let nonce: i32 = 0;
 
     const targetBytes = hex2bin(target)!;
@@ -18,6 +18,8 @@ export function solveChallenge(
 
         nonce++;
     }
+
+    return nonce;
 }
 
 export function hex2bin(hex: string): Uint8Array|null {

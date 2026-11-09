@@ -2,7 +2,6 @@
     import { CircleCheckIcon, FileCheckCornerIcon, InfoIcon, LoaderCircleIcon, PlusIcon, SquarePenIcon, XIcon } from '@lucide/svelte';
     import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '#lib/components/ui/card/index.js';
     import ImportMetadata from '#lib/components/app/ImportMetadata.svelte';
-    import type { APIResponse } from 'lrclib.js';
     import { publishSchema } from '#lib/schemas/publish.js';
     import { zod4Client } from 'sveltekit-superforms/adapters';
     import { superForm } from 'sveltekit-superforms';
@@ -40,15 +39,20 @@
 
     let disabled = $derived(publisher.isPublishing || $submitting);
 
-    function setMetadata(metadata: Partial<Omit<APIResponse.Get.TrackSignature, "id"|"instrumental">>) {
-        console.log('Metadata received:', metadata);
-    }
-
     snapshot({ capture, restore });
 </script>
 
 <div class="grid gap-4 sm:pl-0 px-4 pb-4">
-    <ImportMetadata {setMetadata}/>
+    <ImportMetadata
+        setMetadata={(metadata) => {
+            $formData.trackName = metadata.trackName ?? $formData.trackName;
+            $formData.artistName = metadata.artistName ?? $formData.artistName;
+            $formData.albumName = metadata.albumName ?? $formData.albumName;
+            $formData.duration = metadata.duration ?? $formData.duration;
+            $formData.plainLyrics = metadata.plainLyrics ?? $formData.plainLyrics;
+            $formData.syncedLyrics = metadata.syncedLyrics ?? $formData.syncedLyrics;
+        }}
+    />
     <Card>
         <CardHeader>
             <CardTitle class="flex items-center gap-2">

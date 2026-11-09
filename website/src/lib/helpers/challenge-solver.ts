@@ -1,42 +1,25 @@
-import { VanillaChallengeSolver } from 'lrclib.js';
+import { wasm, type APIResponse } from 'lrclib.js';
 
-let solver: VanillaChallengeSolver|null = null;
+let challenge: APIResponse.Post.RequestChallenge|null = null;
 
 self.addEventListener('message', async (event) => {
     const { type, data } = event.data;
 
     switch (type) {
         case 'start':
-            solver = new VanillaChallengeSolver(data.challenge);
-
-            solver.on('attempt', () => {
-                self.postMessage({
-                    type: 'attempt',
-                    data: {
-                        nonce: solver?.nonce,
-                        attempts: solver?.attempts,
-                        solveStartTime: solver?.solveStartTime,
-                        solveEndTime: solver?.solveEndTime,
-                        solveLastUpdate: solver?.solveLastUpdate
-                    }
-                })
-            });
-            break;
-        case 'abort':
-            solver?.abortController?.abort();
+            challenge = data;
             break;
         case 'solve':
-            await solver?.solve();
-            self.postMessage({
-                type: 'solved',
+            if (!challenge) throw new Error('Challenge is not defined');
+
+            const nonce = (await wasm.ChallengeSolver.getWASM()).solveChallenge(challenge?.prefix, challenge?.target);
+
+            postMessage({
+                type: 'result',
                 data: {
-                    nonce: solver?.nonce,
-                    attempts: solver?.attempts,
-                    solveStartTime: solver?.solveStartTime,
-                    solveEndTime: solver?.solveEndTime,
-                    solveLastUpdate: solver?.solveLastUpdate
+                    nonce
                 }
-            });
+            })
             break;
         default:
             console.warn(`Unknown message type: ${type}`);

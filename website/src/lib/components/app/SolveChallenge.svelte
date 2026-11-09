@@ -1,19 +1,37 @@
 <script lang="ts">
-    import lrclib from 'lrclib.js';
     import { InputGroup, InputGroupButton, InputGroupInput } from '../ui/input-group';
     import Solver from '#lib/helpers/challenge-solver.ts?worker';
     import { LoaderCircleIcon } from '@lucide/svelte';
+    import { onDestroy } from 'svelte';
 
     let token: string|null = $state(null);
     let isSolving: boolean = $state(false);
+    let abortController: AbortController|null = null;
 
     async function solve(): Promise<string> {
-        const challenge = await lrclib.requestChallenge();
+        abortController?.abort();
+        abortController = new AbortController();
+
+        const signal = abortController.signal;
+        const challenge = {
+            prefix: '1cNdiaHCqsE2O0vGzEuuJcbcrznTlWRF',
+            target: '000000FF00000000000000000000000000000000000000000000000000000000',
+        };
         const solver = new Solver({ name: 'Challenge Solver' });
 
         solver.postMessage({
             type: 'start',
-            challenge
+            data: {
+                prefix: challenge.prefix,
+                target: challenge.target,
+            }
+        });
+
+        isSolving = true;
+
+        signal?.addEventListener('abort', () => {
+            solver.terminate();
+            isSolving = false;
         });
 
         return new Promise((resolve, reject) => {
@@ -23,7 +41,8 @@
                 switch (type) {
                     case 'result':
                         isSolving = false;
-                        resolve(token = `${data.prefix}:${data.nonce}`);
+                        resolve(token = `${challenge.prefix}:${data.nonce}`);
+                        solver.terminate();
                         break;
                     case 'attempt':
                         isSolving = true;
@@ -37,11 +56,15 @@
             });
         });
     }
+
+    onDestroy(() => {
+        abortController?.abort();
+    });
 </script>
 
 <InputGroup>
-    <InputGroupInput value={token}/>
-    <InputGroupButton onclick={solve} disabled={isSolving}>
+    <InputGroupInput value={token} placeholder={isSolving ? 'Solving...' : 'Click "Solve" to start'}/>
+    <InputGroupButton onclick={() => !isSolving ? solve() : abortController?.abort()}>
         {#if isSolving}
             <LoaderCircleIcon class="animate-spin"/>
         {:else}

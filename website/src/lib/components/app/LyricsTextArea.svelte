@@ -37,7 +37,7 @@
                         {disabled}
                         bind:value={$formData.syncedLyrics}
                         name="syncedLyrics"
-                        class="max-h-125"
+                        class="max-h-125 font-mono text-sm"
                         placeholder="Enter synced lyrics here..."
                         onkeypress={() => isModified = false}
                     />
@@ -56,7 +56,7 @@
                         {disabled}
                         bind:value={$formData.plainLyrics}
                         name="plainLyrics"
-                        class="max-h-125"
+                        class="max-h-125 font-mono text-sm"
                         placeholder="Enter plain lyrics here..."
                         onkeypress={() => isModified = true}
                     />

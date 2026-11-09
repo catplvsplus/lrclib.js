@@ -45,7 +45,7 @@ export class ChallengeSolver extends AsyncEventEmitter<ChallengeSolver.Events> i
         this._attempts = 0;
         this._nonce = 0;
 
-        const target = ChallengeSolver.decodeHex(this.target);
+        const target = await ChallengeSolver.decodeHex(this.target);
 
         while (true) {
             if (this.abortController.signal.aborted) break;
@@ -58,7 +58,7 @@ export class ChallengeSolver extends AsyncEventEmitter<ChallengeSolver.Events> i
             const input = `${this.prefix}${this._nonce}`;
             const hashed = await ChallengeSolver.sha256(input);
 
-            if (ChallengeSolver.verifyNonce(hashed, target)) break;
+            if (await ChallengeSolver.verifyNonce(hashed, target)) break;
 
             this._nonce++;
         }
@@ -96,11 +96,11 @@ export class ChallengeSolver extends AsyncEventEmitter<ChallengeSolver.Events> i
         return new Uint8Array(hashBuffer);
     }
 
-    public static decodeHex(hex: string): Uint8Array {
+    public static async decodeHex(hex: string): Promise<Uint8Array> {
         return Uint8Array.fromHex(hex);
     }
 
-    public static verifyNonce(hash: Uint8Array, target: Uint8Array): boolean {
+    public static async verifyNonce(hash: Uint8Array, target: Uint8Array): Promise<boolean> {
         if (hash.length !== target.length) return false;
 
         for (let i = 0; i < hash.length - 1; i++) {

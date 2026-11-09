@@ -6,10 +6,10 @@ console.log('Starting...');
 
 let challenge = await lrclib.requestChallenge();
 
-// challenge = {
-//     prefix: '1cNdiaHCqsE2O0vGzEuuJcbcrznTlWRF',
-//     target: '000000FF00000000000000000000000000000000000000000000000000000000',
-// };
+challenge = {
+    prefix: '1cNdiaHCqsE2O0vGzEuuJcbcrznTlWRF', // '5wZfr5mLmXiHOk87f3R63C3Q1gATu0HN',
+    target: '000000FF00000000000000000000000000000000000000000000000000000000',
+};
 
 console.log('Solving...');
 

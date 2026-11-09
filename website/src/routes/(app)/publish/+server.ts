@@ -2,8 +2,7 @@ import { publishSchema } from '#lib/schemas/publish.js';
 import { REST, Routes } from 'lrclib.js';
 
 export async function POST({ request, fetch }) {
-    const formData = await request.formData();
-    const publishData = await publishSchema.safeParseAsync(Object.fromEntries(formData.entries()));
+        const publishData = await publishSchema.safeParseAsync(await request.json());
     const publishToken = request.headers.get('X-Publish-Token');
 
     if (!publishToken) {
@@ -18,6 +17,7 @@ export async function POST({ request, fetch }) {
         method: 'POST',
         headers: {
             ...REST.headers,
+            'Content-Type': 'application/json',
             'X-Publish-Token': publishToken,
         },
         body: JSON.stringify(publishData.data),

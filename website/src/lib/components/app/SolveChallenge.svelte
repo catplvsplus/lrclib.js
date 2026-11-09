@@ -9,12 +9,13 @@
     let isSolving: boolean = $state(false);
     let abortController: AbortController|null = null;
 
-    async function solve(quick: boolean = true): Promise<string> {
+    async function solve(quick: boolean = false): Promise<string> {
         const challenge = await lrclib.requestChallenge();
         const solver = new Solver({ name: 'Challenge Solver' });
 
         abortController?.abort();
         abortController = new AbortController();
+        token = null;
 
         const signal = abortController.signal;
 
@@ -83,7 +84,7 @@
     <InputGroupAddon align="inline-end">
         <InputGroupButton
             variant={isSolving ? 'destructive' : 'default'}
-            onclick={() => !isSolving ? solve() : abortController?.abort()}
+            onclick={event => !isSolving ? solve(event.shiftKey) : abortController?.abort()}
         >
             {#if isSolving}
                 Abort

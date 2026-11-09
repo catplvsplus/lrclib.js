@@ -1,4 +1,5 @@
 import Solver from '#lib/helpers/challenge-solver.ts?worker';
+import { resolve } from '$app/paths';
 import type { PublishSchema } from '../schemas/publish';
 import lrclib from 'lrclib.js';
 
@@ -80,7 +81,20 @@ export class LyricsPublisher {
             });
         });
 
-        await lrclib.publishTrack(data, token, { signal });
+        const res = await fetch(resolve('/(app)/publish'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Publish-Token': token,
+            },
+            body: JSON.stringify(data),
+            signal
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`Failed to publish track (${res.status}): ${errorText}`);
+        }
     }
 }
 

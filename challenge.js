@@ -6,7 +6,7 @@ console.log('Starting...');
 
 let challenge = await lrclib.requestChallenge();
 
-await wasm.ChallengeSolver.getWASM();
+await wasm.ChallengeSolver.getInstance();
 
 challenge = {
     prefix: '1cNdiaHCqsE2O0vGzEuuJcbcrznTlWRF', // '5wZfr5mLmXiHOk87f3R63C3Q1gATu0HN',

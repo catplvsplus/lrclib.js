@@ -1,6 +1,6 @@
 {
   "name": "@lrclib.js/challenge-solver",
-  "description": "A Javascript implementation of the proof-of-work challenge solver for lrclib.net API.",
+  "description": "A Javascript & WebAssembly implementation of the proof-of-work challenge solver for lrclib.net API.",
   "version": "2.0.0",
   "type": "module",
   "module": "dist/index.js",

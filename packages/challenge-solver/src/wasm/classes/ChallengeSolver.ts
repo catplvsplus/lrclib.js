@@ -3,35 +3,43 @@ import type { APIResponse } from '@lrclib.js/api-types';
 import * as wasm from '$wasm/wasm.js';
 
 export type WASMExports = Awaited<ReturnType<typeof wasm.instantiate>>;
-export type WASMEnv = {};
+export type WASMEnv = Record<'env', unknown>;
 
 export class ChallengeSolver extends VanillaChallengeSolver {
     private static _wasm: WASMExports|null = null;
 
-    public static get isNodeOrBun() {
+    public static wasmURL: URL = new URL("../wasm.wasm", import.meta.url);
+
+    public constructor(data: APIResponse.Post.RequestChallenge) {
+        super(data);
+
+        ChallengeSolver.getInstance();
+    }
+
+    /**
+     * Checks if the code is running in a Node.js environment.
+     */
+    public static isNode() {
         return typeof process != "undefined" && process.versions != null && (process.versions.node != null || process.versions.bun != null);
     }
 
-    public constructor(data: APIResponse.Post.RequestChallenge, public readonly options?: VanillaChallengeSolver.Options) {
-        super(data, options);
-
-        ChallengeSolver.getWASM();
-    }
-
-    public static async getWASM(): Promise<WASMExports> {
+    /**
+     * A singleton method to get the WASM exports instance.
+     */
+    public static async getInstance(): Promise<WASMExports> {
         return this._wasm ??= await ChallengeSolver.instantiate(await ChallengeSolver.compile());
     }
 
     public static async sha256(input: string): Promise<Uint8Array> {
-        return (await ChallengeSolver.getWASM()).hash(input);
+        return (await ChallengeSolver.getInstance()).hash(input);
     }
 
     public static async decodeHex(hex: string): Promise<Uint8Array> {
-        return (await ChallengeSolver.getWASM()).hex2bin(hex) ?? new Uint8Array();
+        return (await ChallengeSolver.getInstance()).hex2bin(hex) ?? new Uint8Array();
     }
 
     public static async verifyNonce(result: Uint8Array, target: Uint8Array): Promise<boolean> {
-        return (await ChallengeSolver.getWASM()).verifyNonce(result, target);
+        return (await ChallengeSolver.getInstance()).verifyNonce(result, target);
     }
 
     public static async solve(data: APIResponse.Post.RequestChallenge): Promise<ChallengeSolver> {
@@ -40,28 +48,30 @@ export class ChallengeSolver extends VanillaChallengeSolver {
         return solver;
     }
 
+    /**
+     * Solves the challenge directly using the WebAssembly module without creating an instance of ChallengeSolver.
+     */
     public static async wasmSolve(prefix: string, target: string): Promise<number> {
-        return (await ChallengeSolver.getWASM()).solveChallenge(prefix, target);
+        return (await ChallengeSolver.getInstance()).solveChallenge(prefix, target);
     }
 
-    public static async instantiate(module: WebAssembly.Module, imports?: Record<'env', unknown>): Promise<WASMExports> {
+    /**
+     * Creates a new instance of the WebAssembly module.
+     */
+    public static async instantiate(module: WebAssembly.Module, imports?: WASMEnv): Promise<WASMExports> {
         return wasm.instantiate(
             module,
             imports ?? { env: null }
-            // {
-            //     env: imports?.env ?? {},
-            //     index: {
-            //         onAttempt: (nonce: number, done: boolean) => void 0,
-            //         ...imports?.index ?? {}
-            //     }
-            // }
         );
     }
 
+    /**
+     * Compiles the WebAssembly module from the specified URL or the default URL.
+     */
     public static async compile(url?: string|URL): Promise<WebAssembly.Module> {
         url = url instanceof URL ? url : new URL(url ?? "../wasm.wasm", import.meta.url);
 
-        return ChallengeSolver.isNodeOrBun
+        return ChallengeSolver.isNode()
             ? WebAssembly.compile(await (await import("node:fs/promises")).readFile(url))
             : WebAssembly.compileStreaming(globalThis.fetch(url))
     }

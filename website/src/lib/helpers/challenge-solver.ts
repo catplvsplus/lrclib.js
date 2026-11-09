@@ -14,7 +14,7 @@ self.addEventListener('message', async (event) => {
             if (!challenge) throw new Error('Challenge is not defined');
 
             if (data?.quick) {
-                const nonce = (await wasm.ChallengeSolver.getWASM()).solveChallenge(challenge?.prefix, challenge?.target);
+                const nonce = await wasm.ChallengeSolver.wasmSolve(challenge?.prefix, challenge?.target);
 
                 self.postMessage({
                     type: 'result',
@@ -31,7 +31,7 @@ self.addEventListener('message', async (event) => {
             solver.on('attempt', () => self.postMessage({
                 type: 'attempt',
                 data: {
-                    attempt: solver.attempts
+                    nonce: solver.nonce
                 }
             }));
 

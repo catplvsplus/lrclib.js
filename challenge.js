@@ -16,7 +16,7 @@ console.log('Solving...');
 // Pure wasm solver
 
 let pureWasmTime = Date.now();
-const nonce = wasm.solveChallenge(challenge.prefix, challenge.target);
+const nonce = await wasm.ChallengeSolver.wasmSolve(challenge.prefix, challenge.target);
 
 pureWasmTime = Date.now() - pureWasmTime;
 

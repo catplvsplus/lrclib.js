@@ -9,7 +9,7 @@
     let isSolving: boolean = $state(false);
     let abortController: AbortController|null = null;
 
-    async function solve(): Promise<string> {
+    async function solve(quick: boolean = true): Promise<string> {
         const challenge = await lrclib.requestChallenge();
         const solver = new Solver({ name: 'Challenge Solver' });
 
@@ -33,7 +33,10 @@
 
                 switch (type) {
                     case 'ready':
-                        solver.postMessage({ type: 'solve' });
+                        solver.postMessage({
+                            type: 'solve',
+                            data: { quick }
+                        });
                         break;
                     case 'result':
                         isSolving = false;

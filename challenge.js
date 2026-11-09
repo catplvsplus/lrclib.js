@@ -6,42 +6,38 @@ console.log('Starting...');
 
 let challenge = await lrclib.requestChallenge();
 
-challenge = {
-    prefix: '1cNdiaHCqsE2O0vGzEuuJcbcrznTlWRF', // '5wZfr5mLmXiHOk87f3R63C3Q1gATu0HN',
-    target: '000000FF00000000000000000000000000000000000000000000000000000000',
-};
-
-console.log('Solving...');
+// challenge = {
+//     prefix: '5wZfr5mLmXiHOk87f3R63C3Q1gATu0HN', // '1cNdiaHCqsE2O0vGzEuuJcbcrznTlWRF',
+//     target: '000000FF00000000000000000000000000000000000000000000000000000000',
+// };
 
 // Pure wasm solver
+console.log('[pure wasm] Solving...');
 
 let pureWasmTime = Date.now();
 const nonce = await wasm.ChallengeSolver.wasmSolve(challenge.prefix, challenge.target);
 
 pureWasmTime = Date.now() - pureWasmTime;
+console.log('[pure wasm] Done solving. Nonce =', nonce, 'Time taken =', ms(pureWasmTime));
 
 // Challenge solvers
 const wasmSolver = new wasm.ChallengeSolver(challenge);
 const vanillaSolver = new ChallengeSolver(challenge);
 
-wasmSolver.on('attempt', (solver) => {
-    console.log(`[wasm] Attempt #${solver.attempts}`);
-});
-
-vanillaSolver.on('attempt', (solver) => {
-    console.log(`[vanilla] Attempt #${solver.attempts}`);
-});
-
+console.log('[wasm] Solving...');
 await wasmSolver.solve();
+const wasmTime = (wasmSolver.solveEndTime ?? 0) - (wasmSolver.solveStartTime ?? 0);
+console.log('[wasm] Done solving. Nonce =', wasmSolver.nonce, 'Time taken =', ms(wasmTime));
+
+console.log('[vanilla] Solving...');
 await vanillaSolver.solve();
+const vanillaTime = (vanillaSolver.solveEndTime ?? 0) - (vanillaSolver.solveStartTime ?? 0);
+console.log('[vanilla] Done solving. Nonce =', vanillaSolver.nonce, 'Time taken =', ms(vanillaTime));
 
 if (wasmSolver.nonce !== vanillaSolver.nonce || wasmSolver.nonce !== nonce) {
     console.error('[error] Nonce mismatch between wasm and vanilla solvers');
     process.exit(1);
 }
-
-const wasmTime = (wasmSolver.solveEndTime ?? 0) - (wasmSolver.solveStartTime ?? 0);
-const vanillaTime = (vanillaSolver.solveEndTime ?? 0) - (vanillaSolver.solveStartTime ?? 0);
 
 const sorted = [
     { name: 'wasm', time: wasmTime },

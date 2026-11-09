@@ -1,5 +1,6 @@
 {
   "exclude": ["tsdown.config.ts", "dist", "wasm"],
+  "include": ["src", "wasm"],
   "compilerOptions": {
     "module": "esnext",
     "target": "esnext",

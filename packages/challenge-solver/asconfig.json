@@ -1,4 +1,7 @@
 {
+  "entries": [
+    "./asc/index.ts"
+  ],
   "targets": {
     "debug": {
       "outFile": "wasm/wasm.wasm",

@@ -1,2 +1,5 @@
-export * from './classes/ChallengeSolver.js';
-export * from './classes/VanillaChallengeSolver.js';
+import * as wasm from './wasm/index.js';
+
+export { wasm };
+
+export * from './vanilla/index.js';

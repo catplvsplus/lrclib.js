@@ -2,7 +2,7 @@ import type { APIPublishTokenData, APIResponse } from '@lrclib.js/api-types';
 import { AsyncEventEmitter } from '@vladfrangu/async_event_emitter';
 import { subtle } from 'uncrypto';
 
-export class VanillaChallengeSolver extends AsyncEventEmitter<VanillaChallengeSolver.Events> implements APIResponse.Post.RequestChallenge {
+export class ChallengeSolver extends AsyncEventEmitter<ChallengeSolver.Events> implements APIResponse.Post.RequestChallenge {
     private _nonce: number = 0;
     private _attempts: number = 0;
     private _solveStartTime: number|null = null;
@@ -14,7 +14,7 @@ export class VanillaChallengeSolver extends AsyncEventEmitter<VanillaChallengeSo
     public readonly prefix: string;
     public readonly target: string;
 
-    constructor(data: APIResponse.Post.RequestChallenge, public readonly options?: VanillaChallengeSolver.Options) {
+    constructor(data: APIResponse.Post.RequestChallenge, public readonly options?: ChallengeSolver.Options) {
         super();
         this.prefix = data.prefix;
         this.target = data.target;
@@ -45,7 +45,7 @@ export class VanillaChallengeSolver extends AsyncEventEmitter<VanillaChallengeSo
         this._attempts = 0;
         this._nonce = 0;
 
-        const target = VanillaChallengeSolver.decodeHex(this.target);
+        const target = ChallengeSolver.decodeHex(this.target);
 
         while (true) {
             if (this.abortController.signal.aborted) break;
@@ -56,9 +56,9 @@ export class VanillaChallengeSolver extends AsyncEventEmitter<VanillaChallengeSo
             this.emit('attempt', this);
 
             const input = `${this.prefix}${this._nonce}`;
-            const hashed = await VanillaChallengeSolver.sha256(input);
+            const hashed = await ChallengeSolver.sha256(input);
 
-            if (VanillaChallengeSolver.verifyNonce(hashed, target)) break;
+            if (ChallengeSolver.verifyNonce(hashed, target)) break;
 
             this._nonce++;
         }
@@ -71,7 +71,7 @@ export class VanillaChallengeSolver extends AsyncEventEmitter<VanillaChallengeSo
             this._solveLastUpdate = null;
 
             this.emit('abort', this);
-            throw new VanillaChallengeSolver.AbortError('Solve aborted');
+            throw new ChallengeSolver.AbortError('Solve aborted');
         }
 
         this.emit('solved', this);
@@ -114,26 +114,26 @@ export class VanillaChallengeSolver extends AsyncEventEmitter<VanillaChallengeSo
         return true;
     }
 
-    public static async solve(data: APIResponse.Post.RequestChallenge): Promise<VanillaChallengeSolver> {
-        const solver = new VanillaChallengeSolver(data);
+    public static async solve(data: APIResponse.Post.RequestChallenge): Promise<ChallengeSolver> {
+        const solver = new ChallengeSolver(data);
         await solver.solve();
         return solver;
     }
 }
 
-export namespace VanillaChallengeSolver {
+export namespace ChallengeSolver {
     export class AbortError extends Error {}
 
     export interface Options {
         /**
          * @deprecated Use the `attempt` event instead.
          */
-        onAttempt?: (solver: VanillaChallengeSolver) => void;
+        onAttempt?: (solver: ChallengeSolver) => void;
     }
 
     export interface Events {
-        attempt: [solver: VanillaChallengeSolver];
-        solved: [solver: VanillaChallengeSolver];
-        abort: [solver: VanillaChallengeSolver];
+        attempt: [solver: ChallengeSolver];
+        solved: [solver: ChallengeSolver];
+        abort: [solver: ChallengeSolver];
     }
 }

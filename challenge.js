@@ -1,6 +1,5 @@
 // @ts-check
-import lrclib, { ChallengeSolver, VanillaChallengeSolver } from 'lrclib.js';
-import { solveChallenge } from '@lrclib.js/challenge-solver/wasm';
+import lrclib, { ChallengeSolver, wasm } from 'lrclib.js';
 import ms from 'ms';
 
 console.log('Starting...');
@@ -17,13 +16,13 @@ console.log('Solving...');
 // Pure wasm solver
 
 let pureWasmTime = Date.now();
-const nonce = solveChallenge(challenge.prefix, challenge.target);
+const nonce = wasm.solveChallenge(challenge.prefix, challenge.target);
 
 pureWasmTime = Date.now() - pureWasmTime;
 
 // Challenge solvers
-const wasmSolver = new ChallengeSolver(challenge);
-const vanillaSolver = new VanillaChallengeSolver(challenge);
+const wasmSolver = new wasm.ChallengeSolver(challenge);
+const vanillaSolver = new ChallengeSolver(challenge);
 
 wasmSolver.on('attempt', (solver) => {
     console.log(`[wasm] Attempt #${solver.attempts}`);

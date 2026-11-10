@@ -10,6 +10,7 @@
     "dev:host": "lerna run dev:host"
   },
   "devDependencies": {
+    "@reciple/utils": "^10.0.4",
     "@types/node": "^26.6.6",
     "lerna": "^10.1.1",
     "ms": "^2.1.3",

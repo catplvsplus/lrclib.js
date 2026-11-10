@@ -73,10 +73,12 @@ export class ChallengeSolver extends VanillaChallengeSolver {
 
     /**
      * Compiles the WebAssembly module from the specified URL or the default URL.
-     * @deprecated
+     * @deprecated Use `ChallengeSolver.getModule()` instead, as the module is now precompiled and imported directly.
      */
     public static async compile(url?: string|URL): Promise<WebAssembly.Module> {
-        url = url instanceof URL ? url : new URL(url ?? "../wasm.wasm", import.meta.url);
+        if (!url) return ChallengeSolver.getModule();
+
+        url = url instanceof URL ? url : new URL(url);
 
         return ChallengeSolver.isNode()
             ? WebAssembly.compile(await (await import("node:fs/promises")).readFile(url))

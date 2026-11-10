@@ -1,17 +1,12 @@
 import tailwindcss from '@tailwindcss/vite';
 import adapter from '@sveltejs/adapter-auto';
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig, searchForWorkspaceRoot } from 'vite';
-import { unwasm } from 'unwasm/plugin';
+import { defineConfig } from 'vite';
 
 
 export default defineConfig({
-    optimizeDeps: {
-        exclude: ['@lrclib/challenge-solver']
-    },
 	plugins: [
 		tailwindcss(),
-        unwasm({}),
 		sveltekit({
 			compilerOptions: {
 				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
@@ -23,12 +18,5 @@ export default defineConfig({
 			// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 			adapter: adapter()
 		})
-	],
-    server: {
-        fs: {
-            allow: [
-                searchForWorkspaceRoot(process.cwd())
-            ]
-        }
-    }
+	]
 });

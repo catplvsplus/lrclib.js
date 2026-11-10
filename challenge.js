@@ -8,10 +8,10 @@ let challenge = await lrclib.requestChallenge();
 
 await wasm.ChallengeSolver.getInstance();
 
-challenge = {
-    prefix: '1cNdiaHCqsE2O0vGzEuuJcbcrznTlWRF', // '5wZfr5mLmXiHOk87f3R63C3Q1gATu0HN',
-    target: '000000FF00000000000000000000000000000000000000000000000000000000',
-};
+// challenge = {
+//     prefix: '1cNdiaHCqsE2O0vGzEuuJcbcrznTlWRF', // '5wZfr5mLmXiHOk87f3R63C3Q1gATu0HN',
+//     target: '000000FF00000000000000000000000000000000000000000000000000000000',
+// };
 
 // Pure wasm solver
 console.log('[pure wasm] Solving...');

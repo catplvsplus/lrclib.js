@@ -45,6 +45,7 @@
   "devDependencies": {
     "@lrclib.js/api-types": "^2.0.0",
     "assemblyscript": "^0.28.20",
+    "unwasm": "^0.6.3",
     "wasm-crypto": "^0.0.13"
   },
   "publishConfig": {

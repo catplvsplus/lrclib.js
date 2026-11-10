@@ -7,8 +7,7 @@ export type WASMEnv = Record<'env', unknown>;
 
 export class ChallengeSolver extends VanillaChallengeSolver {
     private static _wasm: WASMExports|null = null;
-
-    public static wasmURL: URL = new URL("../wasm.wasm", import.meta.url);
+    private static _module: WebAssembly.Module|null = null;
 
     public constructor(data: APIResponse.Post.RequestChallenge) {
         super(data);
@@ -27,7 +26,14 @@ export class ChallengeSolver extends VanillaChallengeSolver {
      * A singleton method to get the WASM exports instance.
      */
     public static async getInstance(): Promise<WASMExports> {
-        return this._wasm ??= await ChallengeSolver.instantiate(await ChallengeSolver.compile());
+        return this._wasm ??= await ChallengeSolver.instantiate(await ChallengeSolver.getModule());
+    }
+
+    public static async getModule(): Promise<WebAssembly.Module> {
+        return this._module ??= await import(
+            // @ts-expect-error
+            '$wasm/wasm.wasm'
+        ).then(module => module.default);
     }
 
     public static async sha256(input: string): Promise<Uint8Array> {
@@ -67,6 +73,7 @@ export class ChallengeSolver extends VanillaChallengeSolver {
 
     /**
      * Compiles the WebAssembly module from the specified URL or the default URL.
+     * @deprecated
      */
     public static async compile(url?: string|URL): Promise<WebAssembly.Module> {
         url = url instanceof URL ? url : new URL(url ?? "../wasm.wasm", import.meta.url);

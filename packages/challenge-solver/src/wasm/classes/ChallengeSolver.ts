@@ -2,12 +2,19 @@ import { ChallengeSolver as VanillaChallengeSolver } from '../../vanilla/Challen
 import type { APIResponse } from '@lrclib.js/api-types';
 import * as wasm from '$wasm/wasm.js';
 
+// @ts-expect-error
+import wasmModule from '$wasm/wasm.wasm';
+
 export type WASMExports = Awaited<ReturnType<typeof wasm.instantiate>>;
 export type WASMEnv = Record<'env', unknown>;
 
 export class ChallengeSolver extends VanillaChallengeSolver {
     private static _wasm: WASMExports|null = null;
-    private static _module: WebAssembly.Module|null = null;
+
+    /**
+     * The WebAssembly module instance used for solving challenges.
+     */
+    public readonly module: WebAssembly.Module = wasmModule;
 
     public constructor(data: APIResponse.Post.RequestChallenge) {
         super(data);
@@ -27,13 +34,6 @@ export class ChallengeSolver extends VanillaChallengeSolver {
      */
     public static async getInstance(): Promise<WASMExports> {
         return this._wasm ??= await ChallengeSolver.instantiate(await ChallengeSolver.getModule());
-    }
-
-    public static async getModule(): Promise<WebAssembly.Module> {
-        return this._module ??= await import(
-            // @ts-expect-error
-            '$wasm/wasm.wasm'
-        ).then(module => module.default);
     }
 
     public static async sha256(input: string): Promise<Uint8Array> {
@@ -83,5 +83,12 @@ export class ChallengeSolver extends VanillaChallengeSolver {
         return ChallengeSolver.isNode()
             ? WebAssembly.compile(await (await import("node:fs/promises")).readFile(url))
             : WebAssembly.compileStreaming(globalThis.fetch(url))
+    }
+
+    /**
+     * @deprecated Instance is now precompiled. Use `ChallengeSolver.module` instead.
+     */
+    public static async getModule(): Promise<WebAssembly.Module> {
+        return wasmModule;
     }
 }

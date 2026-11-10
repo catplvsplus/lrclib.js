@@ -23,9 +23,6 @@
         "types": "./dist/wasm/index.d.ts",
         "default": "./dist/wasm/index.js"
       }
-    },
-    "./solver.wasm": {
-      "import": "./dist/wasm/wasm.wasm"
     }
   },
   "scripts": {

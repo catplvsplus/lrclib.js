@@ -17,14 +17,12 @@ export async function POST({ request, fetch }) {
     if (import.meta.env.DEV && publishTarget) {
         const [prefix, nonce] = publishToken.split(':');
 
-        const hash = await wasm.ChallengeSolver.sha256(prefix + nonce);
+        const validToken = await wasm.ChallengeSolver.verify({
+            prefix,
+            target: publishTarget,
+        }, parseInt(nonce, 10));
 
-        const validToken = await wasm.ChallengeSolver.verifyNonce(
-            hash,
-            await wasm.ChallengeSolver.decodeHex(publishTarget)
-        );
-
-        console.log('DEV mode publish token validation:', { prefix, nonce, hash, validToken });
+        console.log(`DEV mode publish token validation (${prefix}:${nonce}):`, validToken);
 
         if (!validToken) {
             return Response.json({ error: 'Invalid publish token' }, { status: 400 });

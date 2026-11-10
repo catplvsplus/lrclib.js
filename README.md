@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="apps/website/static/banner.png" width="300">
+    <img src="https://github.com/catplvsplus/lrclib.js/blob/main/website/static/banner.png?raw=true" width="300">
     <h3 style="margin-top: 0">A library for interacting with lrclib.net API</h3>
 </div>
 

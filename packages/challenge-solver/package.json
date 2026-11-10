@@ -40,12 +40,12 @@
   ],
   "dependencies": {
     "@vladfrangu/async_event_emitter": "^2.4.7",
-    "assemblyscript": "^0.28.20",
-    "uncrypto": "^0.1.3",
-    "wasm-crypto": "^0.0.13"
+    "uncrypto": "^0.1.3"
   },
   "devDependencies": {
-    "@lrclib.js/api-types": "^2.0.0"
+    "@lrclib.js/api-types": "^2.0.0",
+    "assemblyscript": "^0.28.20",
+    "wasm-crypto": "^0.0.13"
   },
   "publishConfig": {
     "access": "public"

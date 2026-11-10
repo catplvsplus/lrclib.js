@@ -1,7 +1,7 @@
 {
   "name": "lrclib.js",
   "description": "A library for interacting with lrclib.net API",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "type": "module",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",

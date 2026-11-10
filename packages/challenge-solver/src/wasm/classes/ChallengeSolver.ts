@@ -54,6 +54,10 @@ export class ChallengeSolver extends VanillaChallengeSolver {
         return solver;
     }
 
+    public static async verify(data: APIResponse.Post.RequestChallenge, nonce: number): Promise<boolean> {
+        return (await ChallengeSolver.getInstance()).verifyChallenge(data.prefix, data.target, nonce);
+    }
+
     /**
      * Solves the challenge directly using the WebAssembly module without creating an instance of ChallengeSolver.
      */

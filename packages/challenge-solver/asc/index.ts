@@ -11,15 +11,20 @@ export function solveChallenge(
     const targetBytes = hex2bin(target)!;
 
     while (true) {
-        const input = prefix + nonce.toString();
-        const hashed = hash(input);
-
-        if (verifyNonce(hashed, targetBytes)) break;
+        if (verifyNonce(hash(prefix + nonce.toString()), targetBytes)) {
+            return nonce;
+        }
 
         nonce++;
     }
+}
 
-    return nonce;
+export function verifyChallenge(
+    prefix: string,
+    target: string,
+    nonce: i32
+): bool {
+    return verifyNonce(hash(prefix + nonce.toString()), hex2bin(target)!);
 }
 
 export function hex2bin(hex: string): Uint8Array|null {

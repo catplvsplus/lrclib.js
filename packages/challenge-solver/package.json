@@ -26,8 +26,8 @@
     }
   },
   "scripts": {
-    "asbuild:debug": "asc --target debug",
-    "asbuild": "asc --target release",
+    "asbuild:debug": "asc --target debug -Ospeed --converge",
+    "asbuild": "asc --target release -Ospeed --converge",
     "build": "bun run asbuild && tsdown --config-loader unrun",
     "prepack": "bun run build"
   },

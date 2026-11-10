@@ -117,7 +117,17 @@ export class ChallengeSolver extends AsyncEventEmitter<ChallengeSolver.Events> i
      * Decodes a hexadecimal string into a Uint8Array.
      */
     public static async decodeHex(hex: string): Promise<Uint8Array> {
-        return Uint8Array.fromHex(hex);
+        if (typeof Uint8Array.fromHex === 'function') {
+            return Uint8Array.fromHex(hex);
+        }
+
+        const bytes = new Uint8Array(hex.length / 2);
+
+        for (let i = 0; i < bytes.length; i++) {
+            bytes[i] = parseInt(hex.substring(i * 2, 2), 16);
+        }
+
+        return bytes;
     }
 
     /**
@@ -144,6 +154,15 @@ export class ChallengeSolver extends AsyncEventEmitter<ChallengeSolver.Events> i
         const solver = new ChallengeSolver(data);
         await solver.solve();
         return solver;
+    }
+
+    /**
+     * Verifies whether the provided nonce is valid for the given challenge data.
+     */
+    public static async verify(data: APIResponse.Post.RequestChallenge, nonce: number): Promise<boolean> {
+        const hashed = await ChallengeSolver.sha256(`${data.prefix}${nonce}`);
+        const target = await ChallengeSolver.decodeHex(data.target);
+        return ChallengeSolver.verifyNonce(hashed, target);
     }
 }
 

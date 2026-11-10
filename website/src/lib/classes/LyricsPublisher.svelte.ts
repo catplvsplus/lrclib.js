@@ -86,6 +86,7 @@ export class LyricsPublisher {
             headers: {
                 'Content-Type': 'application/json',
                 'X-Publish-Token': token,
+                'X-Publish-Target': challenge.target,
             },
             body: JSON.stringify(data),
             signal

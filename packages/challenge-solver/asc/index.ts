@@ -2,9 +2,6 @@
 
 import { hex2bin as h2b, sha256Hash } from "wasm-crypto/assembly/crypto";
 
-//// @ts-expect-error
-// export declare function onAttempt(nonce: number, done: boolean): void;
-
 export function solveChallenge(
     prefix: string,
     target: string
@@ -17,13 +14,11 @@ export function solveChallenge(
         const input = prefix + nonce.toString();
         const hashed = hash(input);
 
-        // onAttempt(nonce, false);
         if (verifyNonce(hashed, targetBytes)) break;
 
         nonce++;
     }
 
-    // onAttempt(nonce, true);
     return nonce;
 }
 

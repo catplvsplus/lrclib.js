@@ -7,7 +7,8 @@
     "build:lib": "lerna run build --ignore website",
     "preview": "lerna run preview",
     "dev": "lerna run dev",
-    "dev:host": "lerna run dev:host"
+    "dev:host": "lerna run dev:host",
+    "bump": "bun ./scripts/bump.ts"
   },
   "devDependencies": {
     "@reciple/utils": "^10.0.4",

@@ -20,27 +20,31 @@
     class={cn("size-full rounded-2xl bg-muted relative overflow-hidden", props.class)}
 >
     {#if player.currentCoverImage && !player.current?.coverLoadError}
-        <KawarpBackground
-            class="size-full absolute top-0 left-0 z-0 bg-black brightness-90"
-            image={player.currentCoverImage}
-            blurPasses={isMobile() ? 10 : 7}
-            saturation={isMobile() ? 4 : 2.5}
-            transitionDuration={1000}
-            tintColor={[0.16, 0.16, 0.24]}
-            tintIntensity={0.5}
-            animationSpeed={0.5}
-            scale={3}
-        />
+        {#key player.currentCoverImage}
+            <KawarpBackground
+                class="size-full absolute top-0 left-0 z-0 bg-black brightness-90"
+                image={player.currentCoverImage}
+                blurPasses={isMobile() ? 10 : 7}
+                saturation={isMobile() ? 4 : 2.5}
+                transitionDuration={1000}
+                tintColor={[0.16, 0.16, 0.24]}
+                tintIntensity={0.5}
+                animationSpeed={0.5}
+                scale={3}
+            />
+        {/key}
     {/if}
     <ScrollArea class="size-full absolute top-0 left-0 z-0 p-4 dark text-white">
         <div class="aspect-square w-full object-cover rounded-xl overflow-hidden flex justify-center items-center bg-background border/20">
             {#if player.currentCoverImage && !player.current?.coverLoadError}
-                <img
-                    src={player.currentCoverImage}
-                    class="size-full object-cover"
-                    alt=""
-                    onerror={() => player.current && (player.current.coverLoadError = true)}
-                >
+                {#key player.currentCoverImage}
+                    <img
+                        src={player.currentCoverImage}
+                        class="size-full object-cover"
+                        alt=""
+                        onerror={() => player.current && (player.current.coverLoadError = true)}
+                    >
+                {/key}
             {:else}
                 <SixteenthNotesIcon class="size-30 text-muted-foreground"/>
             {/if}

@@ -11,7 +11,7 @@
     <div class="p-2">
         <PlayerCard/>
     </div>
-    <div class="">
+    <div class="p-2">
         <Input
             multiple
             type="file"

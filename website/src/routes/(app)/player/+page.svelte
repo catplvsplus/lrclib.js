@@ -7,7 +7,7 @@
     const player = playerContext.get();
 </script>
 
-<div class="grid @2xl:grid-cols-2 @3xl:grid-cols-3 size-full sm:pl-0 px-4 pb-4">
+<div class="grid @2xl:grid-cols-2 @3xl:grid-cols-3 w-full min-h-full sm:pl-0 px-4 pb-4">
     <div class="p-2">
         <PlayerCard/>
     </div>

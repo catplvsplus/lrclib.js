@@ -1,10 +1,30 @@
-import { AudioPlayer, type QueueItem } from '@groovytune/player';
+import { AudioPlayer } from '@groovytune/player';
 import { ACCEPTED_AUDIO_TYPES } from '../helpers/constants';
 import { PlayerTrack } from './PlayerTrack.svelte';
 import type { Track } from 'lrclib.js';
+import { resource } from 'runed';
 
-export class Player extends AudioPlayer {
-    public async init(options?: AudioPlayer.Options<QueueItem>): Promise<void> {
+export class Player extends AudioPlayer<PlayerTrack> {
+    private _currentCoverImage = resource(
+        () => this.current,
+        async track => track?.getImageURL()
+    );
+
+    private _currentMetadata = resource(
+        () => this.current,
+        async track => track?.getMetadata()
+    );
+
+    private _currentLyrics = resource(
+        () => this.current,
+        async track => track?.getLyrics()
+    );
+
+    public currentCoverImage = $derived(this._currentCoverImage.current);
+    public currentMetadata = $derived(this._currentMetadata.current);
+    public currentLyrics = $derived(this._currentLyrics.current);
+
+    public async init(options?: AudioPlayer.Options<PlayerTrack>): Promise<void> {
         super.init(options);
     }
 
@@ -17,8 +37,10 @@ export class Player extends AudioPlayer {
 
             const track = new PlayerTrack({ source: file, lyrics });
 
-            await this.play(track);
+            this.queue.add([track]);
             track.getMetadata().catch(err => console.error('Failed to get metadata for track', err));
         }
+
+        await this.play();
     }
 }

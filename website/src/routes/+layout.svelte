@@ -1,20 +1,27 @@
 <script lang="ts">
 	import '#lib/styles/layout.css';
 	import { ModeWatcher } from 'mode-watcher';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { onNavigate } from '$app/navigation';
 	import storage from '#lib/helpers/storage.js';
 	import { deepMerge, MetaTags } from 'svelte-meta-tags';
 	import { page } from '$app/state';
-	import player from '#lib/helpers/player.js';
+	import { Player } from '../lib/classes/Player.svelte.js';
+	import { playerContext } from '../lib/helpers/contexts.js';
 
 	let { children, data } = $props();
 
     let metaTags = $derived(deepMerge(data.baseMetaTags, page.data.pageMetaTags));
 
+    const player = playerContext.set(new Player());
+
     onMount(async () => {
         await storage.init();
         await player.init();
+    });
+
+    onDestroy(async () => {
+        player.destroy();
     });
 
     onNavigate(navigation => {

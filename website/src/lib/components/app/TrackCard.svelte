@@ -11,7 +11,7 @@
     import type { ClassValue } from 'cn';
     import storage from '#lib/helpers/storage.js';
     import { ACCEPTED_AUDIO_TYPES } from '../../helpers/constants';
-    import player from '../../helpers/player';
+    import { playerContext } from '../../helpers/contexts';
 
     let {
         track,
@@ -22,6 +22,7 @@
     } = $props();
 
     const isNotSmallScreen = new MediaQuery('(width >= 40rem)');
+    const player = playerContext.get();
 
     let isTrackLiked = $derived(storage.likes.entries().find(v => v[0] === track.id));
     let fileInput: HTMLInputElement|null = $state(null);

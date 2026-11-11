@@ -123,7 +123,7 @@
                     <div class="mask-t-from-80% h-60">
                         <LyricPlayer
                             lines={$state.snapshot(player.currentSyncedLyrics)}
-                            currentTime={player.currentTime}
+                            currentTime={player.currentTime * 1000}
                             setAlignPosition={0.1}
                             alignAnchor="top"
                             class="size-full font-bold"

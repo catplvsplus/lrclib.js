@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { KawarpBackground } from '@groovytune/player';
+    import { KawarpBackground, LyricPlayer } from '@groovytune/player';
     import { cn } from 'cn';
     import type { HTMLAttributes } from 'svelte/elements';
     import { playerContext } from '../../../helpers/contexts';
@@ -102,5 +102,16 @@
                 <FastForwardIcon class="size-8 fill-current"/>
             </Button>
         </div>
+        {#if player.currentLyrics}
+            <div class="bg-white/20 rounded-2xl p-4">
+                {#if player.currentSyncedLyrics}
+                    <LyricPlayer
+                        lines={player.currentSyncedLyrics}
+                        currentTime={player.currentTime}
+                        playing={!player.paused}
+                    />
+                {/if}
+            </div>
+        {/if}
     </ScrollArea>
 </div>

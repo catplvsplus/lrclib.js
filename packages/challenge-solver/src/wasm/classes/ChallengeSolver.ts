@@ -41,7 +41,7 @@ export class ChallengeSolver extends VanillaChallengeSolver {
     }
 
     public static async decodeHex(hex: string): Promise<Uint8Array> {
-        return (await ChallengeSolver.getInstance()).hex2bin(hex) ?? new Uint8Array();
+        return (await ChallengeSolver.getInstance()).hex2bin(hex);
     }
 
     public static async verifyNonce(result: Uint8Array, target: Uint8Array): Promise<boolean> {

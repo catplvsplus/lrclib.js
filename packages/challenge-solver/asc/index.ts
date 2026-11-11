@@ -1,5 +1,3 @@
-/// <reference path="../../../node_modules/assemblyscript/dist/assemblyscript.d.ts" />
-
 import { hex2bin as h2b, sha256Hash } from "wasm-crypto/assembly/crypto";
 
 export function solveChallenge(
@@ -24,11 +22,17 @@ export function verifyChallenge(
     target: string,
     nonce: u32
 ): bool {
-    return verifyNonce(hash(prefix + nonce.toString()), hex2bin(target)!);
+    return verifyNonce(hash(prefix + nonce.toString()), hex2bin(target));
 }
 
-export function hex2bin(hex: string): Uint8Array|null {
-    return h2b(hex);
+export function hex2bin(hex: string): Uint8Array {
+    const data = h2b(hex);
+
+    if (data == null) {
+        throw new Error("Invalid hex string");
+    }
+
+    return data;
 }
 
 export function hash(input: string): Uint8Array {

@@ -4,7 +4,7 @@
     import type { HTMLAttributes } from 'svelte/elements';
     import { playerContext } from '../../../helpers/contexts';
     import isMobile from 'is-mobile';
-    import { EllipsisVerticalIcon, FastForwardIcon, PauseIcon, PlayIcon, RewindIcon, SixteenthNotesIcon, StarIcon } from '@lucide/svelte';
+    import { ChevronUpIcon, EllipsisVerticalIcon, FastForwardIcon, Maximize2Icon, PauseIcon, PlayIcon, RewindIcon, SixteenthNotesIcon, StarIcon } from '@lucide/svelte';
     import { ScrollArea } from '../../ui/scroll-area';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '../../ui/item';
     import { Button } from '../../ui/button';
@@ -22,7 +22,7 @@
     {#if player.currentCoverImage && !player.current?.coverLoadError}
         {#key player.currentCoverImage}
             <KawarpBackground
-                class="size-full absolute top-0 left-0 z-0 bg-black brightness-90"
+                class="size-full absolute top-0 left-0 z-0 bg-black brightness-70"
                 image={player.currentCoverImage}
                 blurPasses={isMobile() ? 10 : 7}
                 saturation={isMobile() ? 4 : 2.5}
@@ -59,10 +59,10 @@
                 </ItemDescription>
             </ItemContent>
             <ItemActions>
-                <Button size="icon-lg" variant="ghost" class="size-8 rounded-full bg-white/20 backdrop-saturate-150">
+                <Button size="icon-lg" variant="ghost" class="rounded-full bg-white/20 backdrop-saturate-150">
                     <StarIcon/>
                 </Button>
-                <Button size="icon-lg" variant="ghost" class="size-8 rounded-full bg-white/20 backdrop-saturate-150">
+                <Button size="icon-lg" variant="ghost" class="rounded-full bg-white/20 backdrop-saturate-150">
                     <EllipsisVerticalIcon/>
                 </Button>
             </ItemActions>
@@ -103,13 +103,35 @@
             </Button>
         </div>
         {#if player.currentLyrics}
-            <div class="bg-white/20 rounded-2xl p-4">
+            <div class="bg-white/20 rounded-2xl mt-2">
+                <Item class="p-5 pt-4 pb-0">
+                    <ItemContent>
+                        <ItemTitle class="text-lg font-semibold line-clamp-1">
+                            Lyrics
+                        </ItemTitle>
+                    </ItemContent>
+                    <ItemActions>
+                        <Button size="icon-lg" variant="ghost" class="rounded-full bg-white/20">
+                            <Maximize2Icon class="size-5"/>
+                        </Button>
+                        <Button size="icon-lg" variant="ghost" class="rounded-full bg-white/20">
+                            <ChevronUpIcon class="size-5"/>
+                        </Button>
+                    </ItemActions>
+                </Item>
                 {#if player.currentSyncedLyrics}
-                    <LyricPlayer
-                        lines={player.currentSyncedLyrics}
-                        currentTime={player.currentTime}
-                        playing={!player.paused}
-                    />
+                    <div class="mask-t-from-80% h-60">
+                        <LyricPlayer
+                            lines={$state.snapshot(player.currentSyncedLyrics)}
+                            currentTime={player.currentTime}
+                            setAlignPosition={0.1}
+                            alignAnchor="top"
+                            class="size-full font-bold"
+                            style="--amll-lp-font-size: 1.6em"
+                            playing={!player.paused && player.status === 'playing' && !!player.current}
+                            onLineClick={line => player.setCurrentTime(line.line.getLine().startTime / 1000)}
+                        />
+                    </div>
                 {/if}
             </div>
         {/if}

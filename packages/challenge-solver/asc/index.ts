@@ -5,8 +5,8 @@ import { hex2bin as h2b, sha256Hash } from "wasm-crypto/assembly/crypto";
 export function solveChallenge(
     prefix: string,
     target: string
-): i32 {
-    let nonce: i32 = 0;
+): u32 {
+    let nonce: u32 = 0;
 
     const targetBytes = hex2bin(target)!;
 
@@ -22,7 +22,7 @@ export function solveChallenge(
 export function verifyChallenge(
     prefix: string,
     target: string,
-    nonce: i32
+    nonce: u32
 ): bool {
     return verifyNonce(hash(prefix + nonce.toString()), hex2bin(target)!);
 }

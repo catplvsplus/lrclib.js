@@ -14,13 +14,13 @@ export class REST implements RESTOptions {
         'Lrclib-Client': `lrclib.js@${Utils.version} (https://github.com/catplvsplus/lrclib.js)`
     };
 
-    public baseURL = REST.baseURL;
-    public headers = REST.headers;
+    public baseURL: string = REST.baseURL;
+    public headers: Headers = new Headers(REST.headers);
     public fetch: typeof fetch = fetch;
 
     public constructor(options?: RESTOptions) {
         if (options?.baseURL) this.baseURL = options.baseURL;
-        if (options?.headers) this.headers = options.headers;
+        if (options?.headers) this.headers = new Headers(options.headers);
         if (options?.fetch) this.fetch = options.fetch;
     }
 

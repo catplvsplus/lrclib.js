@@ -9,6 +9,7 @@ export class Track implements APIResponse.Get.TrackSignature {
     public artistName!: string;
     public albumName!: string;
     public instrumental!: boolean;
+    public hasWordSync!: boolean;
     public plainLyrics!: string;
     public syncedLyrics!: string;
     public duration!: number;
@@ -56,6 +57,7 @@ export class Track implements APIResponse.Get.TrackSignature {
             albumName: this.albumName,
             duration: this.duration,
             instrumental: this.instrumental,
+            hasWordSync: this.hasWordSync,
             plainLyrics: this.plainLyrics,
             syncedLyrics: this.syncedLyrics,
             lyricsfile: this.lyricsfile
@@ -69,6 +71,7 @@ export class Track implements APIResponse.Get.TrackSignature {
         track.artistName = options.artistName;
         track.albumName = options.albumName;
         track.instrumental = options.instrumental ?? !(options.plainLyrics?.trim() || options.syncedLyrics?.trim());
+        track.hasWordSync = options.hasWordSync ?? false;
         track.duration = options.duration ?? 0;
         track.plainLyrics = options.plainLyrics ?? '';
         track.syncedLyrics = options.syncedLyrics ?? '';

@@ -16,6 +16,14 @@ export class Client implements Client.Options {
         if (options?.rest) this.rest = options.rest instanceof REST ? options.rest : new REST(options.rest);
         if (options?.cache) this.cache = options.cache;
 
+        if (options?.applicationId) {
+            this.rest.headers.set('Lrclib-App-Id', options.applicationId);
+        }
+
+        if (options?.apiKey) {
+            this.rest.headers.set('Lrclib-Api-Key', options.apiKey);
+        }
+
         this.createCacheSweeper(options?.cacheMaxAge);
     }
 
@@ -97,6 +105,23 @@ export class Client implements Client.Options {
                     return tracks.map(t => new Track(t, this));
                 }
             });
+    }
+
+    /**
+     * Search for tracks without its lyrics content
+     * @param search Search query or options
+     * @param cache Whether to cache the results
+     * @returns The search results
+     */
+    public async partialSearch(
+        search: string|APIOptions.Get.Search|Utils.JSONEncodable<APIOptions.Get.Search>,
+        options?: Client.RequestOptions
+    ): Promise<APIResponse.Get.PartialSearch[]> {
+        const query = Utils.isJSONEncodable(search) ? search.toJSON() : search;
+
+        return await this.rest
+            .get(Routes['/api/v2/search'](typeof query === 'string' ? { q: query } : query), { ...options, cache: undefined })
+            .then(async data => data.json());
     }
 
     /**
@@ -196,6 +221,8 @@ export namespace Client {
         rest?: RESTOptions|REST;
         cache?: Collection<number, Track>;
         cacheMaxAge?: number;
+        applicationId?: string;
+        apiKey?: string;
     }
 
     export interface RequestOptions {

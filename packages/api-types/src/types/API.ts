@@ -118,21 +118,70 @@ export namespace APIResponse {
 
     export namespace Get {
         export interface TrackSignature {
+            /**
+             * Unique, stable ID of the lyrics record
+             */
             id: number;
+            /**
+             * Alias of trackName, kept for backwards compatibility
+             */
             name: string;
+            /**
+             * Title of the track
+             */
             trackName: string;
+            /**
+             * Name of the artist
+             */
             artistName: string;
+            /**
+             * Name of the album
+             */
             albumName: string;
+            /**
+             * Track duration in seconds
+             */
             duration: number;
+            /**
+             * `true` when the track has no lyrics
+             */
             instrumental: boolean;
+            /**
+             * `true` when `lyricsfile` contains word-level timings (`lines[].words`)
+             */
+            hasWordSync: boolean;
+            /**
+             * Plain, unsynced lyrics. `null` for instrumental records
+             */
             plainLyrics: string|null;
+            /**
+             * LRC-formatted lyrics with line timestamps. `null` from instrumental records
+             */
             syncedLyrics: string|null;
+            /**
+             * Raw Lyricsfile YAML document. Every record is guaranteed to include one
+             */
             lyricsfile: string;
         }
 
         export type TrackById = TrackSignature;
         export type SearchQuery = TrackSignature[];
         export type SearchTrackSignature = TrackSignature[];
+
+        export interface PartialSearch extends Omit<TrackSignature, 'plainLyrics'|'syncedLyrics'|'lyricsfile'> {
+            /**
+             * 	`true` when plain lyrics are available
+             */
+            hasPlainLyrics: boolean;
+            /**
+             * `true` when LRC-synced lyrics are available
+             */
+            hasSyncedLyrics: boolean;
+            /**
+             * `true` when a raw Lyricsfile YAML document is available
+             */
+            hasLyricsfile: boolean;
+        }
     }
 
     export namespace Post {
@@ -146,6 +195,28 @@ export namespace APIResponse {
     }
 }
 
+export interface APIError<Name extends APIError.Name|string> {
+    code: Name extends APIError.Name ? APIError.Code[Name] : number;
+    name: Name;
+    message: string;
+}
+
+export namespace APIError {
+    export const Code = {
+        ValidationError: 400,
+        IncorrectPublishTokenError: 400,
+        InvalidAppIdError: 401,
+        MissingApiKeyError: 401,
+        InvalidApiKeyError: 401,
+        TrackNotFound: 404,
+        RateLimitExceeded: 429,
+        UnknownError: 500,
+        ServerOverloaded: 503
+    } as const;
+
+    export type Name = keyof typeof Code;
+    export type Code = typeof Code;
+}
 export interface APIPublishTokenData {
     prefix: string;
     nonce: string;

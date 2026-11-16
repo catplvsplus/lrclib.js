@@ -27,6 +27,10 @@ export class Routes {
         return `/api/request-challenge`;
     }
 
+    public static [`/api/v2/search`](options: APIOptions.Get.Search): `/api/v2/search` {
+        return `/api/v2/search?${Routes.parseURLSearchParams(options)}` as `/api/v2/search`;
+    }
+
     private static parseURLSearchParams(data: Record<string, any>): URLSearchParams {
         const searchParams = new URLSearchParams();
 
@@ -48,6 +52,7 @@ export namespace Routes {
         [`/api/publish`]: [APIOptions.Post.Publish, APIResponse.Post.Publish];
         [`/api/flag`]: [APIOptions.Post.Flag, APIResponse.Post.Flag];
         [`/api/request-challenge`]: [APIOptions.Post.RequestChallenge, APIResponse.Post.RequestChallenge];
+        [`/api/v2/search`]: [APIOptions.Get.Search, APIResponse.Get.PartialSearch];
         [key: string]: [any, any];
     }
 }

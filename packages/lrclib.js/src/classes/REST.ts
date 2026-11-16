@@ -1,4 +1,4 @@
-import { Routes } from '@lrclib.js/api-types';
+import { LrclibAPIError, Routes } from '@lrclib.js/api-types';
 import { Utils } from './Utils.js';
 
 export interface RESTOptions {
@@ -66,7 +66,23 @@ export class REST implements RESTOptions {
             ...options,
         });
 
-        return fetchClient(`${this.baseURL}${String(route)}`, request);
+        const response = await fetchClient(`${this.baseURL}${String(route)}`, request);
+
+        if (response.ok) {
+            return response;
+        }
+
+        // TODO: Retry requests on rate limit
+
+        throw new LrclibAPIError(
+            response.headers.get('Content-Type') === 'application/json'
+                ? await response.json()
+                : {
+                    code: response.status,
+                    name: response.statusText,
+                    message: await response.text()
+                }
+        );
     }
 
     public static async post<T extends keyof Routes.Metadata>(
@@ -83,7 +99,23 @@ export class REST implements RESTOptions {
             ...options
         });
 
-        return fetchClient(request);
+        const response = await fetchClient(request);
+
+        if (response.ok) {
+            return response;
+        }
+
+        // TODO: Retry requests on rate limit
+
+        throw new LrclibAPIError(
+            response.headers.get('Content-Type') === 'application/json'
+                ? await response.json()
+                : {
+                    code: response.status,
+                    name: response.statusText,
+                    message: await response.text()
+                }
+        );
     }
 }
 

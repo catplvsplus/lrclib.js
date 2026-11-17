@@ -1,6 +1,6 @@
 <script lang="ts">
     import { cn, type ClassValue } from 'cn';
-    import type { APIOptions, Track } from 'lrclib.js';
+    import type { APIOptions, PartialTrack, Track } from 'lrclib.js';
     import type { PersistedState, ResourceReturn } from 'runed';
     import { InputGroup, InputGroupButton, InputGroupInput } from '../ui/input-group';
     import { isSearchEmpty } from '../../helpers/utils';
@@ -18,7 +18,7 @@
         class: className = ''
     }: {
         query: APIOptions.Get.Search|null;
-        results: ResourceReturn<Track[], string>;
+        results: ResourceReturn<(Track|PartialTrack)[], string>;
         isAdvancedSearch: PersistedState<boolean>;
         class?: ClassValue;
     } = $props();

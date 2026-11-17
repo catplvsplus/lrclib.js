@@ -22,16 +22,16 @@ export class Track implements APIResponse.Get.TrackSignature {
         Track._patch(this, options);
     }
 
-    public isPlain(): this is Track & { instrumental: false; } {
-        return this.instrumental === false;
+    public isPlain(): boolean {
+        return !this.instrumental;
     }
 
-    public isSynced(): this is Track & { instrumental: false; } {
+    public isSynced(): boolean {
         return !!this.syncedLyrics;
     }
 
-    public isInstrumental(): this is Track & { instrumental: true; } {
-        return this.instrumental === true;
+    public isInstrumental(): boolean {
+        return this.instrumental;
     }
 
     public getLyricsfile(): Lyricsfile {

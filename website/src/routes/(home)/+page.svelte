@@ -12,14 +12,14 @@
     let search = $state('');
     let isFocused = $state(false);
     let autocompleteIndex = $state(-1);
-    let autocompleteContainer: HTMLDivElement|null = $state(null);
+
     let results = resource(
         () => search,
         async (search, prev, { signal }) => {
             if (!search.trim()) return [];
 
             const results = lrclib
-                .search(search.trim(), { signal })
+                .partialSearch(search.trim(), { signal })
                 .then(r => r.splice(0, 5))
                 .catch(() => []);
 
@@ -103,7 +103,6 @@
                 </InputGroupButton>
                 {#if isFocused}
                     <div
-                        bind:this={autocompleteContainer}
                         transition:fly={{ y: 5, duration: 150 }}
                         class="absolute top-full left-0 grid border rounded-xl bg-background mt-1 w-full max-h-48 overflow-y-auto shadow z-10"
                     >

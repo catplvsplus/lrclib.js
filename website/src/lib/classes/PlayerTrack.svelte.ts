@@ -1,9 +1,9 @@
 import { QueueItem } from '@groovytune/player';
-import lrclib, { type Track } from 'lrclib.js';
+import lrclib, { PartialTrack, type Track } from 'lrclib.js';
 import { parseBlob, selectCover, type IAudioMetadata } from 'music-metadata';
 
 export class PlayerTrack extends QueueItem {
-    public lyrics: Track|null = null;
+    public lyrics: Track|PartialTrack|null = null;
     public source: Blob|File|null = null;
     public metadata: IAudioMetadata|null = null;
 
@@ -63,11 +63,15 @@ export class PlayerTrack extends QueueItem {
 
         const metadata = await this.getMetadata();
 
-        return this.lyrics ??= (await lrclib.search({
-            track_name: metadata.common.title ?? ('name' in this.source ? this.source.name : ''),
-            artist_name: metadata.common.artist,
-            album_name: metadata.common.album
-        })).at(0) ?? null;
+        return this.lyrics = this.lyrics instanceof PartialTrack
+            ? await this.lyrics.fetch()
+            : this.lyrics
+                ?? (await lrclib.search({
+                    track_name: metadata.common.title ?? ('name' in this.source ? this.source.name : ''),
+                    artist_name: metadata.common.artist,
+                    album_name: metadata.common.album
+                })).at(0)
+                ?? null;
     }
 
     public async getSourceURL(): Promise<string> {
@@ -97,7 +101,7 @@ export class PlayerTrack extends QueueItem {
 
 export namespace PlayerTrack {
     export interface Options {
-        lyrics?: Track;
+        lyrics?: Track|PartialTrack;
         source?: Blob;
         metadata?: IAudioMetadata;
     }

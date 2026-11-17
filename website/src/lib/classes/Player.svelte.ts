@@ -1,7 +1,7 @@
 import { AudioPlayer } from '@groovytune/player';
 import { ACCEPTED_AUDIO_TYPES } from '../helpers/constants';
 import { PlayerTrack } from './PlayerTrack.svelte';
-import type { Track } from 'lrclib.js';
+import type { PartialTrack, Track } from 'lrclib.js';
 import { resource } from 'runed';
 import { braccatoLyricsToAppleMusicLyrics } from '../helpers/lyrics';
 import { LRCParser } from '@braccato/parsers';
@@ -38,7 +38,7 @@ export class Player extends AudioPlayer<PlayerTrack> {
         super.init(options);
     }
 
-    public async playFiles(files: File[], lyrics?: Track): Promise<void> {
+    public async playFiles(files: File[], lyrics?: Track|PartialTrack): Promise<void> {
         for (const file of files) {
             if (!ACCEPTED_AUDIO_TYPES.includes(file.type)) {
                 console.warn(`File type ${file.type} is not supported. Skipping file ${file.name}.`);

@@ -19,7 +19,7 @@
         () => query,
         async (query, prev, { signal }) => {
             goto(encodeURISearchQuery(query), { reset: false })
-            return !isSearchEmpty(query) ? lrclib.search(query!, { signal }) : [] as Track[];
+            return !isSearchEmpty(query) ? lrclib.partialSearch(query!, { signal }) : [] as Track[];
         },
         {
             debounce: 300,

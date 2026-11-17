@@ -4,6 +4,7 @@ import { REST, type RESTOptions } from './REST.js';
 import type { APIOptions, APIPublishTokenData, APIResponse } from '@lrclib.js/api-types';
 import { Routes } from '@lrclib.js/api-types';
 import { Utils } from './Utils.js';
+import { PartialTrack } from './PartialTrack.js';
 
 export class Client implements Client.Options {
     public rest: REST = new REST();
@@ -116,12 +117,13 @@ export class Client implements Client.Options {
     public async partialSearch(
         search: string|APIOptions.Get.Search|Utils.JSONEncodable<APIOptions.Get.Search>,
         options?: Client.RequestOptions
-    ): Promise<APIResponse.Get.PartialSearch[]> {
+    ): Promise<(PartialTrack|Track)[]> {
         const query = Utils.isJSONEncodable(search) ? search.toJSON() : search;
-
-        return await this.rest
+        const results: APIResponse.Get.PartialSearch[] = await this.rest
             .get(Routes['/api/v2/search'](typeof query === 'string' ? { q: query } : query), { ...options, cache: undefined })
             .then(async data => data.json());
+
+        return results.map(t => this.cache.get(t.id) ?? new PartialTrack(t, this));
     }
 
     /**

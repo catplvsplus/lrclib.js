@@ -5,7 +5,7 @@
     import { Button } from '#lib/components/ui/button/index.js';
     import { Badge } from '#lib/components/ui/badge/index.js';
     import { resolve } from '$app/paths';
-    import type { Track } from 'lrclib.js';
+    import type { Track, PartialTrack } from 'lrclib.js';
     import { MediaQuery } from 'svelte/reactivity';
     import { onMount } from 'svelte';
     import type { ClassValue } from 'cn';
@@ -17,7 +17,7 @@
         track,
         class: className
     }: {
-        track: Track;
+        track: Track|PartialTrack;
         class?: ClassValue;
     } = $props();
 
@@ -75,7 +75,9 @@
                 class="hidden"
                 accept={ACCEPTED_AUDIO_TYPES.join(',')}
                 bind:this={fileInput}
-                onchange={async e => player.playFiles(Array.from(e.currentTarget.files ?? []), track)}
+                onchange={async e => {
+                    await player.playFiles(Array.from(e.currentTarget.files ?? []), track)
+                }}
             >
         </CardAction>
     </CardHeader>

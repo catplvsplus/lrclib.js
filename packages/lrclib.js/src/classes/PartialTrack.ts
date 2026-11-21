@@ -4,7 +4,6 @@ import type { Track } from './Track';
 
 export class PartialTrack implements APIResponse.Get.PartialSearch {
     public id: number;
-    public name: string;
     public trackName: string;
     public artistName: string;
     public albumName: string;
@@ -19,7 +18,6 @@ export class PartialTrack implements APIResponse.Get.PartialSearch {
 
     public constructor(options: APIResponse.Get.PartialSearch, public client?: Client) {
         this.id = options.id;
-        this.name = options.name;
         this.trackName = options.trackName;
         this.artistName = options.artistName;
         this.albumName = options.albumName;
@@ -62,7 +60,6 @@ export class PartialTrack implements APIResponse.Get.PartialSearch {
     public toJSON(): APIResponse.Get.PartialSearch {
         return {
             id: this.id,
-            name: this.name,
             trackName: this.trackName,
             artistName: this.artistName,
             albumName: this.albumName,

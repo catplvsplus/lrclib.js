@@ -1,13 +1,14 @@
 <script lang="ts">
-    import { KawarpBackground, LyricPlayer } from '@groovytune/player';
+    import { KawarpBackground } from '@groovytune/player';
     import { cn } from 'cn';
     import type { HTMLAttributes } from 'svelte/elements';
     import { playerContext } from '../../../helpers/contexts';
     import isMobile from 'is-mobile';
-    import { ChevronUpIcon, EllipsisVerticalIcon, FastForwardIcon, Maximize2Icon, PauseIcon, PlayIcon, RewindIcon, SixteenthNotesIcon, StarIcon } from '@lucide/svelte';
+    import { EllipsisVerticalIcon, FastForwardIcon, PauseIcon, PlayIcon, RewindIcon, SixteenthNotesIcon, StarIcon } from '@lucide/svelte';
     import { ScrollArea } from '../../ui/scroll-area';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '../../ui/item';
     import { Button } from '../../ui/button';
+    import LyricsAccordion from './LyricsAccordion.svelte';
 
     let {
         ...props
@@ -72,7 +73,7 @@
                 <span class="block h-full bg-white rounded-l-full" style="width: {player.progress ?? 0}%;"></span>
             </div>
         </div>
-        <div class="flex gap-4 justify-evenly items-center">
+        <div class="flex gap-4 justify-evenly items-center py-4">
             <Button
                 size="icon-lg"
                 variant="ghost"
@@ -103,37 +104,11 @@
             </Button>
         </div>
         {#if player.currentLyrics}
-            <div class="bg-white/20 rounded-2xl mt-2">
-                <Item class="p-5 pt-4 pb-0">
-                    <ItemContent>
-                        <ItemTitle class="text-lg font-semibold line-clamp-1">
-                            Lyrics
-                        </ItemTitle>
-                    </ItemContent>
-                    <ItemActions>
-                        <Button size="icon-lg" variant="ghost" class="rounded-full bg-white/20">
-                            <Maximize2Icon class="size-5"/>
-                        </Button>
-                        <Button size="icon-lg" variant="ghost" class="rounded-full bg-white/20">
-                            <ChevronUpIcon class="size-5"/>
-                        </Button>
-                    </ItemActions>
-                </Item>
-                {#if player.currentSyncedLyrics}
-                    <div class="mask-t-from-80% h-60">
-                        <LyricPlayer
-                            lines={$state.snapshot(player.currentSyncedLyrics)}
-                            currentTime={player.currentTime * 1000}
-                            setAlignPosition={0.1}
-                            alignAnchor="top"
-                            class="size-full font-bold"
-                            style="--amll-lp-font-size: 1.6em"
-                            playing={!player.paused && player.status === 'playing' && !!player.current}
-                            onLineClick={line => player.setCurrentTime(line.line.getLine().startTime / 1000)}
-                        />
-                    </div>
-                {/if}
-            </div>
+            <LyricsAccordion
+                lyrics={player.currentLyrics}
+                player={player}
+                class="mt-4"
+            />
         {/if}
     </ScrollArea>
 </div>
